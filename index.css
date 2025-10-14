@@ -1,103 +1,58 @@
 * html, body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: grey
-}
-h1 {
-    text-align: center;
-    font-size: 2.5rem;
-    margin-bottom: 30px;
-}
-.container {
-    display: flex;
-}
-.bungkus {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 20px;
-    padding: 15px;
-    width: 100%;
-    height: 50px;
-    background-color: black;
-}
-.brand {
-    display: flex;
-    flex-direction: row;
-    font-size: 1.5em;
-    padding: 15px;
-    text-transform: capitalize;
-}
-.firstname {
-    color: brown;
-    font-weight: 700;
-}
-.lastname {
-    color: white;
-    padding-left: 4px;
-}
-.navigation {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.navigation>li>a:hover {
-    color: crimson;
-}
-.navigation>li {
-    list-style-type: none;
-    padding: 15px;
-}
-.navigation>li>a {
-    color: antiquewhite;
-    font-size: 20px;
-    text-decoration: none;
-    text-transform: capitalize;
-}
-.active {
-    background-color: red;
-    color: white;
-    text-transform: capitalize;
-}
-.judul {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 2rem;
-    color: white;
-  }
-  .list-game {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    max-width: 1100px;
-    margin: 20px auto;
-    padding: 10px;
-}
+      font-family: Arial, sans-serif;
+      background-color: #fafafa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
 
-.kotak {
-    background-color: darkcyan;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s ease;
-    text-align: center;
-    color: white;
-}
+    header {
+      background-color: #ff6347;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+    }
 
-.kotak:hover {
-    transform: translateY(-8px);
-}
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
 
-.gambar {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    display: block;
-}
+    .container {
+      width: 90%;
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-.judul-produk {
-    margin: 10px 0;
-    font-size: 1.2rem;
-    font-weight: bold;
-}
+    h2 {
+      border-bottom: 2px solid #ff6347;
+      padding-bottom: 8px;
+      color: #ff6347;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    li span {
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      background-color: #ff6347;
+      color: white;
+      padding: 10px 0;
+      margin-top: 30px;
