@@ -37,13 +37,20 @@
       margin-top: 40px;
     }
 
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     .menu-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-      flex-wrap: wrap;
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background-color: #fffaf7;
     }
 
     .menu-item img {
@@ -56,12 +63,15 @@
 
     .menu-info {
       flex-grow: 1;
-      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .menu-name {
       font-weight: bold;
       font-size: 16px;
+      margin-bottom: 5px;
     }
 
     .menu-price {
@@ -128,6 +138,16 @@
       padding: 10px 0;
       margin-top: 30px;
     }
+
+    @media (max-width: 600px) {
+      .menu-item {
+        flex-direction: column;
+        text-align: center;
+      }
+      .menu-item img {
+        margin: 0 0 10px 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -139,43 +159,67 @@
 
   <div class="container">
     <h2>Menu Makanan</h2>
+    <div class="menu-list">
 
-    <div class="menu-item">
-      <img src="https://images.unsplash.com/photo-1604909053725-22e6b4a4f7f9?auto=format&fit=crop&w=80&q=60" alt="Nasi Goreng">
-      <div class="menu-info">
-        <div class="menu-name">Nasi Goreng Spesial</div>
-        <div class="menu-price">Rp25.000</div>
+      <div class="menu-item">
+        <img src="https://images.unsplash.com/photo-1604909053725-22e6b4a4f7f9?auto=format&fit=crop&w=80&q=60" alt="Nasi Goreng">
+        <div class="menu-info">
+          <div class="menu-name">Nasi Goreng Spesial</div>
+          <div class="menu-price">Rp25.000</div>
+        </div>
+        <button onclick="addToCart('Nasi Goreng Spesial', 25000)">Pesan</button>
       </div>
-      <button onclick="addToCart('Nasi Goreng Spesial', 25000)">Pesan</button>
-    </div>
 
-    <div class="menu-item">
-      <img src="https://images.unsplash.com/photo-1601050690597-1a55e31dfe6c?auto=format&fit=crop&w=80&q=60" alt="Mie Ayam Bakso">
-      <div class="menu-info">
-        <div class="menu-name">Mie Ayam Bakso</div>
-        <div class="menu-price">Rp20.000</div>
+      <div class="menu-item">
+        <img src="https://images.unsplash.com/photo-1601050690597-1a55e31dfe6c?auto=format&fit=crop&w=80&q=60" alt="Mie Ayam Bakso">
+        <div class="menu-info">
+          <div class="menu-name">Mie Ayam Bakso</div>
+          <div class="menu-price">Rp20.000</div>
+        </div>
+        <button onclick="addToCart('Mie Ayam Bakso', 20000)">Pesan</button>
       </div>
-      <button onclick="addToCart('Mie Ayam Bakso', 20000)">Pesan</button>
+
+      <div class="menu-item">
+        <img src="https://images.unsplash.com/photo-1562967916-eb82221dfb36?auto=format&fit=crop&w=80&q=60" alt="Sate Ayam">
+        <div class="menu-info">
+          <div class="menu-name">Sate Ayam</div>
+          <div class="menu-price">Rp30.000</div>
+        </div>
+        <button onclick="addToCart('Sate Ayam', 30000)">Pesan</button>
+      </div>
+
     </div>
 
     <h2>Menu Minuman</h2>
+    <div class="menu-list">
 
-    <div class="menu-item">
-      <img src="https://images.unsplash.com/photo-1565958011703-44e211b64006?auto=format&fit=crop&w=80&q=60" alt="Es Teh Manis">
-      <div class="menu-info">
-        <div class="menu-name">Es Teh Manis</div>
-        <div class="menu-price">Rp8.000</div>
+      <div class="menu-item">
+        <img src="https://images.unsplash.com/photo-1565958011703-44e211b64006?auto=format&fit=crop&w=80&q=60" alt="Es Teh Manis">
+        <div class="menu-info">
+          <div class="menu-name">Es Teh Manis</div>
+          <div class="menu-price">Rp8.000</div>
+        </div>
+        <button onclick="addToCart('Es Teh Manis', 8000)">Pesan</button>
       </div>
-      <button onclick="addToCart('Es Teh Manis', 8000)">Pesan</button>
-    </div>
 
-    <div class="menu-item">
-      <img src="https://images.unsplash.com/photo-1604908177745-927d7a0f802e?auto=format&fit=crop&w=80&q=60" alt="Jus Alpukat">
-      <div class="menu-info">
-        <div class="menu-name">Jus Alpukat</div>
-        <div class="menu-price">Rp15.000</div>
+      <div class="menu-item">
+        <img src="https://images.unsplash.com/photo-1604908177745-927d7a0f802e?auto=format&fit=crop&w=80&q=60" alt="Jus Alpukat">
+        <div class="menu-info">
+          <div class="menu-name">Jus Alpukat</div>
+          <div class="menu-price">Rp15.000</div>
+        </div>
+        <button onclick="addToCart('Jus Alpukat', 15000)">Pesan</button>
       </div>
-      <button onclick="addToCart('Jus Alpukat', 15000)">Pesan</button>
+
+      <div class="menu-item">
+        <img src="https://images.unsplash.com/photo-1510626176961-4b37d6e3b4a9?auto=format&fit=crop&w=80&q=60" alt="Kopi Hitam">
+        <div class="menu-info">
+          <div class="menu-name">Kopi Hitam</div>
+          <div class="menu-price">Rp10.000</div>
+        </div>
+        <button onclick="addToCart('Kopi Hitam', 10000)">Pesan</button>
+      </div>
+
     </div>
 
     <!-- Keranjang -->
@@ -231,15 +275,4 @@
 
       let pesan = "Halo Warung Lezat! Saya ingin memesan:\n";
       cart.forEach(item => {
-        pesan += `- ${item.name} (Rp${item.price.toLocaleString('id-ID')})\n`;
-      });
-      const total = cart.reduce((sum, item) => sum + item.price, 0);
-      pesan += `\nTotal: Rp${total.toLocaleString('id-ID')}`;
-
-      // Ganti dengan nomor WhatsApp kasir kamu
-      const url = `https://wa.me/6281234567890?text=${encodeURIComponent(pesan)}`;
-      window.open(url, '_blank');
-    }
-  </script>
-</body>
-</html>
+        pesan += `- ${item.na
