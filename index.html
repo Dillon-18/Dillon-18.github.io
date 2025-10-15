@@ -4,113 +4,116 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="index.css">
-  <title>Daftar Menu - Warung Lezat</title>
+  <title>WarKan Menu</title>
 </head>
 <body>
 
   <header>
-    <h1>🍴 WarKan 🍹</h1>
-    <p>Silakan pilih menu favorit Anda!</p>
+    <h1>🍴 Warkan 🍹</h1>
+    <p>Silakan pilih menu favorit Anda dan klik “Pesan”</p>
   </header>
 
   <div class="container">
-
     <h2>Menu Makanan</h2>
 
     <div class="menu-item">
-      <img src="nasgor.jpg" alt="Nasi Goreng">
+      <img src="https://images.unsplash.com/photo-1604909053725-22e6b4a4f7f9?auto=format&fit=crop&w=80&q=60" alt="Nasi Goreng">
       <div class="menu-info">
         <div class="menu-name">Nasi Goreng Spesial</div>
+        <div class="menu-price">Rp25.000</div>
       </div>
-      <div class="menu-price">Rp25.000</div>
+      <button onclick="addToCart('Nasi Goreng Spesial', 25000)">Pesan</button>
     </div>
 
     <div class="menu-item">
-      <img src="yamyam.jpg" alt="Mie Ayam Bakso">
+      <img src="https://images.unsplash.com/photo-1601050690597-1a55e31dfe6c?auto=format&fit=crop&w=80&q=60" alt="Mie Ayam Bakso">
       <div class="menu-info">
         <div class="menu-name">Mie Ayam Bakso</div>
+        <div class="menu-price">Rp20.000</div>
       </div>
-      <div class="menu-price">Rp20.000</div>
-    </div>
-
-    <div class="menu-item">
-      <img src="tesate.jpg" alt="Sate Ayam">
-      <div class="menu-info">
-        <div class="menu-name">Sate Ayam</div>
-      </div>
-      <div class="menu-price">Rp30.000</div>
-    </div>
-
-    <div class="menu-item">
-      <img src="geprek.jpg" alt="Ayam Geprek">
-      <div class="menu-info">
-        <div class="menu-name">Ayam Geprek Sambal Bawang</div>
-      </div>
-      <div class="menu-price">Rp22.000</div>
-    </div>
-
-    <div class="menu-item">
-      <img src="rendang.jpg" alt="Rendang">
-      <div class="menu-info">
-        <div class="menu-name">Rendang Daging</div>
-      </div>
-      <div class="menu-price">Rp35.000</div>
+      <button onclick="addToCart('Mie Ayam Bakso', 20000)">Pesan</button>
     </div>
 
     <h2>Menu Minuman</h2>
 
     <div class="menu-item">
-      <img src="eses.jpg" alt="Es Teh Manis">
+      <img src="https://images.unsplash.com/photo-1565958011703-44e211b64006?auto=format&fit=crop&w=80&q=60" alt="Es Teh Manis">
       <div class="menu-info">
         <div class="menu-name">Es Teh Manis</div>
+        <div class="menu-price">Rp8.000</div>
       </div>
-      <div class="menu-price">Rp8.000</div>
+      <button onclick="addToCart('Es Teh Manis', 8000)">Pesan</button>
     </div>
 
     <div class="menu-item">
-      <img src="aalal.jpg" alt="Jus Alpukat">
+      <img src="https://images.unsplash.com/photo-1604908177745-927d7a0f802e?auto=format&fit=crop&w=80&q=60" alt="Jus Alpukat">
       <div class="menu-info">
         <div class="menu-name">Jus Alpukat</div>
+        <div class="menu-price">Rp15.000</div>
       </div>
-      <div class="menu-price">Rp15.000</div>
+      <button onclick="addToCart('Jus Alpukat', 15000)">Pesan</button>
     </div>
 
-    <div class="menu-item">
-      <img src="kpi.jpg" alt="Kopi Hitam">
-      <div class="menu-info">
-        <div class="menu-name">Kopi Hitam</div>
-      </div>
-      <div class="menu-price">Rp10.000</div>
+    <!-- Keranjang -->
+    <div id="cart">
+      <h2>🛒 Keranjang Pesanan</h2>
+      <ul id="cart-items"></ul>
+      <div id="cart-total">Total: Rp0</div>
+      <button id="checkout-btn" onclick="checkout()">Checkout</button>
     </div>
-
-    <div class="menu-item">
-      <img src="ruk.jpg" alt="Es Jeruk">
-      <div class="menu-info">
-        <div class="menu-name">Es Jeruk Segar</div>
-      </div>
-      <div class="menu-price">Rp12.000</div>
-    </div>
-
-    <div class="menu-item">
-      <img src="putih.jpg" alt="Air Mineral">
-      <div class="menu-info">
-        <div class="menu-name">Air Mineral</div>
-      </div>
-      <div class="menu-price">Rp5.000</div>
-    </div>
-
   </div>
 
   <footer>
-    © 2025 Warkan — Dibuat dengan Dillon 🍴
+    © 2025 Warung Lezat — Dibuat dengan Dillon
   </footer>
 
+  <script>
+    let cart = [];
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartList = document.getElementById('cart-items');
+      const cartTotal = document.getElementById('cart-total');
+      cartList.innerHTML = '';
+
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price;
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${item.name} - Rp${item.price.toLocaleString('id-ID')}
+          <button onclick="removeItem(${index})" style="background:red;color:white;border:none;border-radius:4px;padding:4px 8px;">x</button>
+        `;
+        cartList.appendChild(li);
+      });
+
+      cartTotal.textContent = `Total: Rp${total.toLocaleString('id-ID')}`;
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function checkout() {
+      if (cart.length === 0) {
+        alert("Keranjang masih kosong!");
+        return;
+      }
+      let pesan = "Halo, saya ingin memesan:\n";
+      cart.forEach(item => {
+        pesan += `- ${item.name} (Rp${item.price.toLocaleString('id-ID')})\n`;
+      });
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      pesan += `\nTotal: Rp${total.toLocaleString('id-ID')}`;
+      const url = `https://wa.me/6281234567890?text=${encodeURIComponent(pesan)}`;
+      window.open(url, '_blank');
+    }
+  </script>
 </body>
 </html>
-
-
-
-
-
-
 
