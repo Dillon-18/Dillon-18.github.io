@@ -1,4 +1,5 @@
 * html, body {
+    body {
       font-family: Arial, sans-serif;
       background-color: #fafafa;
       color: #333;
@@ -30,13 +31,20 @@
       margin-top: 40px;
     }
 
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     .menu-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #eee;
-      flex-wrap: wrap;
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      background-color: #fffaf7;
     }
 
     .menu-item img {
@@ -49,12 +57,15 @@
 
     .menu-info {
       flex-grow: 1;
-      min-width: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     .menu-name {
       font-weight: bold;
       font-size: 16px;
+      margin-bottom: 5px;
     }
 
     .menu-price {
@@ -120,4 +131,14 @@
       color: white;
       padding: 10px 0;
       margin-top: 30px;
+    }
+
+    @media (max-width: 600px) {
+      .menu-item {
+        flex-direction: column;
+        text-align: center;
+      }
+      .menu-item img {
+        margin: 0 0 10px 0;
+      }
     }
