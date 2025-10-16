@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pantry - Status Pesanan Pelanggan</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Khusus Customer View */
+    .container {
+        max-width: 800px;
+    }
+    .search-area {
+        margin-bottom: 25px;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        text-align: center;
+    }
+    .search-area input {
+        width: 70%;
+        padding: 12px;
+        border: 2px solid #068b18;
+        border-radius: 6px;
+        font-size: 1.1em;
+        text-align: center;
+        margin-top: 10px;
+    }
+    
+    #customer-order-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    
+    .status-card {
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        border-left: 5px solid;
+    }
+    
+    .status-baru { border-left-color: #ef4444; background-color: #fee2e2; }
+    .status-proses { border-left-color: #f59e0b; background-color: #fef3c7; }
+    .status-selesai { border-left-color: #10b981; background-color: #d1fae5; }
+
+    .status-card h3 {
+        margin-top: 0;
+        color: #333;
+        font-size: 1.5em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px dotted #ccc;
+        padding-bottom: 5px;
+    }
+
+    .status-card .status-label {
+        font-size: 1.2em;
+        font-weight: 700;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+    
+    /* Warna Label Status */
+    .status-baru .status-label { color: #ef4444; }
+    .status-proses .status-label { color: #f59e0b; }
+    .status-selesai .status-label { color: #10b981; }
+
+    .item-list-customer {
+        list-style: none;
+        padding: 0;
+        font-size: 0.9em;
+        margin-top: 10px;
+    }
+    .item-list-customer li {
+        padding: 3px 0;
+        color: #555;
+    }
+
+    #no-result {
+        text-align: center;
+        color: #999;
+        padding: 50px 0;
+        font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <span class="brand-name">Pantry</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn btn-primary" onclick="window.location.href='index.html'">Pesan Sekarang</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>Cek Status Pesanan Anda</h2>
+    <div class="search-area">
+        <label for="search-name">Masukkan **Nama Anda** saat memesan:</label>
+        <input type="text" id="search-name" placeholder="Contoh: Budi Meja 5" oninput="filterOrders()">
+    </div>
+
+    <div id="customer-order-list">
+        </div>
+
+    <div id="no-result">
+        Silakan masukkan nama Anda di kolom atas untuk melihat status pesanan.
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Pantry — Dibuat dengan ❤️
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Muat pesanan saat halaman pertama kali dibuka, tetapi tidak menampilkan apa-apa
+        // sampai pengguna memasukkan nama.
+        document.getElementById('search-name').focus();
+        filterOrders(); 
+    });
+
+    function formatRupiah(number) {
+        return `Rp${number.toLocaleString('id-ID')}`;
+    }
+
+    // Fungsi utama untuk memfilter dan menampilkan pesanan
+    function filterOrders() {
+        const searchTerm = document.getElementById('search-name').value.trim().toLowerCase();
+        const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+        const orderListDiv = document.getElementById('customer-order-list');
+        const noResultDiv = document.getElementById('no-result');
+        
+        orderListDiv.innerHTML = '';
+        noResultDiv.style.display = 'none';
+
+        if (searchTerm.length < 2) {
+            noResultDiv.innerHTML = 'Silakan masukkan minimal 2 karakter nama Anda.';
+            noResultDiv.style.display = 'block';
+            return;
+        }
+
+        // Filter pesanan berdasarkan nama pelanggan (case-insensitive search)
+        const filteredOrders = orders.filter(order => 
+            order.customerName && order.customerName.toLowerCase().includes(searchTerm)
+        ).filter(order => order.status !== 'Selesai'); // Sembunyikan pesanan Selesai (sudah diambil)
+
+        if (filteredOrders.length === 0) {
+            noResultDiv.innerHTML = `Tidak ada pesanan aktif yang ditemukan untuk "${searchTerm.toUpperCase()}"`;
+            noResultDiv.style.display = 'block';
+            return;
+        }
+
+        filteredOrders.forEach(order => {
+            let statusLabel;
+            let statusClass;
+            
+            switch (order.status) {
+                case 'Proses':
+                    statusLabel = 'SEDANG DIPROSES 🧑‍🍳';
+                    statusClass = 'status-proses';
+                    break;
+                case 'Selesai':
+                    statusLabel = 'SIAP DIAMBIL! 🎉';
+                    statusClass = 'status-selesai';
+                    break;
+                case 'Baru':
+                default:
+                    statusLabel = 'BARU (Menunggu Proses Dapur) ⏳';
+                    statusClass = 'status-baru';
+            }
+
+            const itemList = order.items.map(item => 
+              `<li>${item.name} x${item.qty}</li>`
+            ).join('');
+
+            const card = document.createElement('div');
+            card.className = `status-card ${statusClass}`;
+            card.innerHTML = `
+                <h3>
+                    <span>Pesanan ID: ${order.id}</span>
+                    <span class="status-label">${statusLabel}</span>
+                </h3>
+                <p><strong>Pelanggan:</strong> ${order.customerName}</p>
+                <p><strong>Total Pesanan:</strong> ${formatRupiah(order.total)}</p>
+                <ul class="item-list-customer">${itemList}</ul>
+            `;
+            orderListDiv.appendChild(card);
+        });
+    }
+
+    // Auto-refresh setiap 5 detik agar status selalu terbaru
+    setInterval(filterOrders, 5000);
+  </script>
+
+</body>
+</html>
