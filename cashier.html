@@ -3,63 +3,289 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Kasir - Pantry</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <title>Pantry - Dashboard Dapur</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Poppins', sans-serif; padding: 20px; background: #f8f8f8; }
-    h1 { text-align: center; }
-    .payment-list, .order-list { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 0 5px #ccc; margin-top: 20px; }
-    .item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
-    button { padding: 5px 10px; border: none; border-radius: 6px; cursor: pointer; }
-    .btn-pay { background: #28a745; color: white; }
-    .btn-back { background: #555; color: white; margin-top: 20px; }
+    /* CSS Tambahan untuk Dashboard Dapur */
+    .container {
+        max-width: 1400px; 
+    }
+    .kanban-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 20px;
+    }
+    .kanban-column {
+        background-color: #f7f7f7;
+        padding: 15px;
+        border-radius: 8px;
+        min-height: 400px;
+        border: 1px solid #ddd;
+    }
+    .kanban-column h3 {
+        text-align: center;
+        margin-top: 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #068b18;
+        color: #333;
+    }
+    .order-card {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s; /* Transisi */
+        position: relative;
+    }
+    .order-card:hover {
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 5px;
+    }
+    .order-customer {
+        font-weight: 700;
+        font-size: 1.1em;
+        color: #333;
+    }
+    .order-time {
+      font-weight: bold;
+      color: #d14838; /* Warna primer baru */
+      font-size: 1.2em;
+    }
+    .order-status {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.9em;
+    }
+    .status-baru { background-color: #fee2e2; color: #ef4444; }
+    .status-proses { background-color: #fef3c7; color: #f59e0b; }
+    .status-selesai { background-color: #d1fae5; color: #10b981; }
+    .item-list {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0;
+        font-size: 0.95em;
+    }
+    .item-list li {
+        border-bottom: 1px dotted #eee;
+        padding: 6px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+    .order-total {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #068b18;
+      display: block;
+      margin-top: 10px;
+    }
+    .action-btn-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 15px;
+    }
+    .action-btn-group button {
+        flex: 1;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        color: white;
+        font-weight: 600;
+        transition: background-color 0.3s, transform 0.2s; /* Transisi */
+    }
+    .action-btn-group button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    /* WARNA TOMBOL AKSI LEBIH GELAP */
+    .btn-proses { background-color: #e68a00; } 
+    .btn-proses:hover:not(:disabled) { background-color: #cc7800; }
+    .btn-selesai { background-color: #056b12; }
+    .btn-selesai:hover:not(:disabled) { background-color: #04520e; }
+    .btn-hapus { background-color: #c44336; }
+    .btn-hapus:hover:not(:disabled) { background-color: #a3322b; }
+    .order-list { 
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .empty-column-msg {
+        text-align: center;
+        color: #999;
+        margin-top: 50px;
+    }
   </style>
 </head>
 <body>
-  <h1>💰 Dashboard Kasir Pantry</h1>
 
-  <div class="payment-list">
-    <h2>Pembayaran Menunggu Verifikasi</h2>
-    <div id="pending-list"></div>
+  <header class="navbar">
+    <div class="nav-left">
+      <span class="brand-name">Pantry</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
+      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Dashboard Dapur</span>
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn btn-primary" onclick="window.location.href='payment_dashboard.html'">💳 Dashboard Pembayaran</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Kembali ke Menu Utama</button>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <div class="order-dashboard-container">
+        <h2>👨‍🍳 Daftar Pesanan (Real-time Simulasi)</h2>
+        <div class="kanban-container">
+            <div class="kanban-column">
+                <h3>Baru</h3>
+                <div class="order-list" id="order-list-baru"></div>
+            </div>
+            <div class="kanban-column">
+                <h3>Diproses</h3>
+                <div class="order-list" id="order-list-proses"></div>
+            </div>
+            <div class="kanban-column">
+                <h3>Selesai</h3>
+                <div class="order-list" id="order-list-selesai"></div>
+            </div>
+        </div>
+    </div>
   </div>
 
-  <button class="btn-back" onclick="goBack()">⬅ Kembali ke Menu</button>
+  <footer>
+    © 2025 Pantry — Dibuat dengan ❤️
+  </footer>
 
   <script>
-    function renderPayments() {
-      const container = document.getElementById('pending-list');
-      const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-      container.innerHTML = '';
+    // === MEKANISME PROTEKSI AKSES KASIR ===
+    (function checkAccess() {
+        const KASIR_PASS = "kasir123";
+        let isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
 
-      if (payments.length === 0) {
-        container.innerHTML = '<p>Tidak ada pembayaran.</p>';
-        return;
-      }
+        if (!isAuthorized) {
+            const password = prompt("Masukkan password kasir untuk mengakses Dashboard:");
 
-      payments.forEach((p, i) => {
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `
-          <span><b>${p.id}</b> - Rp${p.total.toLocaleString('id-ID')} 
-          (${p.status === 'paid' ? '✅ Sudah Dibayar' : '🕓 Menunggu'})</span>
-          ${p.status === 'pending' ? `<button class="btn-pay" onclick="markPaid(${i})">Tandai Sudah Dibayar</button>` : ''}
+            if (password === KASIR_PASS) {
+                sessionStorage.setItem('cashierAuth', 'true');
+            } else {
+                alert("Password salah. Akses ditolak. Anda akan diarahkan kembali ke Menu Utama.");
+                window.location.href = 'index.html';
+            }
+        }
+    })();
+    // ======================================
+    
+    document.addEventListener('DOMContentLoaded', loadOrders);
+
+    // Fungsi utilitas untuk memformat harga
+    function formatRupiah(number) {
+        return `Rp${number.toLocaleString('id-ID')}`;
+    }
+    
+    // ======================================
+    // === FUNGSI MANAJEMEN PESANAN (ORDER) ===
+    // ======================================
+
+    function loadOrders() {
+      const orderListBaru = document.getElementById('order-list-baru');
+      const orderListProses = document.getElementById('order-list-proses');
+      const orderListSelesai = document.getElementById('order-list-selesai');
+      let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      
+      orderListBaru.innerHTML = '';
+      orderListProses.innerHTML = '';
+      orderListSelesai.innerHTML = '';
+      
+      orders.forEach(order => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+        card.id = 'order-' + order.id;
+        
+        const itemList = order.items.map(item => 
+          `<li><span>${item.name} x${item.qty}</span> <span>${formatRupiah(item.price * item.qty)}</span></li>`
+        ).join('');
+
+        let statusClass = 'status-baru';
+        let targetList = orderListBaru;
+        
+        if (order.status === 'Proses') {
+            statusClass = 'status-proses';
+            targetList = orderListProses;
+        } else if (order.status === 'Selesai') {
+            statusClass = 'status-selesai';
+            targetList = orderListSelesai;
+        }
+        
+        const isDisabled = order.status === 'Selesai' ? 'disabled' : '';
+
+        card.innerHTML = `
+          <div class="order-header">
+            <div class="order-info">
+                <span class="order-customer">${order.customerName || 'Nama Tidak Diketahui'}</span>
+                <span class="order-time">#${order.time}</span>
+                <span style="font-size:0.8em; color:#999;">Kode Bayar: ${order.paymentId || 'N/A'}</span>
+            </div>
+            <span class="order-status ${statusClass}">${order.status}</span>
+          </div>
+          <ul class="item-list">${itemList}</ul>
+          <div style="text-align: right; margin-top: 10px;">
+            <span class="order-total">${formatRupiah(order.total)}</span>
+          </div>
+          <div class="action-btn-group">
+            <button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')" ${isDisabled}>Proses</button>
+            <button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')" ${isDisabled}>Selesai</button>
+            <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
+          </div>
         `;
-        container.appendChild(div);
+        targetList.appendChild(card);
       });
+      
+      if (orderListBaru.children.length === 0) {
+        orderListBaru.innerHTML = '<p class="empty-column-msg">Tidak ada pesanan baru.</p>';
+      }
+      if (orderListProses.children.length === 0) {
+        orderListProses.innerHTML = '<p class="empty-column-msg">Tidak ada pesanan diproses.</p>';
+      }
+      if (orderListSelesai.children.length === 0) {
+        orderListSelesai.innerHTML = '<p class="empty-column-msg">Tidak ada pesanan selesai.</p>';
+      }
+    }
+    
+    function updateOrderStatus(id, newStatus) {
+      let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      const orderIndex = orders.findIndex(order => order.id === id);
+      
+      if (orderIndex !== -1) {
+        orders[orderIndex].status = newStatus;
+        localStorage.setItem('pantryOrders', JSON.stringify(orders));
+        loadOrders(); 
+      }
     }
 
-    function markPaid(i) {
-      const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-      payments[i].status = 'paid';
-      localStorage.setItem('pantryPayments', JSON.stringify(payments));
-      renderPayments();
+    function deleteOrder(id) {
+      if (!confirm(`Yakin ingin menghapus pesanan ID: ${id}?`)) return;
+      
+      let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      orders = orders.filter(order => order.id !== id);
+      localStorage.setItem('pantryOrders', JSON.stringify(orders));
+      loadOrders();
     }
-
-    function goBack() {
-      window.location.href = 'index.html';
-    }
-
-    renderPayments();
+    
+    // Auto-refresh untuk pesanan setiap 5 detik
+    setInterval(loadOrders, 5000);
   </script>
+
 </body>
 </html>
