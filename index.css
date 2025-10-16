@@ -406,7 +406,6 @@ footer {
   right: 20px;
 }
 
-.close:hover,
 .close:focus {
   color: #333;
   text-decoration: none;
