@@ -1,434 +1,357 @@
-html, body {
-  font-family: 'Poppins', Arial, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pantry - Pemesanan Online</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS BARU UNTUK TOMBOL BAYAR (Agar lebih menonjol - Sudah ada di index.css) */
+    .btn-pay-now {
+        background-color: #068b18; /* Hijau */
+        color: white; 
+        padding: 10px 15px; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 10px;
+        transition: background-color 0.3s, transform 0.2s;
+        width: 100%; 
+        font-size: 1.1em; /* Agak lebih besar */
+        box-shadow: 0 4px 8px rgba(6, 139, 24, 0.3);
+    }
+    .btn-pay-now:hover {
+        background-color: #046e12; /* Hijau lebih gelap saat hover */
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(6, 139, 24, 0.4);
+    }
+    /* Gaya untuk Tombol Cek Status Pesanan di Keranjang (Dibuat sekunder agar tidak menyaingi Bayar) */
+    .btn-check-status-cart {
+        background-color: #f0f0f0;
+        color: #333;
+        padding: 8px 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 10px; /* Jarak dari tombol Bayar Sekarang */
+        transition: background-color 0.3s;
+        width: 100%;
+        font-size: 1em;
+    }
+    .btn-check-status-cart:hover {
+        background-color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-left">
+      <span class="brand-name">Pantry</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn btn-secondary" onclick="openModal('contact')">Contact Me</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='order_status.html'">Cek Status Pesanan</button>
+      <button class="nav-btn btn-primary" onclick="redirectToCashier()">Dashboard Kasir</button>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="content-grid">
+        
+        <div id="menu-section">
+            <h2>Menu Makanan</h2>
+            <div class="menu-list" id="menu-makanan"></div>
 
-/* === NAVBAR === */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ffffff;
-  border-bottom: 1px solid #eee;
-  padding: 12px 25px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
+            <h2 style="margin-top: 30px;">Menu Minuman</h2>
+            <div class="menu-list" id="menu-minuman"></div>
+        </div>
 
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+        <div id="cart-section">
+            <div class="cart-box">
+                <h2>🛒 Keranjang Anda</h2>
+                <div id="cart-list">
+                    <p style="text-align: center; color: #999;">Keranjang kosong.</p>
+                </div>
+                
+                <hr>
+                <div class="cart-summary">
+                    <p>Total Item: <span id="total-items">0</span></p>
+                    <p class="total-price">Total Bayar: <span id="total-price">Rp0</span></p>
+                </div>
 
-.brand-name {
-  font-size: 24px;
-  font-weight: 700;
-  color: #068b18;
-}
+                <div class="payment-area">
+                    <h3 style="margin-top: 20px;">Pembayaran</h3>
+                    <input type="text" id="customer-name" placeholder="Masukkan Nama Anda" required style="margin-bottom: 10px;">
+                    <select id="payment-method" style="margin-bottom: 10px;">
+                        <option value="Tunai/Langsung">Tunai/Langsung</option>
+                        <option value="Transfer Bank">Transfer Bank</option>
+                        <option value="E-Wallet">E-Wallet (OVO/Dana/Gopay)</option>
+                    </select>
+                    <button class="btn-pay-now" onclick="initiatePayment()">Bayar Sekarang</button>
+                    
+                    <button class="btn-check-status-cart" onclick="window.location.href='order_status.html'">👁️ Cek Status Pesanan Anda</button>
 
-.brand-logo {
-  height: 30px;
-  width: auto;
-}
+                    <p style="margin-top: 10px; font-weight: 600;">Status Pembayaran: <span id="payment-status" style="color: #d14838;">Belum dibayar ❌</span></p>
+                </div>
 
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+                <button class="btn-primary" onclick="placeOrder()" style="width: 100%; margin-top: 20px;">Pesan Sekarang</button>
+                <button class="btn-secondary" onclick="clearCart()" style="width: 100%; margin-top: 10px; background-color: #999;">Kosongkan Keranjang</button>
+            </div>
+        </div>
+    </div>
+  </div>
 
-.nav-btn {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.2s, box-shadow 0.2s;
-}
+  <div id="contact-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('contact')">&times;</span>
+      <h2>Kontak Kami</h2>
+      <p>Jika ada pertanyaan atau masalah dengan pesanan, silakan hubungi kasir atau hubungi kami di:</p>
+      <p>Telepon: (021) 123-456</p>
+      <p>Email: support@pantry.com</p>
+      <p style="margin-top: 15px; font-style: italic;">"Melayani dengan rasa dan cinta."</p>
+    </div>
+  </div>
 
-.btn-primary {
-  /* Tombol Utama (Pesan Sekarang) - Merah */
-  background-color: #ff6347;
-  color: white;
-}
+  <footer>
+    © 2025 Pantry — Dibuat dengan ❤️
+  </footer>
 
-.btn-primary:hover {
-  background-color: #e5533d;
-  box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
-}
+  <script>
+    // Data dummy untuk menu
+    const menuItems = [
+      // Makanan (Diperbarui)
+      { id: 1, name: "Nasi Goreng Spesial", price: 25000, category: "makanan" },
+      { id: 2, name: "Mie Ayam Bakso", price: 22000, category: "makanan" },
+      { id: 3, name: "Ayam Geprek Sambal Matah", price: 28000, category: "makanan" },
+      { id: 7, name: "Kwetiau Goreng Seafood", price: 30000, category: "makanan" },
+      { id: 8, name: "Capcay Kuah", price: 24000, category: "makanan" },
+      
+      // Minuman (Diperbarui)
+      { id: 4, name: "Kopi Susu Gula Aren", price: 18000, category: "minuman" },
+      { id: 5, name: "Es Teh Manis Jumbo", price: 8000, category: "minuman" },
+      { id: 6, name: "Jus Alpukat", price: 20000, category: "minuman" },
+      { id: 9, name: "Lemon Tea Dingin", price: 15000, category: "minuman" },
+      { id: 10, name: "Air Mineral", price: 5000, category: "minuman" },
+    ];
 
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #333;
-}
+    let cart = [];
+    let currentPayment = null;
 
-.btn-secondary:hover {
-  background-color: #e0e0e0;
-}
+    // Inisialisasi
+    document.addEventListener('DOMContentLoaded', () => {
+        const storedCart = sessionStorage.getItem('pantryCart');
+        if (storedCart) {
+            cart = JSON.parse(storedCart);
+        }
+        const storedPayment = sessionStorage.getItem('pantryCurrentPayment');
+        if (storedPayment) {
+            currentPayment = JSON.parse(storedPayment);
+            document.getElementById('payment-status').textContent = `Menunggu Verifikasi (${currentPayment.method}) ⏳`;
+            document.getElementById('payment-status').style.color = '#f7b000';
+        }
+        
+        renderMenu();
+        updateCart();
+    });
 
-/* === TOMBOL BAYAR SEKARANG (HIJAU) === */
-.btn-pay-now {
-    background-color: #068b18; /* Hijau */
-    color: white; 
-    padding: 10px 15px; 
-    border: none; 
-    border-radius: 5px; 
-    cursor: pointer;
-    font-weight: 600;
-    margin-top: 10px;
-    transition: background-color 0.3s, transform 0.2s;
-    width: 100%; 
-    font-size: 1.1em;
-    box-shadow: 0 4px 8px rgba(6, 139, 24, 0.3);
-}
-.btn-pay-now:hover {
-    background-color: #046e12; /* Hijau lebih gelap saat hover */
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(6, 139, 24, 0.4);
-}
+    // Fungsi utilitas untuk memformat harga
+    function formatRupiah(number) {
+        return `Rp${number.toLocaleString('id-ID')}`;
+    }
 
-/* === TOMBOL CEK STATUS PESANAN (BARU) === */
-.btn-check-status-cart {
-    background-color: #f0f0f0;
-    color: #333;
-    padding: 8px 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    margin-top: 10px; 
-    transition: background-color 0.3s;
-    width: 100%;
-    font-size: 1em;
-    text-align: center;
-}
-.btn-check-status-cart:hover {
-    background-color: #e0e0e0;
-}
+    function renderMenu() {
+      const menuMakananEl = document.getElementById('menu-makanan');
+      const menuMinumanEl = document.getElementById('menu-minuman');
+      
+      menuMakananEl.innerHTML = '';
+      menuMinumanEl.innerHTML = '';
 
-/* === KONTEN UTAMA DUA KOLOM === */
-.container {
-  width: 95%;
-  max-width: 1200px;
-  margin: 30px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+      menuItems.forEach(item => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'menu-item';
+        itemEl.innerHTML = `
+          <div class="item-info">
+            <h3>${item.name}</h3>
+            <p>${formatRupiah(item.price)}</p>
+          </div>
+          <button onclick="addToCart(${item.id})">Tambah +</button>
+        `;
+        
+        if (item.category === 'makanan') {
+          menuMakananEl.appendChild(itemEl);
+        } else {
+          menuMinumanEl.appendChild(itemEl);
+        }
+      });
+    }
 
-.content-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr; 
-    gap: 30px;
-    margin-top: 10px; 
-}
+    function addToCart(itemId) {
+        if (currentPayment) {
+            alert("Anda sedang menunggu verifikasi pembayaran. Selesaikan pembayaran dahulu!");
+            return;
+        }
+        const item = menuItems.find(i => i.id === itemId);
+        const existingItem = cart.find(i => i.id === itemId);
 
-/* === JUDUL === */
-h2 {
-  border-bottom: 2px solid #067c0c;
-  padding-bottom: 8px;
-  color: #ff6347;
-  margin-top: 40px;
-}
+        if (existingItem) {
+            existingItem.qty += 1;
+        } else {
+            cart.push({ ...item, qty: 1 });
+        }
+        sessionStorage.setItem('pantryCart', JSON.stringify(cart));
+        updateCart();
+    }
 
-/* === MENU === */
-.menu-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 15px;
-}
+    function updateCart() {
+      const cartListEl = document.getElementById('cart-list');
+      const totalItemsEl = document.getElementById('total-items');
+      const totalPriceEl = document.getElementById('total-price');
 
-.menu-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  background-color: #fffaf7;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
-}
+      cartListEl.innerHTML = '';
+      let totalItems = 0;
+      let totalPrice = 0;
 
-.menu-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+      if (cart.length === 0) {
+        cartListEl.innerHTML = '<p style="text-align: center; color: #999;">Keranjang kosong.</p>';
+      } else {
+        cart.forEach(item => {
+          const itemTotal = item.price * item.qty;
+          totalItems += item.qty;
+          totalPrice += itemTotal;
 
-.menu-item img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-right: 15px;
-  flex-shrink: 0;
-}
+          const itemEl = document.createElement('div');
+          itemEl.className = 'cart-item';
+          itemEl.innerHTML = `
+            <span>${item.name}</span>
+            <div class="item-controls">
+                <button onclick="changeQty(${item.id}, -1)">-</button>
+                <span>${item.qty}</span>
+                <button onclick="changeQty(${item.id}, 1)">+</button>
+            </div>
+            <span>${formatRupiah(itemTotal)}</span>
+          `;
+          cartListEl.appendChild(itemEl);
+        });
+      }
 
-.menu-info {
-  flex-grow: 1;
-}
+      totalItemsEl.textContent = totalItems;
+      totalPriceEl.textContent = formatRupiah(totalPrice);
+    }
+    
+    function changeQty(itemId, delta) {
+        const item = cart.find(i => i.id === itemId);
+        if (!item) return;
 
-.menu-name {
-  font-weight: 600;
-  color: #333;
-}
+        item.qty += delta;
 
-.menu-price {
-  color: #ff6347;
-  font-weight: 700;
-  font-size: 1.1em;
-}
+        if (item.qty <= 0) {
+            cart = cart.filter(i => i.id !== itemId);
+        }
+        sessionStorage.setItem('pantryCart', JSON.stringify(cart));
+        updateCart();
+    }
 
-/* === TOMBOL DI MENU === */
-.menu-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
-}
+    function clearCart() {
+        if (confirm("Yakin ingin mengosongkan keranjang dan membatalkan pembayaran saat ini?")) {
+            cart = [];
+            currentPayment = null;
+            sessionStorage.removeItem('pantryCart');
+            sessionStorage.removeItem('pantryCurrentPayment');
+            updateCart();
+            document.getElementById('payment-status').textContent = "Belum dibayar ❌";
+            document.getElementById('payment-status').style.color = '#d14838';
+        }
+    }
 
-.btn-qty {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s;
-}
+    function initiatePayment() {
+        if (cart.length === 0) return alert("Keranjang kosong! Tambahkan menu terlebih dahulu.");
+        
+        const totalAmount = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        const method = document.getElementById('payment-method').value;
+        
+        const paymentId = 'PAY-' + Date.now().toString().slice(-6); 
 
-.btn-qty:hover {
-  background-color: #ddd;
-}
+        currentPayment = {
+            id: paymentId,
+            total: totalAmount,
+            method: method,
+            time: new Date().toLocaleString('id-ID'),
+            customerName: document.getElementById('customer-name').value.trim() || 'Anonim',
+            cart: [...cart],
+            status: 'pending' 
+        };
 
-.btn-plus {
-  background-color: #068b18;
-  color: white;
-  border-color: #068b18;
-}
+        let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        payments.unshift(currentPayment);
+        localStorage.setItem('pantryPayments', JSON.stringify(payments));
+        sessionStorage.setItem('pantryCurrentPayment', JSON.stringify(currentPayment));
 
-.btn-plus:hover {
-  background-color: #046b13;
-}
+        document.getElementById('payment-status').textContent = `Menunggu Verifikasi (${method}): Kode ${paymentId} ⏳`;
+        document.getElementById('payment-status').style.color = '#f7b000';
+        
+        alert(`Pembayaran telah dibuat! Total ${formatRupiah(totalAmount)} melalui ${method}. Mohon infokan kode ${paymentId} ke Kasir untuk Verifikasi.`);
+    }
 
-.qty-display {
-  width: 28px;
-  text-align: center;
-  font-weight: 600;
-}
+    function placeOrder() {
+      if (cart.length === 0) return alert("Keranjang kosong!");
+      if (!currentPayment) return alert("Pilih metode pembayaran dan bayar terlebih dahulu!");
 
-/* === SIDEBAR STICKY WRAPPER === */
-#sticky-sidebar {
-  position: sticky; 
-  top: 80px; 
-  height: fit-content; 
-  align-self: flex-start;
-}
+      const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+      const found = payments.find(p => p.id === currentPayment.id);
+      
+      if (!found || found.status !== "paid") return alert("Pembayaran belum diverifikasi oleh kasir! Mohon tunggu verifikasi atau hubungi kasir.");
 
-/* === CUSTOMER INFO === */
-.customer-info {
-  padding: 15px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+      const name = document.getElementById('customer-name').value.trim();
+      if (!name) return alert("Masukkan nama Anda!");
 
-.customer-info h3 {
-  margin-top: 0;
-  color: #068b18;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
+      const newOrderId = Date.now();
 
-.customer-info input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
+      const order = {
+        id: newOrderId,
+        customerName: name,
+        items: [...cart],
+        total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+        status: 'Baru',
+        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        paymentId: currentPayment.id
+      };
 
-/* === KERANJANG === */
-#cart {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-top: 30px; 
-}
+      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      orders.unshift(order);
+      localStorage.setItem('pantryOrders', JSON.stringify(orders));
 
-#cart h2 {
-  color: #333;
-  border-bottom: 1px solid #ddd;
-  margin-top: 0;
-  padding-bottom: 10px;
-}
+      localStorage.setItem('pantryLastOrderId', newOrderId); 
+      
+      cart = [];
+      currentPayment = null;
+      sessionStorage.removeItem('pantryCart');
+      sessionStorage.removeItem('pantryCurrentPayment');
+      updateCart();
+      renderMenu();
+      document.getElementById('payment-status').textContent = "Belum dibayar ❌";
+      
+      alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
+      window.location.href = 'order_status.html';
+    }
 
-#cart-items {
-  list-style: none;
-  padding: 0;
-}
+    // Fungsi Navigasi
+    function redirectToCashier() {
+      window.location.href = 'payment_dashboard.html';
+    }
+    
+    // Fungsi Modal
+    function openModal(id) { document.getElementById(id + "-modal").style.display = "block"; }
+    function closeModal(id) { document.getElementById(id + "-modal").style.display = "none"; }
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+      }
+    }
+  </script>
 
-#cart-items li {
-  padding: 10px 0;
-  border-bottom: 1px dotted #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.95em;
-}
-
-#cart-items li:last-child {
-  border-bottom: none;
-}
-
-/* Tombol di keranjang */
-.cart-actions .btn-qty {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  width: 25px;
-  height: 25px;
-  border-radius: 4px;
-  font-size: 14px;
-  padding: 0;
-  line-height: 1;
-}
-
-.cart-actions .btn-plus {
-  background-color: #068b18;
-  color: white;
-  border-color: #068b18;
-}
-
-.btn-remove {
-  background-color: #ff4d4d;
-  color: white;
-  border-color: #ff4d4d;
-}
-
-/* === CHECKOUT BUTTON === */
-#checkout-btn {
-  display: block;
-  width: 100%;
-  padding: 15px;
-  background-color: #ff6347;
-  color: white;
-  font-size: 1.2em;
-  font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.2s;
-  text-align: center; 
-}
-
-#checkout-btn:hover:not(:disabled) {
-  background-color: #e5533d;
-}
-
-#checkout-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-/* === FOOTER === */
-footer {
-  text-align: center;
-  padding: 20px;
-  margin-top: 40px;
-  border-top: 1px solid #eee;
-  color: #999;
-  font-size: 0.9em;
-}
-
-/* === NOTIFIKASI === */
-.notification {
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  z-index: 1001;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.notification.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* === MODAL POPUP === */
-.modal {
-  display: none; 
-  position: fixed; 
-  z-index: 2000; 
-  left: 0;
-  top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
-  background-color: rgba(0,0,0,0.4); 
-  padding-top: 60px;
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 5% auto; 
-  padding: 30px;
-  border: 1px solid #888;
-  width: 80%; 
-  max-width: 500px;
-  border-radius: 10px;
-  position: relative;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
-
-.close:focus {
-  color: #333;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.modal-content h2 {
-  color: #ff6347;
-  border-bottom: 2px solid #068b18;
-  padding-bottom: 10px;
-}
-
-.contact-link {
-  color: #068b18;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.contact-link:hover {
-  text-decoration: underline;
-}
+</body>
+</html>
