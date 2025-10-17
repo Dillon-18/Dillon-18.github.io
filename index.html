@@ -260,14 +260,15 @@
       const name = document.getElementById('customer-name').value.trim();
       if (!name) return alert("Masukkan nama Anda sebelum memulai pembayaran!");
 
+      // Tutup modal lain sebelum membuka modal utama
       closeModal('payment-detail');
       openModal('method-selection');
     }
 
     // FUNGSI BARU: Membuka modal opsi detail QRIS atau TRANSFER
     function openDigitalOptions(type) {
-        closeModal('method-selection'); // Tutup modal utama
-
+        // Tutup modal utama dan buka modal detail
+        closeModal('method-selection'); 
         if (type === 'qris') {
             openModal('qris-selection');
         } else if (type === 'transfer') {
@@ -276,18 +277,19 @@
     }
 
 
-    // FUNGSI UTAMA: Memproses pembayaran setelah metode dipilih
+    // FUNGSI UTAMA: Memproses pembayaran setelah metode SPESIFIK dipilih (DANA, BCA, Tunai, dll)
     function processPayment(methodName) { 
       const name = document.getElementById('customer-name').value.trim();
       
-      closeModal('qris-selection'); // Tutup modal detail E-Wallet
-      closeModal('transfer-selection'); // Tutup modal detail Transfer
-      closeModal('method-selection'); // Tutup modal utama (jika Tunai dipilih langsung)
+      // Tutup SEMUA modal pemilihan:
+      closeModal('qris-selection'); 
+      closeModal('transfer-selection');
+      closeModal('method-selection');
       
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
       const code = "PAY" + Date.now();
       
-      // Tetapkan status pembayaran dan kunci
+      // KUNCI: Set status dan kunci di sini
       currentPayment = { 
           id: code, 
           status: "pending", 
@@ -297,7 +299,7 @@
           method: methodName,
           customerName: name 
       };
-      isPaymentInProgress = true; 
+      isPaymentInProgress = true; // KUNCI MENU DI SINI
       
       // Render ulang menu dan keranjang untuk mengunci tombol (+) dan (-)
       renderMenu(); 
