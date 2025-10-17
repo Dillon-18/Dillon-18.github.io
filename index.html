@@ -37,6 +37,7 @@
     </div>
     <div class="nav-right">
       <button class="nav-btn btn-secondary" onclick="openModal('contact')">Contact Me</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='order_status.html'">Cek Status Pesanan</button>
       <button class="nav-btn btn-primary" onclick="redirectToCashier()">Dashboard Kasir</button>
     </div>
   </header>
@@ -197,7 +198,7 @@
           totalPrice += itemTotal;
 
           const itemEl = document.createElement('div');
-          // Struktur HTML ringkas untuk item keranjang
+          // Menggunakan kelas cart-item dan item-controls (versi lama)
           itemEl.className = 'cart-item'; 
           itemEl.innerHTML = `
             <span>${item.name}</span>
@@ -281,8 +282,10 @@
       const name = document.getElementById('customer-name').value.trim();
       if (!name) return alert("Masukkan nama Anda!");
 
+      const newOrderId = Date.now();
+
       const order = {
-        id: Date.now(),
+        id: newOrderId,
         customerName: name,
         items: [...cart],
         total: cart.reduce((s, i) => s + i.price * i.qty, 0),
@@ -295,7 +298,8 @@
       orders.unshift(order);
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
 
-      // Hapus data keranjang dan status pembayaran sementara
+      localStorage.setItem('pantryLastOrderId', newOrderId); 
+      
       cart = [];
       currentPayment = null;
       sessionStorage.removeItem('pantryCart');
@@ -304,7 +308,8 @@
       renderMenu();
       document.getElementById('payment-status').textContent = "Belum dibayar ❌";
       
-      alert(`✅ Pesanan ${name} berhasil dibuat!`);
+      alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
+      window.location.href = 'order_status.html';
     }
 
     function redirectToCashier() {
