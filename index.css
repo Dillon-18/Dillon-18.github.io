@@ -29,7 +29,7 @@ html, body {
 .brand-name {
   font-size: 24px;
   font-weight: 700;
-  /* Warna diambil dari var(--color-primary) di <style> HTML */
+  color: #068b18; /* Hijau */
 }
 
 .brand-logo {
@@ -49,17 +49,16 @@ html, body {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  transition: background-color 0.2s;
 }
 
 .btn-primary {
-  background-color: var(--color-primary); /* Dari style HTML */
+  background-color: #d14838; /* Merah Maroon/Primer */
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #b02323; 
-  box-shadow: 0 4px 8px rgba(210, 43, 43, 0.3);
+  background-color: #b03a2c;
 }
 
 .btn-secondary {
@@ -71,228 +70,150 @@ html, body {
   background-color: #e0e0e0;
 }
 
-/* === KONTEN UTAMA DUA KOLOM === */
+/* === CONTAINER & GRID === */
 .container {
-  width: 95%;
   max-width: 1200px;
-  margin: 30px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 20px auto;
+  padding: 0 20px;
 }
 
 .content-grid {
-    display: grid;
-    /* Kolom kiri (Menu) 2 bagian, Kolom kanan (Sticky Sidebar) 1 bagian */
-    grid-template-columns: 2fr 1fr; 
-    gap: 30px;
-    margin-top: 10px; 
+  display: grid;
+  grid-template-columns: 2.5fr 1fr; /* Menu lebih besar dari sidebar */
+  gap: 30px;
 }
 
-/* === JUDUL === */
-h2 {
-  border-bottom: 2px solid var(--color-secondary); 
-  padding-bottom: 8px;
-  color: var(--color-primary); 
-  margin-top: 40px;
+#sticky-sidebar {
+  position: sticky;
+  top: 80px; /* Di bawah navbar */
+  height: fit-content;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
-/* === MENU === */
+/* === CUSTOMER INFO === */
+.customer-info {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+.customer-info input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+
+/* === MENU LIST === */
 .menu-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 15px;
+  margin-top: 15px;
 }
 
 .menu-item {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  background-color: #fffaf7;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
-}
-
-.menu-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  flex-direction: column;
 }
 
 .menu-item img {
-  width: 80px;
-  height: 80px;
+  width: 100%;
+  height: 150px;
   object-fit: cover;
-  border-radius: 10px;
-  margin-right: 15px;
-  flex-shrink: 0;
 }
 
 .menu-info {
-  flex-grow: 1;
+  padding: 10px 15px;
 }
 
 .menu-name {
   font-weight: 600;
-  color: #333;
+  font-size: 1.1em;
+  margin-bottom: 5px;
 }
 
 .menu-price {
-  color: var(--color-primary); 
+  color: #d14838; /* Warna primer */
   font-weight: 700;
-  font-size: 1.1em;
 }
 
-/* === TOMBOL DI MENU === */
 .menu-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-top: 1px solid #eee;
 }
 
 .btn-qty {
   background-color: #f0f0f0;
   color: #333;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 16px;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 50%;
   cursor: pointer;
-  transition: 0.2s;
+  font-weight: 700;
+  transition: background-color 0.2s;
 }
 
 .btn-qty:hover {
-  background-color: #ddd;
+  background-color: #e0e0e0;
 }
 
 .btn-plus {
-  background-color: var(--color-secondary); 
+  background-color: #068b18; /* Hijau */
   color: white;
-  border-color: var(--color-secondary);
 }
 
 .btn-plus:hover {
-  background-color: #046b13;
+  background-color: #046b14;
 }
 
 .qty-display {
-  width: 28px;
-  text-align: center;
   font-weight: 600;
-}
-
-/* === SIDEBAR STICKY WRAPPER === */
-#sticky-sidebar {
-  position: sticky; 
-  top: 80px; 
-  height: fit-content; 
-  align-self: flex-start;
-}
-
-/* === CUSTOMER INFO === */
-.customer-info {
-  padding: 15px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.customer-info h3 {
-  margin-top: 0;
-  color: var(--color-secondary); 
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.customer-info input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-sizing: border-box;
+  width: 25px;
+  text-align: center;
 }
 
 /* === KERANJANG === */
-#cart {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-top: 30px; 
-}
-
 #cart h2 {
-  color: #333;
-  border-bottom: 1px solid #ddd;
-  margin-top: 0;
-  padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 0;
 }
 
 #cart-items {
-  list-style: none;
+  list-style-type: none;
   padding: 0;
+  margin: 15px 0;
+  min-height: 50px;
 }
 
 #cart-items li {
-  padding: 10px 0;
-  border-bottom: 1px dotted #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 5px 0;
   font-size: 0.95em;
+  border-bottom: 1px dotted #eee;
 }
 
-#cart-items li:last-child {
-  border-bottom: none;
-}
-
-/* === PAYMENT STATUS DI SIDEBAR === */
-#payment-section {
-    text-align: center;
-    padding-top: 15px;
-    border-top: 1px solid #eee;
-}
-
-.payment-status {
-    font-weight: 600;
-    /* Warna default diambil dari var(--color-primary) */
-}
-
-.status-lunas {
-    /* Warna status lunas diambil dari var(--color-secondary) */
-    font-weight: 700;
-}
-
-/* === CHECKOUT BUTTON === */
-#checkout-btn {
-  display: block;
+#checkout-btn, #pay-btn {
   width: 100%;
-  padding: 15px;
-  background-color: var(--color-primary); 
-  color: white;
-  font-size: 1.2em;
-  font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.2s;
-  text-align: center; 
-}
-
-#checkout-btn:hover:not(:disabled) {
-  background-color: #b02323;
+  padding: 12px;
+  font-size: 1.1em;
+  margin-top: 15px;
 }
 
 #checkout-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+    background-color: #ccc !important;
+    cursor: not-allowed;
 }
 
 /* === FOOTER === */
@@ -305,7 +226,7 @@ footer {
   font-size: 0.9em;
 }
 
-/* === MODAL POPUP === */
+/* === MODAL POPUP (Perlu Dipertahankan) === */
 .modal {
   display: none; 
   position: fixed; 
@@ -315,20 +236,25 @@ footer {
   width: 100%; 
   height: 100%; 
   overflow: auto; 
-  background-color: rgba(0,0,0,0.4); 
-  padding-top: 60px;
+  background-color: rgba(0,0,0,0.6); 
+  padding-top: 50px; 
+  backdrop-filter: blur(3px); 
 }
 
 .modal-content {
   background-color: #fefefe;
   margin: 5% auto; 
   padding: 30px;
-  border: 1px solid #888;
-  width: 80%; 
-  max-width: 500px;
-  border-radius: 10px;
+  border-radius: 12px;
+  max-width: 450px; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   position: relative;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: modal-fade-in 0.3s ease-out;
+}
+
+@keyframes modal-fade-in {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .close {
@@ -338,112 +264,138 @@ footer {
   font-weight: bold;
   position: absolute;
   top: 10px;
-  right: 20px;
-  cursor: pointer;
+  right: 15px;
 }
 
+.close:hover,
 .close:focus {
   color: #333;
   text-decoration: none;
   cursor: pointer;
 }
 
-.modal-content h2 {
-  color: var(--color-primary); 
-  border-bottom: 2px solid var(--color-secondary); 
-  padding-bottom: 10px;
+/* === MODAL PEMBAYARAN KUSTOM (TAMPILAN MENARIK) === */
+#payment-modal h2, #transfer-detail-modal h2 {
+    color: #d14838; 
+    font-weight: 700;
+    margin-top: 0;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
 }
 
-.contact-link {
-  color: var(--color-secondary); 
-  text-decoration: none;
-  font-weight: 600;
+/* Styling untuk container pilihan pembayaran */
+#payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    margin-top: 20px !important; 
 }
 
-.contact-link:hover {
-  text-decoration: underline;
-}
-
-/* === GRID TOMBOL DI MODAL (Contoh: Pilihan Bank) === */
-.modal-button-grid {
-    display:grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 10px; 
-    margin-top: 20px;
-}
-.modal-button-grid button {
-    padding: 12px 10px; 
-    font-size: 1em; 
+/* Styling untuk tombol pilihan pembayaran */
+.payment-btn-custom {
+    padding: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.05em;
     font-weight: 600;
-    border: 1px solid #ddd;
-    background-color: #fff;
+    transition: all 0.2s ease;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.payment-btn-custom:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+}
+
+/* Style khusus untuk indikator ikon/panah */
+.payment-btn-custom::after {
+    content: '→';
+    font-size: 1.2em;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+/* Styling untuk modal detail transfer */
+.transfer-info-box {
+    background: #fff8f5; 
+    border: 1px solid #ff6347;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 15px 0;
+    text-align: left;
+}
+.transfer-info-box .bank-name {
+    font-weight: 700;
+    color: #004A99; 
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+.transfer-info-box .account-number {
+    font-size: 2em;
+    font-weight: 800;
     color: #333;
-    transition: background-color 0.2s, border-color 0.2s;
+    margin: 5px 0;
+    word-break: break-all;
 }
-.modal-button-grid button:hover {
-    background-color: #f0f0f0;
-    border-color: var(--color-primary); 
-}
-
-/* === Style untuk Tombol Kategori Utama di Modal Pemilihan Metode === */
-.payment-category-grid button {
-    color: white !important; 
-    border: none !important;
+.transfer-info-box .account-holder {
+    font-size: 0.9em;
+    color: #555;
 }
 
-/* =======================================
-   RESPONSIVE DESIGN (Smartphone View) 
-   ======================================= */
-@media (max-width: 768px) {
+
+/* === RESPONSIF UNTUK MOBILE (FLEXIBLE) === */
+@media (max-width: 900px) {
+  .content-grid {
+    grid-template-columns: 1fr; /* Semua kolom jadi satu baris */
+  }
+
+  #sticky-sidebar {
+    position: relative; /* Non-sticky di mobile */
+    top: 0;
+    order: -1; /* Pindahkan keranjang ke atas menu */
+  }
+
+  .menu-list {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Kolom menu jadi lebih kecil */
+  }
+}
+
+@media (max-width: 600px) {
     .navbar {
         padding: 10px 15px;
+        flex-wrap: wrap;
     }
-    .container {
+    .nav-right {
         width: 100%;
-        margin: 15px auto;
-        padding: 10px;
-        border-radius: 0;
-        box-shadow: none;
-    }
-    
-    /* Grid utama berubah menjadi satu kolom */
-    .content-grid {
-        grid-template-columns: 1fr; 
-    }
-    
-    /* Sidebar tidak lagi sticky di mobile */
-    #sticky-sidebar {
-        position: static;
-        top: auto;
-    }
-
-    /* Menu list menjadi grid satu kolom yang lebih padat */
-    .menu-list {
-        grid-template-columns: 1fr;
-    }
-    
-    /* Modal content menjadi lebih lebar */
-    .modal-content {
-        width: 95%;
-        margin: 10% auto;
-        padding: 20px;
-    }
-    
-    /* Grid 3 kolom (Kategori Pembayaran) berubah menjadi 1 kolom */
-    .payment-category-grid {
-        grid-template-columns: 1fr !important;
-    }
-    
-    /* Grid 2 kolom (Pilihan Bank/E-Wallet) berubah menjadi 1 kolom */
-    .modal-button-grid {
-        grid-template-columns: 1fr !important;
-    }
-    
-    .brand-name {
-        font-size: 20px;
+        justify-content: space-around;
+        margin-top: 10px;
     }
     .nav-btn {
-        padding: 6px 10px;
-        font-size: 0.9em;
+        flex-grow: 1;
+        margin: 0 5px;
+    }
+    .container {
+        padding: 0 10px;
+    }
+    
+    /* Responsivitas Modal */
+    .modal-content {
+        margin: 0;
+        width: 100%;
+        max-width: none;
+        height: auto;
+        min-height: 100vh; 
+        border-radius: 0;
+        padding-top: 50px;
+        box-sizing: border-box;
+    }
+    .modal {
+        padding-top: 0;
     }
 }
