@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Tambahan untuk Dashboard Dapur */
+    /* CSS Tambahan untuk Dashboard Dapur - Simple Version */
     .container {
         max-width: 1400px; 
     }
@@ -101,19 +101,18 @@
     /* === Responsif Dashboard Dapur === */
     @media (max-width: 1200px) {
         .kanban-container {
-            grid-template-columns: repeat(2, 1fr); /* 2 kolom di tablet */
+            grid-template-columns: repeat(2, 1fr); 
         }
     }
     @media (max-width: 768px) {
         .kanban-container {
-            grid-template-columns: 1fr; /* 1 kolom di mobile */
+            grid-template-columns: 1fr; 
         }
         .order-actions button {
             width: 100%;
             margin-bottom: 5px;
         }
     }
-
   </style>
 </head>
 <body>
@@ -170,7 +169,7 @@
     // ======================================
     
     document.addEventListener('DOMContentLoaded', loadOrders);
-    setInterval(loadOrders, 5000); // Auto-refresh setiap 5 detik
+    setInterval(loadOrders, 5000); 
 
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
