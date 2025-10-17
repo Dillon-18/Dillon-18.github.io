@@ -59,7 +59,7 @@
     }
     .order-time {
       font-weight: bold;
-      color: #d14838; /* Warna primer baru */
+      color: #ff6347; /* Warna primer baru */
       font-size: 1.2em;
     }
     .order-status {
@@ -135,7 +135,7 @@
     <div class="nav-left">
       <span class="brand-name">Pantry</span>
       <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Dashboard Dapur</span>
+      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #ff6347;">Dashboard Dapur</span>
     </div>
     <div class="nav-right">
       <button class="nav-btn btn-primary" onclick="window.location.href='payment_dashboard.html'">💳 Dashboard Pembayaran</button>
@@ -229,9 +229,10 @@
         }
         
         const isDisabled = order.status === 'Selesai' ? 'disabled' : '';
-        // Tampilkan Metode Pembayaran
+        
+        // Perubahan: Menampilkan Metode Pembayaran spesifik
         const paymentInfo = order.paymentMethod 
-            ? `<span style="font-size:0.8em; color:#d14838; font-weight:600;">Bayar: ${order.paymentMethod}</span>`
+            ? `<span style="font-size:0.8em; color:#ff6347; font-weight:600;">Metode Bayar: ${order.paymentMethod}</span>`
             : `<span style="font-size:0.8em; color:#999;">Kode Bayar: ${order.paymentId || 'N/A'}</span>`;
 
         card.innerHTML = `
@@ -239,8 +240,7 @@
             <div class="order-info">
                 <span class="order-customer">${order.customerName || 'Nama Tidak Diketahui'}</span>
                 <span class="order-time">#${order.time}</span>
-                ${paymentInfo}
-            </div>
+                ${paymentInfo} </div>
             <span class="order-status ${statusClass}">${order.status}</span>
           </div>
           <ul class="item-list">${itemList}</ul>
