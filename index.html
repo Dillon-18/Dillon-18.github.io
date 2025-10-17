@@ -125,7 +125,7 @@
             Transfer Bank
         </button>
         <button class="btn-primary" onclick="processPayment('Tunai')" style="background-color: #333; padding: 15px 10px; font-size: 1em;">
-            Tunai (Bayar di Kasir)
+            **Tunai (Bayar di Kasir)**
         </button>
       </div>
 
@@ -325,7 +325,7 @@
           // LOGIC FOR CASH PAYMENT
           code = "CASH-" + Date.now().toString().slice(-6); // Simple unique ID for cash
           modalTitle = "Pembayaran Tunai";
-          // Close method selection modal
+          // Tutup modal selection
           closeModal('method-selection'); 
       } else {
           // LOGIC FOR VA/TRANSFER PAYMENT
