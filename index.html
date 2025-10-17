@@ -155,7 +155,7 @@
       } else if (pass) alert("Password salah!");
     }
 
-    // --- FUNGSI BARU UNTUK KEAMANAN ---
+    // --- FUNGSI UNTUK KEAMANAN (Pelanggan tidak bisa mengubah menu setelah pembayaran) ---
     function isPaymentVerified() {
       if (!currentPayment) return false;
       const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
@@ -163,7 +163,7 @@
       // Pembayaran dianggap terverifikasi jika statusnya "paid"
       return found && found.status === "paid";
     }
-    // ------------------------------------
+    // ----------------------------
 
     function renderMenu() {
       const makanan = document.getElementById('menu-makanan');
@@ -247,6 +247,11 @@
 
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
       
+      // === KEWAJIBAN INPUT NAMA SEBELUM BAYAR ===
+      const customerName = document.getElementById('customer-name').value.trim();
+      if (!customerName) return alert("⚠️ Harap masukkan nama Anda di kolom 'Masukkan Nama Anda' sebelum melanjutkan pembayaran.");
+      // ==========================================
+
       document.getElementById('payment-total-display').textContent = 'Rp' + total.toLocaleString('id-ID');
       
       const optionsEl = document.getElementById('payment-options');
@@ -275,6 +280,14 @@
     }
 
     function selectPaymentMethod(methodName, total) {
+      // Dapatkan nama pelanggan dari input (sudah dicek di openPaymentModal, tapi dicek lagi untuk keamanan)
+      const customerName = document.getElementById('customer-name').value.trim();
+      if (!customerName) {
+          alert("⚠️ Terjadi kesalahan. Harap masukkan nama Anda.");
+          closeModal('payment');
+          return;
+      }
+
       // Tutup modal pilihan
       closeModal('payment');
       
@@ -289,7 +302,9 @@
           total, 
           cart: [...cart], 
           time: new Date().toLocaleString('id-ID'),
-          method: methodName 
+          method: methodName,
+          // === DISIMPAN DI SINI: customerName dari inputan ===
+          customerName: customerName 
       };
 
       let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
@@ -337,7 +352,7 @@
       if (!found || found.status !== "paid") return alert("Pembayaran belum diverifikasi oleh kasir!");
 
       const name = document.getElementById('customer-name').value.trim();
-      if (!name) return alert("Masukkan nama Anda!");
+      if (!name) return alert("Masukkan nama Anda!"); // Seharusnya sudah diisi saat bayar
 
       const order = {
         id: Date.now(),
