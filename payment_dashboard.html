@@ -25,7 +25,7 @@
     }
     .payment-card {
         background: #ffffff;
-        border: 1px solid #d14838; /* Border warna primer baru */
+        border: 1px solid #ff6347; /* Border warna primer baru */
         padding: 15px;
         border-radius: 8px;
         display: flex;
@@ -41,7 +41,7 @@
     .payment-card p { margin: 5px 0; }
     .payment-card .pay-total { font-size: 1.3em; color: #068b18; font-weight: 700; }
     .payment-card button {
-        background-color: #d14838; /* Warna primer baru */
+        background-color: #ff6347; /* Warna primer baru */
         color: white; 
         padding: 8px 15px; 
         border: none; 
@@ -52,12 +52,12 @@
         transition: background-color 0.3s, transform 0.2s;
     }
     .payment-card button:hover {
-        background-color: #b03a2c; /* Warna lebih gelap saat hover */
+        background-color: #e5533d; /* Warna lebih gelap saat hover */
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(209, 72, 56, 0.3);
+        box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
     }
     .payment-status-title {
-        border-bottom: 2px solid #d14838; /* Warna primer baru */
+        border-bottom: 2px solid #ff6347; /* Warna primer baru */
         padding-bottom: 8px; 
         color: #068b18; 
         margin-top: 0;
@@ -70,7 +70,7 @@
     <div class="nav-left">
       <span class="brand-name">Pantry</span>
       <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Dashboard Pembayaran</span>
+      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #ff6347;">Dashboard Pembayaran</span>
     </div>
     <div class="nav-right">
       <button class="nav-btn btn-primary" onclick="window.location.href='cashier.html'">Dashboard Dapur</button>
@@ -81,7 +81,7 @@
   <div class="container">
     
     <div class="payment-dashboard-container">
-        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi</h2>
+        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi</h2> 
         <div class="payment-list" id="payment-verification-list">
             <p style="text-align: center; color: #999;">Memuat data...</p>
         </div>
@@ -148,11 +148,11 @@
             const div = document.createElement('div');
             div.className = 'payment-card';
             div.innerHTML = `
-                <p style="margin:0; font-weight:700;">Metode:</p>
-                <p style="margin:0; color:#d14838; font-size:1.1em; word-break: break-all;"><b>${payment.method}</b></p>
-                <p style="margin:0; font-weight:700; margin-top: 10px;">Kode Pembayaran:</p>
-                <p style="margin:0; color:#d14838; font-size:1.1em; word-break: break-all;"><b>${payment.id}</b></p>
-                <hr style="border:0; border-top:1px dotted #ccc; margin: 10px 0;">
+                <p style="margin:0; font-weight:700;">Metode Pembayaran:</p>
+                <p style="margin:0; color:#ff6347; font-size:1.1em; word-break: break-all;"><b>${payment.method}</b></p>
+                <p style="margin:0; font-weight:700; margin-top: 10px;">Kode Pembayaran/VA:</p>
+                <p style="margin:0; color:#ff6347; font-size:1.1em; word-break: break-all;"><b>${payment.id}</b></p>
+                <hr style="border:0; border-top:1px dotted #ccc;">
                 <p style="font-weight: 600;">Detail Pesanan:</p>
                 ${itemsList}
                 <hr style="border:0; border-top:1px dotted #ccc;">
