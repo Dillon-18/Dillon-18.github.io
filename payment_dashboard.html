@@ -81,7 +81,7 @@
   <div class="container">
     
     <div class="payment-dashboard-container">
-        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi</h2>
+        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi (Transfer/E-Wallet)</h2>
         <div class="payment-list" id="payment-verification-list">
             <p style="text-align: center; color: #999;">Memuat data...</p>
         </div>
@@ -129,7 +129,7 @@
     
     function loadPayments() {
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        // Hanya tampilkan pembayaran dengan status 'pending'
+        // HANYA tampilkan pembayaran dengan status 'pending' (transfer/e-wallet)
         const pendingPayments = payments.filter(p => p.status === 'pending');
         
         const listEl = document.getElementById('payment-verification-list');
@@ -146,7 +146,7 @@
             ).join('');
 
             const methodDisplay = payment.method ? `<p style="font-weight: 600; color: #d14838;">Metode: ${payment.method}</p>` : '';
-            // === BARU: Tampilkan Nama Pelanggan dari inputan di index.html ===
+            // Tampilkan Nama Pelanggan
             const customerNameDisplay = payment.customerName ? `<p style="font-weight: 700; font-size: 1.2em; margin-bottom: 10px; color: #068b18;">${payment.customerName}</p>` : '';
 
 
