@@ -3,186 +3,455 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pantry - Dashboard Pembayaran</title>
+  <title>Pantry - Pemesanan Online</title>
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Khusus Dashboard Pembayaran */
-    .container {
-      max-width: 1000px;
+    :root {
+      --color-primary: #D22B2B; /* Merah Maroon/Merah Darah */
+      --color-secondary: #068b18; /* Hijau untuk Lunas/Sukses */
     }
-    .payment-dashboard-container {
-        padding: 20px;
-        background: #fcfcfc;
-        border-radius: 10px;
-        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    .brand-name { 
+      color: var(--color-primary); 
     }
-    .payment-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
-        margin-top: 15px;
+    .payment-status {
+        color: var(--color-primary);
     }
-    .payment-card {
-        background: #ffffff;
-        border: 1px solid #ff6347; /* Border warna primer baru */
-        padding: 15px;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        transition: transform 0.3s, box-shadow 0.3s;
+    .status-lunas {
+        color: var(--color-secondary) !important;
     }
-    .payment-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    }
-    .payment-card p { margin: 5px 0; }
-    .payment-card .pay-total { font-size: 1.3em; color: #068b18; font-weight: 700; }
-    .payment-card button {
-        background-color: #ff6347; /* Warna primer baru */
-        color: white; 
-        padding: 8px 15px; 
-        border: none; 
-        border-radius: 5px; 
-        cursor: pointer;
-        font-weight: 600;
-        margin-top: 10px;
-        transition: background-color 0.3s, transform 0.2s;
-    }
-    .payment-card button:hover {
-        background-color: #e5533d; /* Warna lebih gelap saat hover */
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
-    }
-    .payment-status-title {
-        border-bottom: 2px solid #ff6347; /* Warna primer baru */
-        padding-bottom: 8px; 
-        color: #068b18; 
-        margin-top: 0;
+    /* Style untuk grid 3 kolom di modal utama (Responsif diatur di index.css) */
+    .payment-category-grid {
+        display:grid; 
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 15px; 
+        margin-top: 20px;
     }
   </style>
 </head>
 <body>
-
   <header class="navbar">
     <div class="nav-left">
       <span class="brand-name">Pantry</span>
-      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #ff6347;">Dashboard Pembayaran</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-primary" onclick="window.location.href='cashier.html'">Dashboard Dapur</button>
-      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Menu Utama</button>
+      <button class="nav-btn btn-secondary" onclick="openModal('contact')">Contact Me</button>
+      <button class="nav-btn btn-secondary" onclick="openModal('info')">Info</button>
+      <button class="nav-btn btn-primary" onclick="redirectToCashier()">Dashboard Kasir</button>
     </div>
   </header>
-
+  
   <div class="container">
-    
-    <div class="payment-dashboard-container">
-        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi</h2> 
-        <div class="payment-list" id="payment-verification-list">
-            <p style="text-align: center; color: #999;">Memuat data...</p>
+    <div class="content-grid">
+        
+        <div id="menu-section">
+            <h2>Menu Makanan</h2>
+            <div class="menu-list" id="menu-makanan"></div>
+
+            <h2 style="margin-top: 30px;">Menu Minuman</h2>
+            <div class="menu-list" id="menu-minuman"></div>
+        </div>
+        
+        <div id="sticky-sidebar">
+            
+            <div class="customer-info">
+                <h3>Masukkan Nama Anda</h3>
+                <input type="text" id="customer-name" placeholder="Contoh: Budi" required>
+            </div>
+
+            <div id="cart">
+                <h2>🛒 Keranjang Pesanan</h2>
+                <ul id="cart-items"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul>
+                <button id="checkout-btn" onclick="checkout()" disabled>Pesan</button>
+
+                <div id="payment-section" style="margin-top:20px; text-align:center;">
+                    <button id="pay-btn" onclick="openMethodSelection()" class="btn-primary">💳 Bayar Sekarang</button>
+                    <p id="payment-status" style="color:#555; margin-top:10px;">Belum dibayar ❌</p>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
+  <footer>© 2025 Pantry — Dibuat dengan ❤️</footer>
+
+  <div id="info-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('info')">&times;</span>
+      <h2>Tentang Pantry</h2>
+      <p>Pantry menyediakan makanan dan minuman lezat. Pesan online dan bayar dengan berbagai metode pilihan!</p>
+    </div>
+  </div>
+  <div id="contact-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('contact')">&times;</span>
+      <h2>Hubungi Kami</h2>
+      <p>📞 <a href="tel:+6287777796610" class="contact-link">+62 877-7779-6610</a></p>
+      <p>💬 <a href="https://wa.me/6287777796610" target="_blank" class="contact-link">Chat via WhatsApp</a></p>
+      <p>📧 <a href="mailto:pantry@gmail.com" class="contact-link">pantry@gmail.com</a></p>
+    </div>
+  </div>
+  
+  <div id="method-selection-modal" class="modal">
+    <div class="modal-content" style="text-align:center;">
+      <span class="close" onclick="closeModal('method-selection')">&times;</span>
+      <h2>Pilih Kategori Pembayaran</h2>
+      
+      <div class="payment-category-grid">
+        <button class="btn-primary" onclick="openDigitalOptions('ewallet')" style="background-color: #ff6347; padding: 15px 10px; font-size: 1em;">
+            E-Wallet
+        </button>
+        <button class="btn-primary" onclick="openDigitalOptions('transfer')" style="background-color: #068b18; padding: 15px 10px; font-size: 1em;">
+            Transfer Bank
+        </button>
+        <button class="btn-primary" onclick="processPayment('Tunai')" style="background-color: #333; padding: 15px 10px; font-size: 1em;">
+            **Tunai (Bayar di Kasir)**
+        </button>
+      </div>
+
+    </div>
   </div>
 
-  <footer>
-    © 2025 Pantry — Dibuat dengan ❤️
-  </footer>
+  <div id="ewallet-selection-modal" class="modal">
+    <div class="modal-content" style="text-align:center;">
+      <span class="close" onclick="closeModal('ewallet-selection')">&times;</span>
+      <h2>Pilih E-Wallet Tujuan Transfer</h2>
+      
+      <div class="modal-button-grid">
+        <button onclick="processPayment('GOPAY')">GOPAY</button>
+        <button onclick="processPayment('OVO')">OVO</button>
+        <button onclick="processPayment('DANA')">DANA</button>
+        <button onclick="processPayment('ShopeePay')">ShopeePay</button>
+      </div>
+      <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Anda akan mendapatkan kode transfer/VA yang unik.</p>
+    </div>
+  </div>
+
+  <div id="transfer-selection-modal" class="modal">
+    <div class="modal-content" style="text-align:center;">
+      <span class="close" onclick="closeModal('transfer-selection')">&times;</span>
+      <h2>Pilih Bank Tujuan Transfer</h2>
+      
+      <div class="modal-button-grid">
+        <button onclick="processPayment('BCA')">BCA Virtual Account</button>
+        <button onclick="processPayment('Mandiri')">Mandiri Virtual Account</button>
+        <button onclick="processPayment('BRI')">BRI Virtual Account</button>
+        <button onclick="processPayment('BNI')">BNI Virtual Account</button>
+      </div>
+      <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Anda akan mendapatkan Kode Virtual Account/Nomor Transfer.</p>
+    </div>
+  </div>
+  
+  <div id="payment-detail-modal" class="modal"> 
+    <div class="modal-content" style="text-align:center;">
+      <span class="close" onclick="closeModal('payment-detail')">&times;</span>
+      <h2 id="payment-modal-title" style="color:var(--color-primary);">Rincian Pembayaran</h2>
+      
+      <p style="font-size: 1.1em; font-weight: 600;">Metode yang dipilih:</p>
+      <p style="font-weight: 700; font-size: 1.5em; color: var(--color-secondary); margin-top:-10px;">
+          <span id="payment-method-display"></span>
+      </p>
+      
+      <p style="font-weight: 700; font-size: 1.1em; margin-top: 20px;" id="va-code-text">Silakan Transfer ke Virtual Account:</p>
+      
+      <p style="word-break: break-all; font-weight: 800; border: 2px dashed #ccc; padding: 10px; border-radius: 8px;"
+         id="payment-code">
+      </p>
+      
+      <p style="margin-top: 30px;" id="confirmation-text">Tunggu kasir memverifikasi pembayaran Anda.</p>
+      <p style="margin-top: 15px; font-weight: bold; color: #ff6347;">Pesanan Terkunci. Tidak bisa diubah.</p>
+    </div>
+  </div>
 
   <script>
-    // === MEKANISME PROTEKSI AKSES KASIR ===
-    (function checkAccess() {
-        const KASIR_PASS = "kasir123";
-        let isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
+    const menuData = [
+      { name: 'Nasi Goreng Spesial', price: 25000, category: 'makanan', img: 'nasgor.jpg' },
+      { name: 'Mie Ayam Bakso', price: 20000, category: 'makanan', img: 'yamyam.jpg' },
+      { name: 'Sate Ayam Madura', price: 30000, category: 'makanan', img: 'sate.jpg' },
+      { name: 'Ayam Geprek Sambal Matah', price: 28000, category: 'makanan', img: 'ayamgeprek.jpg' },
+      { name: 'Kwetiau Goreng Seafood', price: 27000, category: 'makanan', img: 'kwetiau.jpg' },
+      { name: 'Soto Ayam Bening', price: 22000, category: 'makanan', img: 'soto.jpg' },
+      { name: 'Beef Black Pepper', price: 35000, category: 'makanan', img: 'beefpepper.jpg' },
+      { name: 'Capcay Kuah Sayur', price: 24000, category: 'makanan', img: 'capcay.jpg' },
+      
+      { name: 'Es Teh Manis', price: 8000, category: 'minuman', img: 'eses.jpg' },
+      { name: 'Jus Alpukat', price: 15000, category: 'minuman', img: 'aalal.jpg' },
+      { name: 'Kopi Susu Dingin', price: 12000, category: 'minuman', img: 'kopi.jpg' },
+      { name: 'Teh Tarik Panas', price: 10000, category: 'minuman', img: 'tehtarik.jpg' },
+      { name: 'Lemon Tea Dingin', price: 14000, category: 'minuman', img: 'lemontea.jpg' },
+      { name: 'Milkshake Cokelat', price: 18000, category: 'minuman', img: 'milkshake.jpg' },
+      { name: 'Air Mineral Botol', price: 5000, category: 'minuman', img: 'airmineral.jpg' },
+      { name: 'Jus Mangga Segar', price: 16000, category: 'minuman', img: 'jusmangga.jpg' },
+    ];
 
-        if (!isAuthorized) {
-            const password = prompt("Masukkan password kasir untuk mengakses Dashboard:");
+    let cart = [];
+    let currentPayment = null;
+    let isPaymentInProgress = false; 
 
-            if (password === KASIR_PASS) {
-                sessionStorage.setItem('cashierAuth', 'true');
-            } else {
-                alert("Password salah. Akses ditolak. Anda akan diarahkan kembali ke Menu Utama.");
-                window.location.href = 'index.html';
-            }
-        }
-    })();
-    // ======================================
-    
-    document.addEventListener('DOMContentLoaded', initializeDashboard);
+    document.addEventListener('DOMContentLoaded', () => {
+      renderMenu();
+      updateCart();
+      // Memeriksa status pembayaran setiap 2 detik
+      setInterval(checkPaymentStatus, 2000); 
+    });
 
-    function initializeDashboard() {
-        loadPayments();
+    function redirectToCashier() {
+      const pass = prompt("Masukkan password kasir:");
+      if (pass === "kasir123") {
+        sessionStorage.setItem("cashierAuth", "true");
+        // Ganti 'cashier.html' ke path dashboard kasir Anda
+        window.location.href = "cashier.html"; 
+      } else if (pass) alert("Password salah!");
     }
 
-    // Fungsi utilitas untuk memformat harga
-    function formatRupiah(number) {
-        return `Rp${number.toLocaleString('id-ID')}`;
+    function renderMenu() {
+      const makanan = document.getElementById('menu-makanan');
+      const minuman = document.getElementById('menu-minuman');
+      makanan.innerHTML = '';
+      minuman.innerHTML = '';
+
+      menuData.forEach(item => {
+        const exist = cart.find(i => i.name === item.name);
+        const qty = exist ? exist.qty : 0;
+        
+        const disabledAttr = isPaymentInProgress ? 'disabled' : ''; 
+
+        const div = document.createElement('div');
+        div.className = 'menu-item';
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}">
+          <div class="menu-info">
+            <div class="menu-name">${item.name}</div>
+            <div class="menu-price">Rp${item.price.toLocaleString('id-ID')}</div>
+          </div>
+          <div class="menu-actions">
+            <button class="btn-qty" onclick="changeMenuQty('${item.name}', ${item.price}, -1)" ${disabledAttr}>-</button>
+            <div class="qty-display">${qty}</div>
+            <button class="btn-qty btn-plus" onclick="changeMenuQty('${item.name}', ${item.price}, 1)" ${disabledAttr}>+</button>
+          </div>`;
+        if (item.category === 'makanan') makanan.appendChild(div);
+        else minuman.appendChild(div);
+      });
     }
-    
-    // ======================================
-    // === DASHBOARD PEMBAYARAN LOGIC ===
-    // ======================================
-    
-    function loadPayments() {
-        let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        // Hanya tampilkan pembayaran dengan status 'pending'
-        const pendingPayments = payments.filter(p => p.status === 'pending');
-        
-        const listEl = document.getElementById('payment-verification-list');
-        listEl.innerHTML = ''; 
-        
-        if (pendingPayments.length === 0) {
-            listEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center; grid-column: 1 / -1;">Tidak ada pembayaran yang menunggu verifikasi.</p>';
-            return;
-        }
 
-        pendingPayments.forEach(payment => {
-            const itemsList = payment.cart.map(item => 
-                `<p style="margin:2px 0; font-size:0.9em; color:#555;">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
-            ).join('');
+    function changeMenuQty(name, price, delta) {
+      if (isPaymentInProgress) return alert("Pembayaran sedang diproses. Anda tidak bisa mengubah pesanan.");
 
-            const div = document.createElement('div');
-            div.className = 'payment-card';
-            div.innerHTML = `
-                <p style="margin:0; font-weight:700;">Metode Pembayaran:</p>
-                <p style="margin:0; color:#ff6347; font-size:1.1em; word-break: break-all;"><b>${payment.method}</b></p>
-                <p style="margin:0; font-weight:700; margin-top: 10px;">Kode Pembayaran/VA:</p>
-                <p style="margin:0; color:#ff6347; font-size:1.1em; word-break: break-all;"><b>${payment.id}</b></p>
-                <hr style="border:0; border-top:1px dotted #ccc;">
-                <p style="font-weight: 600;">Detail Pesanan:</p>
-                ${itemsList}
-                <hr style="border:0; border-top:1px dotted #ccc;">
-                <p class="pay-total">Total: ${formatRupiah(payment.total)}</p>
-                <span style="font-size:0.8em; color:#999;">Waktu: ${payment.time}</span>
-                <button onclick="verifyPayment('${payment.id}')">
-                    ✅ Verifikasi Bayar
-                </button>
-            `;
-            listEl.appendChild(div);
+      const exist = cart.find(i => i.name === name);
+      if (exist) {
+        exist.qty += delta;
+        if (exist.qty <= 0) cart = cart.filter(i => i.name !== name);
+      } else if (delta > 0) cart.push({ name, price, qty: 1 });
+      updateCart();
+      renderMenu();
+    }
+
+    function updateCart() {
+      const list = document.getElementById('cart-items');
+      const checkoutBtn = document.getElementById('checkout-btn');
+      const payBtn = document.getElementById('pay-btn');
+      list.innerHTML = '';
+      let total = 0;
+
+      if (cart.length === 0) {
+        list.innerHTML = '<li style="color:#999;text-align:center;">Keranjang kosong.</li>';
+        payBtn.disabled = true;
+      } else {
+        cart.forEach((item, i) => {
+          const subtotal = item.price * item.qty;
+          total += subtotal;
+          list.innerHTML += `<li>${item.name} - Rp${subtotal.toLocaleString('id-ID')} (${item.qty}x)</li>`;
         });
-    }
+        payBtn.disabled = isPaymentInProgress; 
+      }
 
-    function verifyPayment(paymentId) {
-        if (!confirm(`Yakin ingin memverifikasi pembayaran dengan kode ${paymentId}? Pelanggan akan bisa checkout.`)) return;
-
-        let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        const paymentIndex = payments.findIndex(p => p.id === paymentId);
-        
-        if (paymentIndex !== -1) {
-            payments[paymentIndex].status = "paid";
-            localStorage.setItem('pantryPayments', JSON.stringify(payments));
-            alert(`Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa checkout.`);
-            loadPayments(); // Muat ulang daftar pembayaran
-        }
+      const totalRupiah = total.toLocaleString('id-ID');
+      checkoutBtn.textContent = (total === 0) ? `Pesan` : `Pesan - Rp${totalRupiah}`;
+      
+      const isPaid = document.getElementById('payment-status').classList.contains('status-lunas');
+      checkoutBtn.disabled = (total === 0 || !isPaid);
     }
     
-    // Auto-refresh untuk pembayaran setiap 5 detik
-    setInterval(loadPayments, 5000);
-  </script>
+    function openMethodSelection() {
+      if (cart.length === 0) return alert("Keranjang kosong!");
+      
+      const name = document.getElementById('customer-name').value.trim();
+      if (!name) return alert("Masukkan nama Anda sebelum memulai pembayaran!");
 
+      closeModal('payment-detail');
+      openModal('method-selection');
+    }
+
+    function openDigitalOptions(type) {
+        closeModal('method-selection'); 
+        if (type === 'ewallet') {
+            openModal('ewallet-selection');
+        } else if (type === 'transfer') {
+            openModal('transfer-selection');
+        }
+    }
+
+    function processPayment(methodName) { 
+      const name = document.getElementById('customer-name').value.trim();
+      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      let code;
+      let modalTitle;
+
+      if (methodName === 'Tunai') {
+          code = "CASH-" + Date.now().toString().slice(-6); 
+          modalTitle = "Pembayaran Tunai";
+          closeModal('method-selection'); 
+      } else {
+          const methodCode = methodName.slice(0, 3).toUpperCase();
+          const customerId = Math.floor(10000 + Math.random() * 90000); 
+          const random4Digit = Math.floor(1000 + Math.random() * 9000); 
+          code = `8888-${methodCode}-${customerId}${random4Digit}`; 
+          modalTitle = `Transfer ${methodName}`;
+          
+          closeModal('ewallet-selection'); 
+          closeModal('transfer-selection');
+          closeModal('method-selection');
+      }
+      
+      currentPayment = { 
+          id: code, 
+          status: "pending", 
+          total, 
+          cart: [...cart], 
+          time: new Date().toLocaleString('id-ID'), 
+          method: methodName, 
+          customerName: name 
+      };
+      isPaymentInProgress = true; 
+      
+      renderMenu(); 
+      updateCart(); 
+      
+      let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+      payments.push(currentPayment);
+      localStorage.setItem('pantryPayments', JSON.stringify(payments));
+
+      // Atur tampilan modal DETAIL PEMBAYARAN
+      document.getElementById('payment-modal-title').textContent = modalTitle;
+      document.getElementById('payment-method-display').textContent = methodName;
+
+      const paymentCodeEl = document.getElementById('payment-code');
+      const vaCodeTextEl = document.getElementById('va-code-text');
+      const confirmationTextEl = document.getElementById('confirmation-text');
+
+      if (methodName === 'Tunai') {
+          vaCodeTextEl.textContent = "Jumlah yang harus dibayar:";
+          paymentCodeEl.textContent = `Rp${total.toLocaleString('id-ID')}`; 
+          paymentCodeEl.style.fontSize = "2.5em";
+          paymentCodeEl.style.color = "#333";
+          paymentCodeEl.style.border = "2px solid #ccc";
+          
+          confirmationTextEl.textContent = "Silakan menuju kasir untuk melakukan pembayaran tunai.";
+      } else {
+          vaCodeTextEl.textContent = "Silakan Transfer ke Virtual Account:";
+          paymentCodeEl.textContent = code; 
+          paymentCodeEl.style.fontSize = "1.8em";
+          paymentCodeEl.style.color = "var(--color-primary)";
+          paymentCodeEl.style.border = "2px dashed #ccc";
+
+          confirmationTextEl.textContent = "Tunggu kasir memverifikasi pembayaran Anda.";
+      }
+      
+      const statusEl = document.getElementById('payment-status');
+      statusEl.textContent = `Menunggu verifikasi ${methodName}. 🔒`;
+      statusEl.style.color = "var(--color-primary)";
+      statusEl.classList.remove('status-lunas');
+
+      openModal('payment-detail');
+      document.getElementById('customer-name').disabled = true;
+    }
+
+    function checkPaymentStatus() {
+      if (!currentPayment) return;
+      
+      const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+      const found = payments.find(p => p.id === currentPayment.id);
+      
+      const checkoutBtn = document.getElementById('checkout-btn');
+      const paymentStatusEl = document.getElementById('payment-status');
+      
+      if (found && found.status === "paid") {
+        // Pembayaran sudah diverifikasi
+        paymentStatusEl.textContent = `Sudah dibayar melalui ${found.method} ✅`;
+        paymentStatusEl.classList.add('status-lunas');
+        
+        const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        if (total > 0) {
+            checkoutBtn.disabled = false;
+        }
+        closeModal('payment-detail');
+        document.getElementById('customer-name').disabled = false;
+      } else if (found && found.status === "pending") {
+         document.getElementById('customer-name').disabled = true;
+         paymentStatusEl.textContent = `Menunggu verifikasi ${currentPayment.method}. 🔒`;
+         paymentStatusEl.classList.remove('status-lunas');
+      } else {
+        // Jika status hilang/batal, reset
+        if(isPaymentInProgress) {
+            isPaymentInProgress = false;
+            currentPayment = null;
+            renderMenu();
+            updateCart();
+            paymentStatusEl.textContent = "Belum dibayar ❌";
+            paymentStatusEl.classList.remove('status-lunas');
+            paymentStatusEl.style.color = "#555";
+            document.getElementById('customer-name').disabled = false;
+        }
+      }
+    }
+
+    function checkout() {
+      if (!currentPayment) return alert("Belum ada pembayaran!");
+      const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+      const found = payments.find(p => p.id === currentPayment.id);
+      if (!found || found.status !== "paid") return alert("Pembayaran belum diverifikasi oleh kasir!");
+
+      const name = document.getElementById('customer-name').value.trim();
+      if (!name) return alert("Masukkan nama Anda!");
+
+      const order = {
+        id: Date.now(),
+        customerName: name,
+        items: [...cart],
+        total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+        status: 'Baru',
+        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        paymentId: currentPayment.id,
+        paymentMethod: currentPayment.method 
+      };
+
+      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      orders.unshift(order);
+      localStorage.setItem('pantryOrders', JSON.stringify(orders));
+
+      alert(`✅ Pesanan ${name} berhasil dibuat!`);
+      
+      // RESET SEMUA STATUS
+      cart = [];
+      currentPayment = null;
+      isPaymentInProgress = false; 
+      
+      updateCart();
+      renderMenu(); 
+      
+      document.getElementById('payment-status').textContent = "Belum dibayar ❌";
+      document.getElementById('payment-status').classList.remove('status-lunas');
+      document.getElementById('payment-status').style.color = "#555";
+      document.getElementById('customer-name').value = ''; 
+      document.getElementById('customer-name').disabled = false;
+    }
+
+    function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; }
+    function closeModal(t) { 
+        document.getElementById(t + "-modal").style.display = "none"; 
+    }
+    window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; };
+  </script>
 </body>
 </html>
