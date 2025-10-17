@@ -19,30 +19,13 @@
         margin-top: 10px;
         transition: background-color 0.3s, transform 0.2s;
         width: 100%; 
-        font-size: 1.1em; /* Agak lebih besar */
+        font-size: 1.1em; 
         box-shadow: 0 4px 8px rgba(6, 139, 24, 0.3);
     }
     .btn-pay-now:hover {
         background-color: #046e12; /* Hijau lebih gelap saat hover */
         transform: translateY(-2px);
         box-shadow: 0 6px 12px rgba(6, 139, 24, 0.4);
-    }
-    /* Gaya untuk Tombol Cek Status Pesanan di Keranjang (Dibuat sekunder agar tidak menyaingi Bayar) */
-    .btn-check-status-cart {
-        background-color: #f0f0f0;
-        color: #333;
-        padding: 8px 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: 600;
-        margin-top: 10px; /* Jarak dari tombol Bayar Sekarang */
-        transition: background-color 0.3s;
-        width: 100%;
-        font-size: 1em;
-    }
-    .btn-check-status-cart:hover {
-        background-color: #e0e0e0;
     }
   </style>
 </head>
@@ -92,9 +75,6 @@
                         <option value="E-Wallet">E-Wallet (OVO/Dana/Gopay)</option>
                     </select>
                     <button class="btn-pay-now" onclick="initiatePayment()">Bayar Sekarang</button>
-                    
-                    <button class="btn-check-status-cart" onclick="window.location.href='order_status.html'">👁️ Cek Status Pesanan Anda</button>
-
                     <p style="margin-top: 10px; font-weight: 600;">Status Pembayaran: <span id="payment-status" style="color: #d14838;">Belum dibayar ❌</span></p>
                 </div>
 
@@ -121,16 +101,16 @@
   </footer>
 
   <script>
-    // Data dummy untuk menu
+    // Data dummy untuk menu (Menu yang diperbarui dipertahankan)
     const menuItems = [
-      // Makanan (Diperbarui)
+      // Makanan 
       { id: 1, name: "Nasi Goreng Spesial", price: 25000, category: "makanan" },
       { id: 2, name: "Mie Ayam Bakso", price: 22000, category: "makanan" },
       { id: 3, name: "Ayam Geprek Sambal Matah", price: 28000, category: "makanan" },
       { id: 7, name: "Kwetiau Goreng Seafood", price: 30000, category: "makanan" },
       { id: 8, name: "Capcay Kuah", price: 24000, category: "makanan" },
       
-      // Minuman (Diperbarui)
+      // Minuman 
       { id: 4, name: "Kopi Susu Gula Aren", price: 18000, category: "minuman" },
       { id: 5, name: "Es Teh Manis Jumbo", price: 8000, category: "minuman" },
       { id: 6, name: "Jus Alpukat", price: 20000, category: "minuman" },
@@ -141,24 +121,19 @@
     let cart = [];
     let currentPayment = null;
 
-    // Inisialisasi
     document.addEventListener('DOMContentLoaded', () => {
         const storedCart = sessionStorage.getItem('pantryCart');
-        if (storedCart) {
-            cart = JSON.parse(storedCart);
-        }
+        if (storedCart) { cart = JSON.parse(storedCart); }
         const storedPayment = sessionStorage.getItem('pantryCurrentPayment');
         if (storedPayment) {
             currentPayment = JSON.parse(storedPayment);
             document.getElementById('payment-status').textContent = `Menunggu Verifikasi (${currentPayment.method}) ⏳`;
             document.getElementById('payment-status').style.color = '#f7b000';
         }
-        
         renderMenu();
         updateCart();
     });
 
-    // Fungsi utilitas untuk memformat harga
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
     }
@@ -166,7 +141,6 @@
     function renderMenu() {
       const menuMakananEl = document.getElementById('menu-makanan');
       const menuMinumanEl = document.getElementById('menu-minuman');
-      
       menuMakananEl.innerHTML = '';
       menuMinumanEl.innerHTML = '';
 
@@ -191,7 +165,7 @@
 
     function addToCart(itemId) {
         if (currentPayment) {
-            alert("Anda sedang menunggu verifikasi pembayaran. Selesaikan pembayaran dahulu!");
+            alert("Anda sedang menunggu verifikasi pembayaran. Selesaikan pembayaran dahulu.");
             return;
         }
         const item = menuItems.find(i => i.id === itemId);
@@ -272,7 +246,6 @@
         
         const totalAmount = cart.reduce((s, i) => s + i.price * i.qty, 0);
         const method = document.getElementById('payment-method').value;
-        
         const paymentId = 'PAY-' + Date.now().toString().slice(-6); 
 
         currentPayment = {
@@ -338,12 +311,10 @@
       window.location.href = 'order_status.html';
     }
 
-    // Fungsi Navigasi
     function redirectToCashier() {
       window.location.href = 'payment_dashboard.html';
     }
     
-    // Fungsi Modal
     function openModal(id) { document.getElementById(id + "-modal").style.display = "block"; }
     function closeModal(id) { document.getElementById(id + "-modal").style.display = "none"; }
     window.onclick = function(event) {
