@@ -32,96 +32,62 @@
         color: #333;
     }
     .order-card {
-        background-color: #ffffff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+        background: white;
+        border: 1px solid #eee;
         padding: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        transition: all 0.3s; /* Transisi */
-        position: relative;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    .order-card:hover {
-        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        transform: translateY(-2px);
+    .order-card.status-baru {
+        border-left: 5px solid #d14838; /* Merah */
+    }
+    .order-card.status-diproses {
+        border-left: 5px solid #f0ad4e; /* Kuning/Orange */
+    }
+    .order-card.status-selesai {
+        border-left: 5px solid #068b18; /* Hijau */
+        opacity: 0.7;
     }
     .order-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      border-bottom: 1px dashed #ccc;
-      padding-bottom: 5px;
-    }
-    .order-customer {
-        font-weight: 700;
-        font-size: 1.1em;
-        color: #333;
-    }
-    .order-time {
-      font-weight: bold;
-      color: #d14838; /* Warna primer baru */
-      font-size: 1.2em;
-    }
-    .order-status {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 0.9em;
-    }
-    .status-baru { background-color: #fee2e2; color: #ef4444; }
-    .status-proses { background-color: #fef3c7; color: #f59e0b; }
-    .status-selesai { background-color: #d1fae5; color: #10b981; }
-    .item-list {
-        list-style: none;
-        padding: 0;
-        margin: 10px 0;
-        font-size: 0.95em;
-    }
-    .item-list li {
-        border-bottom: 1px dotted #eee;
-        padding: 6px 0;
         display: flex;
         justify-content: space-between;
+        align-items: center;
+    }
+    .order-time {
+        font-size: 0.9em;
+        color: #999;
+    }
+    .order-items-list {
+        list-style: disc;
+        padding-left: 20px;
+        margin: 5px 0 10px 0;
+        font-size: 0.9em;
+    }
+    .order-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        border-top: 1px dashed #eee;
+        padding-top: 10px;
     }
     .order-total {
-      font-size: 1.5em;
-      font-weight: 700;
-      color: #068b18;
-      display: block;
-      margin-top: 10px;
+        font-weight: 700;
+        color: #333;
     }
-    .action-btn-group {
-        display: flex;
-        gap: 8px;
-        margin-top: 15px;
-    }
-    .action-btn-group button {
-        flex: 1;
-        padding: 10px;
+    .action-buttons button {
+        padding: 8px 12px;
         border: none;
-        border-radius: 6px;
+        border-radius: 5px;
         cursor: pointer;
-        color: white;
         font-weight: 600;
-        transition: background-color 0.3s, transform 0.2s; /* Transisi */
+        color: white;
+        margin-left: 5px;
     }
-    .action-btn-group button:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    /* WARNA TOMBOL AKSI LEBIH GELAP */
-    .btn-proses { background-color: #e68a00; } 
-    .btn-proses:hover:not(:disabled) { background-color: #cc7800; }
-    .btn-selesai { background-color: #056b12; }
-    .btn-selesai:hover:not(:disabled) { background-color: #04520e; }
-    .btn-hapus { background-color: #c44336; }
-    .btn-hapus:hover:not(:disabled) { background-color: #a3322b; }
-    .order-list { 
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
+    .action-buttons .btn-primary { background-color: #007bff; }
+    .action-buttons .btn-success { background-color: #068b18; }
+    .action-buttons .btn-hapus { background-color: #999; }
     .empty-column-msg {
         text-align: center;
         color: #999;
@@ -130,123 +96,108 @@
   </style>
 </head>
 <body>
-
   <header class="navbar">
     <div class="nav-left">
-      <span class="brand-name">Pantry</span>
-      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Dashboard Dapur</span>
+      <span class="brand-name">Dashboard Dapur/Kasir</span>
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-primary" onclick="window.location.href='payment_dashboard.html'">💳 Dashboard Pembayaran</button>
-      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Kembali ke Menu Utama</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='payment_dashboard.html'">Verifikasi Pembayaran</button>
+      <button class="nav-btn btn-primary" onclick="logout()">Logout</button>
     </div>
   </header>
-
+  
   <div class="container">
-    
-    <div class="order-dashboard-container">
-        <h2>👨‍🍳 Daftar Pesanan </h2>
-        <div class="kanban-container">
-            <div class="kanban-column">
-                <h3>Baru</h3>
-                <div class="order-list" id="order-list-baru"></div>
-            </div>
-            <div class="kanban-column">
-                <h3>Diproses</h3>
-                <div class="order-list" id="order-list-proses"></div>
-            </div>
-            <div class="kanban-column">
-                <h3>Selesai</h3>
-                <div class="order-list" id="order-list-selesai"></div>
-            </div>
+    <h1 style="text-align:center;">Daftar Pesanan</h1>
+    <div class="kanban-container">
+        
+        <div class="kanban-column">
+            <h3>Baru 🆕</h3>
+            <div id="order-list-baru">
+                </div>
+        </div>
+
+        <div class="kanban-column">
+            <h3>Diproses 🧑‍🍳</h3>
+            <div id="order-list-proses">
+                </div>
+        </div>
+
+        <div class="kanban-column">
+            <h3>Selesai ✅</h3>
+            <div id="order-list-selesai">
+                </div>
         </div>
     </div>
   </div>
 
-  <footer>
-    © 2025 Pantry — Dibuat dengan ❤️
-  </footer>
-
   <script>
-    // === MEKANISME PROTEKSI AKSES KASIR ===
-    (function checkAccess() {
-        const KASIR_PASS = "kasir123";
-        let isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
-
-        if (!isAuthorized) {
-            const password = prompt("Masukkan password kasir untuk mengakses Dashboard:");
-
-            if (password === KASIR_PASS) {
-                sessionStorage.setItem('cashierAuth', 'true');
-            } else {
-                alert("Password salah. Akses ditolak. Anda akan diarahkan kembali ke Menu Utama.");
-                window.location.href = 'index.html';
-            }
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!sessionStorage.getItem("cashierAuth")) {
+            alert("Akses ditolak. Silakan login kasir terlebih dahulu.");
+            window.location.href = "index.html";
+            return;
         }
-    })();
-    // ======================================
-    
-    document.addEventListener('DOMContentLoaded', loadOrders);
+        loadOrders();
+        setInterval(loadOrders, 3000); // Muat ulang data setiap 3 detik
+    });
 
-    // Fungsi utilitas untuk memformat harga
     function formatRupiah(number) {
-        return `Rp${number.toLocaleString('id-ID')}`;
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(number);
     }
-    
-    // ======================================
-    // === FUNGSI MANAJEMEN PESANAN (ORDER) ===
-    // ======================================
+
+    function logout() {
+        sessionStorage.removeItem("cashierAuth");
+        window.location.href = "index.html";
+    }
 
     function loadOrders() {
+      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       const orderListBaru = document.getElementById('order-list-baru');
       const orderListProses = document.getElementById('order-list-proses');
       const orderListSelesai = document.getElementById('order-list-selesai');
-      let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       
       orderListBaru.innerHTML = '';
       orderListProses.innerHTML = '';
       orderListSelesai.innerHTML = '';
-      
+
+      // Urutkan berdasarkan waktu terbaru
+      orders.sort((a, b) => b.id - a.id);
+
       orders.forEach(order => {
+        let targetList;
+        if (order.status === 'Baru') targetList = orderListBaru;
+        else if (order.status === 'Diproses') targetList = orderListProses;
+        else if (order.status === 'Selesai') targetList = orderListSelesai;
+        else return; 
+        
+        const itemsList = order.items.map(item => `
+          <li>${item.name} (${item.qty}x)</li>
+        `).join('');
+
         const card = document.createElement('div');
-        card.className = 'order-card';
-        card.id = 'order-' + order.id;
-        
-        const itemList = order.items.map(item => 
-          `<li><span>${item.name} x${item.qty}</span> <span>${formatRupiah(item.price * item.qty)}</span></li>`
-        ).join('');
-
-        let statusClass = 'status-baru';
-        let targetList = orderListBaru;
-        
-        if (order.status === 'Proses') {
-            statusClass = 'status-proses';
-            targetList = orderListProses;
-        } else if (order.status === 'Selesai') {
-            statusClass = 'status-selesai';
-            targetList = orderListSelesai;
-        }
-        
-        const isDisabled = order.status === 'Selesai' ? 'disabled' : '';
-
+        card.className = `order-card status-${order.status.toLowerCase().replace(' ', '')}`;
         card.innerHTML = `
           <div class="order-header">
-            <div class="order-info">
-                <span class="order-customer">${order.customerName || 'Nama Tidak Diketahui'}</span>
-                <span class="order-time">#${order.time}</span>
-                <span style="font-size:0.8em; color:#999;">Kode Bayar: ${order.paymentId || 'N/A'}</span>
+            <h4 style="margin:0; font-size:1.4em;">${order.customerName}</h4> 
+            <span class="order-time">${order.time}</span>
+          </div>
+          <hr style="border:0; border-top:1px solid #eee; margin: 8px 0;">
+          <p style="font-size:0.9em; color:#777; margin-top:5px;">ID Pesanan: ${order.id}</p>
+          <p style="font-weight: 600;">Detail:</p>
+          <ul class="order-items-list">${itemsList}</ul>
+          <div class="order-footer">
+            <span class="order-total">Total: ${formatRupiah(order.total)}</span>
+            <div class="action-buttons">
+              ${order.status === 'Baru' ? `
+                <button onclick="updateOrderStatus(${order.id}, 'Diproses')" class="btn-primary">Proses</button>` : ''}
+              ${order.status === 'Diproses' ? `
+                <button onclick="updateOrderStatus(${order.id}, 'Selesai')" class="btn-success">Selesai</button>` : ''}
+              <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
             </div>
-            <span class="order-status ${statusClass}">${order.status}</span>
-          </div>
-          <ul class="item-list">${itemList}</ul>
-          <div style="text-align: right; margin-top: 10px;">
-            <span class="order-total">${formatRupiah(order.total)}</span>
-          </div>
-          <div class="action-btn-group">
-            <button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')" ${isDisabled}>Proses</button>
-            <button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')" ${isDisabled}>Selesai</button>
-            <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
           </div>
         `;
         targetList.appendChild(card);
@@ -280,12 +231,8 @@
       let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       orders = orders.filter(order => order.id !== id);
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
-      loadOrders();
+      loadOrders(); 
     }
-    
-    // Auto-refresh untuk pesanan setiap 5 detik
-    setInterval(loadOrders, 5000);
-  </script>
-
+</script>
 </body>
 </html>
