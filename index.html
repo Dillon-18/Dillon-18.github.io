@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pantry - Pemesanan Online</title>
+  <title>Pantry - Pesan </title>
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -155,7 +155,7 @@
       } else if (pass) alert("Password salah!");
     }
 
-    // --- FUNGSI BARU UNTUK KEAMANAN ---
+    // --- FUNGSI UNTUK KEAMANAN ---
     function isPaymentVerified() {
       if (!currentPayment) return false;
       const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
@@ -163,7 +163,7 @@
       // Pembayaran dianggap terverifikasi jika statusnya "paid"
       return found && found.status === "paid";
     }
-    // ------------------------------------
+    // ----------------------------
 
     function renderMenu() {
       const makanan = document.getElementById('menu-makanan');
