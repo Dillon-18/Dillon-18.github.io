@@ -34,6 +34,11 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         transition: transform 0.3s, box-shadow 0.3s;
     }
+    /* Style khusus untuk kartu yang sudah selesai/dibayar */
+    .payment-card.completed {
+        border: 1px solid #068b18; /* Border warna hijau */
+        background-color: #f0fff0;
+    }
     .payment-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 6px 15px rgba(0,0,0,0.1);
@@ -59,7 +64,7 @@
     .payment-status-title {
         border-bottom: 2px solid #d14838; /* Warna primer baru */
         padding-bottom: 8px; 
-        color: #068b18; 
+        color: #d14838; 
         margin-top: 0;
     }
   </style>
@@ -87,7 +92,13 @@
         </div>
     </div>
 
-  </div>
+    <div class="payment-dashboard-container" style="margin-top: 30px;">
+        <h2 class="payment-status-title" style="color: #068b18; border-bottom: 2px solid #068b18;">✅ Riwayat Pembayaran Selesai (Termasuk Tunai)</h2>
+        <div class="payment-list" id="payment-completed-list">
+            <p style="text-align: center; color: #999;">Memuat data...</p>
+        </div>
+    </div>
+    </div>
 
   <footer>
     © 2025 Pantry — Dibuat dengan ❤️
@@ -122,52 +133,65 @@
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
     }
-    
-    // ======================================
-    // === DASHBOARD PEMBAYARAN LOGIC ===
-    // ======================================
+
+    // Fungsi untuk membuat elemen kartu pembayaran
+    function createPaymentCard(payment, isCompleted) {
+        const itemsList = payment.cart.map(item => 
+            `<p style="margin:2px 0; font-size:0.9em; color:#555;">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
+        ).join('');
+
+        const methodDisplay = `<p style="font-weight: 600; color: ${isCompleted ? '#068b18' : '#d14838'};">Metode: ${payment.method}</p>`;
+        const customerNameDisplay = payment.customerName ? `<p style="font-weight: 700; font-size: 1.2em; margin-bottom: 10px; color: #333;">${payment.customerName}</p>` : '';
+
+        const div = document.createElement('div');
+        div.className = 'payment-card' + (isCompleted ? ' completed' : '');
+        div.innerHTML = `
+            ${customerNameDisplay}
+            <p style="margin:0; font-weight:700;">Kode Pembayaran:</p>
+            <p style="margin:0; color:#d14838; font-size:1.1em; word-break: break-all;"><b>${payment.id}</b></p>
+            ${methodDisplay} 
+            ${isCompleted ? '<span style="color: #068b18; font-weight: 700; margin-bottom: 10px;">(STATUS: LUNAS)</span>' : ''}
+            <hr style="border:0; border-top:1px dotted #ccc;">
+            <p style="font-weight: 600;">Detail Pesanan:</p>
+            ${itemsList}
+            <hr style="border:0; border-top:1px dotted #ccc;">
+            <p class="pay-total">Total: ${formatRupiah(payment.total)}</p>
+            <span style="font-size:0.8em; color:#999;">Waktu: ${payment.time}</span>
+            ${!isCompleted ? `<button onclick="verifyPayment('${payment.id}')">✅ Verifikasi Bayar</button>` : ''}
+        `;
+        return div;
+    }
     
     function loadPayments() {
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        // HANYA tampilkan pembayaran dengan status 'pending' (transfer/e-wallet)
+        
+        // Pisahkan menjadi dua kategori
         const pendingPayments = payments.filter(p => p.status === 'pending');
+        const completedPayments = payments.filter(p => p.status === 'paid').reverse(); // Urutkan terbaru di atas
         
-        const listEl = document.getElementById('payment-verification-list');
-        listEl.innerHTML = ''; 
+        const pendingListEl = document.getElementById('payment-verification-list');
+        const completedListEl = document.getElementById('payment-completed-list'); // Ambil elemen baru
         
+        pendingListEl.innerHTML = ''; 
+        completedListEl.innerHTML = '';
+        
+        // 1. RENDER PEMBAYARAN PENDING (TRANSFER/E-WALLET)
         if (pendingPayments.length === 0) {
-            listEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center; grid-column: 1 / -1;">Tidak ada pembayaran yang menunggu verifikasi.</p>';
-            return;
+            pendingListEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center; grid-column: 1 / -1;">Tidak ada pembayaran yang menunggu verifikasi.</p>';
+        } else {
+            pendingPayments.forEach(payment => {
+                pendingListEl.appendChild(createPaymentCard(payment, false));
+            });
         }
-
-        pendingPayments.forEach(payment => {
-            const itemsList = payment.cart.map(item => 
-                `<p style="margin:2px 0; font-size:0.9em; color:#555;">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
-            ).join('');
-
-            const methodDisplay = payment.method ? `<p style="font-weight: 600; color: #d14838;">Metode: ${payment.method}</p>` : '';
-            // Tampilkan Nama Pelanggan
-            const customerNameDisplay = payment.customerName ? `<p style="font-weight: 700; font-size: 1.2em; margin-bottom: 10px; color: #068b18;">${payment.customerName}</p>` : '';
-
-
-            const div = document.createElement('div');
-            div.className = 'payment-card';
-            div.innerHTML = `
-                ${customerNameDisplay}
-                <p style="margin:0; font-weight:700;">Kode Pembayaran:</p>
-                <p style="margin:0; color:#d14838; font-size:1.1em; word-break: break-all;"><b>${payment.id}</b></p>
-                ${methodDisplay} <hr style="border:0; border-top:1px dotted #ccc;">
-                <p style="font-weight: 600;">Detail Pesanan:</p>
-                ${itemsList}
-                <hr style="border:0; border-top:1px dotted #ccc;">
-                <p class="pay-total">Total: ${formatRupiah(payment.total)}</p>
-                <span style="font-size:0.8em; color:#999;">Waktu: ${payment.time}</span>
-                <button onclick="verifyPayment('${payment.id}')">
-                    ✅ Verifikasi Bayar
-                </button>
-            `;
-            listEl.appendChild(div);
-        });
+        
+        // 2. RENDER PEMBAYARAN SELESAI (TERMASUK TUNAI)
+        if (completedPayments.length === 0) {
+            completedListEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center; grid-column: 1 / -1;">Belum ada pembayaran yang diselesaikan.</p>';
+        } else {
+            completedPayments.forEach(payment => {
+                completedListEl.appendChild(createPaymentCard(payment, true));
+            });
+        }
     }
 
     function verifyPayment(paymentId) {
