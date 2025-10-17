@@ -143,30 +143,6 @@ h2 {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.menu-item img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-right: 15px;
-  flex-shrink: 0;
-}
-
-.menu-info {
-  flex-grow: 1;
-}
-
-.menu-name {
-  font-weight: 600;
-  color: #333;
-}
-
-.menu-price {
-  color: #ff6347;
-  font-weight: 700;
-  font-size: 1.1em;
-}
-
 /* === TOMBOL DI MENU === */
 .menu-actions {
   display: flex;
@@ -176,127 +152,86 @@ h2 {
   margin-top: 10px;
 }
 
-.btn-qty {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s;
+/* === KERANJANG - TAMPILAN BARU (LEBIH RAPI) === */
+.cart-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.btn-qty:hover {
-  background-color: #ddd;
+.cart-item-list {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dotted #eee;
+    font-size: 0.95em;
 }
 
-.btn-plus {
-  background-color: #068b18;
-  color: white;
-  border-color: #068b18;
+.cart-item-list:last-child {
+    border-bottom: none;
 }
 
-.btn-plus:hover {
-  background-color: #046b13;
+.item-details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
-.qty-display {
-  width: 28px;
-  text-align: center;
-  font-weight: 600;
-}
-
-/* === SIDEBAR STICKY WRAPPER === */
-#sticky-sidebar {
-  position: sticky; 
-  top: 80px; 
-  height: fit-content; 
-  align-self: flex-start;
-}
-
-/* === CUSTOMER INFO === */
-.customer-info {
-  padding: 15px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.customer-info h3 {
-  margin-top: 0;
-  color: #068b18;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.customer-info input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-/* === KERANJANG === */
-#cart {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-top: 30px; 
-}
-
-#cart h2 {
-  color: #333;
-  border-bottom: 1px solid #ddd;
-  margin-top: 0;
-  padding-bottom: 10px;
-}
-
-#cart-items {
-  list-style: none;
-  padding: 0;
-}
-
-#cart-items li {
-  padding: 10px 0;
-  border-bottom: 1px dotted #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.95em;
-}
-
-#cart-items li:last-child {
-  border-bottom: none;
+.item-price-qty {
+    font-size: 0.8em;
+    color: #999;
 }
 
 /* Tombol di keranjang */
-.cart-actions .btn-qty {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  width: 25px;
-  height: 25px;
-  border-radius: 4px;
-  font-size: 14px;
-  padding: 0;
-  line-height: 1;
+.cart-actions {
+    display: flex;
+    gap: 5px;
+    align-items: center;
 }
 
-.cart-actions .btn-plus {
-  background-color: #068b18;
-  color: white;
-  border-color: #068b18;
+.btn-qty {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    width: 30px; /* Diperbesar sedikit */
+    height: 30px; /* Diperbesar sedikit */
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 600;
 }
 
-.btn-remove {
-  background-color: #ff4d4d;
-  color: white;
-  border-color: #ff4d4d;
+.btn-qty:hover {
+    background-color: #ddd;
 }
+
+.btn-plus {
+    background-color: #068b18;
+    color: white;
+    border-color: #068b18;
+}
+
+.btn-plus:hover {
+    background-color: #046b13;
+}
+
+.btn-minus {
+    background-color: #ff4d4d;
+    color: white;
+    border-color: #ff4d4d;
+}
+
+.btn-minus:hover {
+    background-color: #e53d3d;
+}
+
+
+/* === SISA CSS LAINNYA (DIPERTAHANKAN) === */
 
 /* === CHECKOUT BUTTON === */
 #checkout-btn {
@@ -332,28 +267,6 @@ footer {
   border-top: 1px solid #eee;
   color: #999;
   font-size: 0.9em;
-}
-
-/* === NOTIFIKASI === */
-.notification {
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  z-index: 1001;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.notification.show {
-  opacity: 1;
-  visibility: visible;
 }
 
 /* === MODAL POPUP === */
@@ -402,14 +315,4 @@ footer {
   color: #ff6347;
   border-bottom: 2px solid #068b18;
   padding-bottom: 10px;
-}
-
-.contact-link {
-  color: #068b18;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.contact-link:hover {
-  text-decoration: underline;
 }
