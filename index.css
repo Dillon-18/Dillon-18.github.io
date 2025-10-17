@@ -143,16 +143,7 @@ h2 {
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* === TOMBOL DI MENU === */
-.menu-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-/* === KERANJANG - TAMPILAN BARU (LEBIH RAPI) === */
+/* === KERANJANG - VERSI LAMA (DEFAULT) === */
 .cart-box {
     background: #fff;
     padding: 20px;
@@ -160,7 +151,7 @@ h2 {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.cart-item-list {
+.cart-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -169,36 +160,24 @@ h2 {
     font-size: 0.95em;
 }
 
-.cart-item-list:last-child {
+.cart-item:last-child {
     border-bottom: none;
 }
 
-.item-details {
+.item-controls {
     display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-}
-
-.item-price-qty {
-    font-size: 0.8em;
-    color: #999;
-}
-
-/* Tombol di keranjang */
-.cart-actions {
-    display: flex;
-    gap: 5px;
     align-items: center;
+    gap: 5px;
 }
 
-.btn-qty {
+.btn-cart-qty {
     background-color: #f0f0f0;
     color: #333;
     border: 1px solid #ccc;
-    width: 30px; /* Diperbesar sedikit */
-    height: 30px; /* Diperbesar sedikit */
+    width: 25px; 
+    height: 25px; 
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 14px;
     padding: 0;
     line-height: 1;
     cursor: pointer;
@@ -206,58 +185,18 @@ h2 {
     font-weight: 600;
 }
 
-.btn-qty:hover {
+.btn-cart-qty:hover {
     background-color: #ddd;
 }
 
-.btn-plus {
-    background-color: #068b18;
-    color: white;
-    border-color: #068b18;
-}
-
-.btn-plus:hover {
-    background-color: #046b13;
-}
-
-.btn-minus {
-    background-color: #ff4d4d;
-    color: white;
-    border-color: #ff4d4d;
-}
-
-.btn-minus:hover {
-    background-color: #e53d3d;
+.item-controls .qty-display {
+    width: 20px;
+    text-align: center;
+    font-weight: 600;
 }
 
 
-/* === SISA CSS LAINNYA (DIPERTAHANKAN) === */
-
-/* === CHECKOUT BUTTON === */
-#checkout-btn {
-  display: block;
-  width: 100%;
-  padding: 15px;
-  background-color: #ff6347;
-  color: white;
-  font-size: 1.2em;
-  font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.2s;
-  text-align: center; 
-}
-
-#checkout-btn:hover:not(:disabled) {
-  background-color: #e5533d;
-}
-
-#checkout-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
+/* === SISA CSS LAINNYA === */
 
 /* === FOOTER === */
 footer {
