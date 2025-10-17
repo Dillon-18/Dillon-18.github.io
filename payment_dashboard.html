@@ -144,17 +144,19 @@
             const itemsList = payment.cart.map(item => 
                 `<p style="margin:2px 0; font-size:0.9em; color:#555;">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
             ).join('');
-
-            // Menampilkan metode pembayaran
+            
+            // Tambahan: Menampilkan metode pembayaran
             const methodDisplay = payment.method ? `<p style="font-weight: 600; color: #068b18;">Metode: ${payment.method}</p>` : ''; 
 
             const div = document.createElement('div');
             div.className = 'payment-card';
             div.innerHTML = `
+                <p style="margin:0; font-weight:700;">Pelanggan:</p>
+                <p style="margin:0; font-size:1.2em; word-break: break-all;"><b>${payment.customerName || 'Nama T/A'}</b></p>
+                <hr style="border:0; border-top:1px dotted #ccc;">
                 <p style="margin:0; font-weight:700;">Kode Pembayaran:</p>
                 <p style="margin:0; color:#d14838; font-size:1.1em; word-break: break-all;"><b>${payment.id}</b></p>
-                ${methodDisplay}
-                <hr style="border:0; border-top:1px dotted #ccc;">
+                ${methodDisplay} <hr style="border:0; border-top:1px dotted #ccc;">
                 <p style="font-weight: 600;">Detail Pesanan:</p>
                 ${itemsList}
                 <hr style="border:0; border-top:1px dotted #ccc;">
