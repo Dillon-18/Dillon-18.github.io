@@ -31,63 +31,60 @@
         border-bottom: 2px solid #068b18;
         color: #333;
     }
-    .order-card {
-        background: white;
-        border: 1px solid #eee;
+    
+    .order-card-dapur {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
         padding: 15px;
-        border-radius: 8px;
+        border-radius: 6px;
         margin-bottom: 15px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
-    .order-card.status-baru {
-        border-left: 5px solid #d14838; /* Merah */
+    
+    .order-card-dapur h4 {
+        margin-top: 0;
+        margin-bottom: 5px;
+        color: #ff6347;
+        border-bottom: 1px dotted #eee;
+        padding-bottom: 5px;
     }
-    .order-card.status-diproses {
-        border-left: 5px solid #f0ad4e; /* Kuning/Orange */
-    }
-    .order-card.status-selesai {
-        border-left: 5px solid #068b18; /* Hijau */
-        opacity: 0.7;
-    }
-    .order-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .order-time {
+    
+    .order-item-dapur {
         font-size: 0.9em;
-        color: #999;
+        margin: 3px 0;
+        color: #555;
     }
-    .order-items-list {
-        list-style: disc;
-        padding-left: 20px;
-        margin: 5px 0 10px 0;
-        font-size: 0.9em;
-    }
-    .order-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-        border-top: 1px dashed #eee;
-        padding-top: 10px;
-    }
-    .order-total {
-        font-weight: 700;
-        color: #333;
-    }
-    .action-buttons button {
-        padding: 8px 12px;
+    
+    .order-card-dapur .actions button {
+        width: 100%;
+        padding: 8px;
         border: none;
-        border-radius: 5px;
+        border-radius: 4px;
         cursor: pointer;
         font-weight: 600;
-        color: white;
-        margin-left: 5px;
+        margin-top: 8px;
+        transition: background-color 0.2s;
     }
-    .action-buttons .btn-primary { background-color: #007bff; }
-    .action-buttons .btn-success { background-color: #068b18; }
-    .action-buttons .btn-hapus { background-color: #999; }
+
+    .btn-proses {
+        background-color: #f7b000;
+        color: white;
+    }
+    .btn-proses:hover { background-color: #d19500; }
+    
+    .btn-selesai {
+        background-color: #068b18;
+        color: white;
+    }
+    .btn-selesai:hover { background-color: #046e12; }
+
+    .btn-hapus {
+        background-color: #ff4d4d;
+        color: white;
+        margin-top: 5px !important;
+    }
+    .btn-hapus:hover { background-color: #e53d3d; }
+
     .empty-column-msg {
         text-align: center;
         color: #999;
@@ -95,109 +92,106 @@
     }
   </style>
 </head>
-<body>
+<body onload="loadOrders()">
   <header class="navbar">
     <div class="nav-left">
-      <span class="brand-name">Dashboard Dapur/Kasir</span>
+      <span class="brand-name">Pantry</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-secondary" onclick="window.location.href='payment_dashboard.html'">Verifikasi Pembayaran</button>
-      <button class="nav-btn btn-primary" onclick="logout()">Logout</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='payment_dashboard.html'">Dashboard Kasir</button>
+      <button class="nav-btn btn-primary" onclick="window.location.href='index.html'">Pemesanan Pelanggan</button>
     </div>
   </header>
   
   <div class="container">
-    <h1 style="text-align:center;">Daftar Pesanan</h1>
+    <h1>Dashboard Dapur (Kanban Pesanan)</h1>
+    
     <div class="kanban-container">
         
-        <div class="kanban-column">
-            <h3>Baru 🆕</h3>
-            <div id="order-list-baru">
-                </div>
+        <div class="kanban-column" id="column-Baru">
+            <h3 style="color: #ff6347; border-color: #ff6347;">Pesanan Baru</h3>
+            <div id="order-list-Baru">
+                <p class="empty-column-msg">Tidak ada pesanan baru.</p>
+            </div>
         </div>
 
-        <div class="kanban-column">
-            <h3>Diproses 🧑‍🍳</h3>
-            <div id="order-list-proses">
-                </div>
+        <div class="kanban-column" id="column-Diproses">
+            <h3 style="color: #f7b000; border-color: #f7b000;">Sedang Diproses</h3>
+            <div id="order-list-Diproses">
+                <p class="empty-column-msg">Tidak ada pesanan diproses.</p>
+            </div>
         </div>
 
-        <div class="kanban-column">
-            <h3>Selesai ✅</h3>
-            <div id="order-list-selesai">
-                </div>
+        <div class="kanban-column" id="column-Selesai">
+            <h3 style="color: #068b18; border-color: #068b18;">Siap Diambil</h3>
+            <div id="order-list-Selesai">
+                <p class="empty-column-msg">Tidak ada pesanan selesai.</p>
+            </div>
         </div>
     </div>
   </div>
 
+  <footer>
+    © 2025 Pantry — Dibuat dengan ❤️
+  </footer>
+
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!sessionStorage.getItem("cashierAuth")) {
-            alert("Akses ditolak. Silakan login kasir terlebih dahulu.");
-            window.location.href = "index.html";
-            return;
-        }
-        loadOrders();
-        setInterval(loadOrders, 3000); // Muat ulang data setiap 3 detik
-    });
-
     function formatRupiah(number) {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        }).format(number);
+        return `Rp${number.toLocaleString('id-ID')}`;
     }
 
-    function logout() {
-        sessionStorage.removeItem("cashierAuth");
-        window.location.href = "index.html";
-    }
+    // Panggil saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', loadOrders);
 
     function loadOrders() {
-      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-      const orderListBaru = document.getElementById('order-list-baru');
-      const orderListProses = document.getElementById('order-list-proses');
-      const orderListSelesai = document.getElementById('order-list-selesai');
-      
+      // Ambil data pesanan, urutkan berdasarkan waktu (yang baru di atas)
+      let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      orders.sort((a, b) => b.id - a.id); 
+
+      const orderListBaru = document.getElementById('order-list-Baru');
+      const orderListProses = document.getElementById('order-list-Diproses');
+      const orderListSelesai = document.getElementById('order-list-Selesai');
+
+      // Bersihkan kolom
       orderListBaru.innerHTML = '';
       orderListProses.innerHTML = '';
       orderListSelesai.innerHTML = '';
 
-      // Urutkan berdasarkan waktu terbaru
-      orders.sort((a, b) => b.id - a.id);
-
       orders.forEach(order => {
-        let targetList;
-        if (order.status === 'Baru') targetList = orderListBaru;
-        else if (order.status === 'Diproses') targetList = orderListProses;
-        else if (order.status === 'Selesai') targetList = orderListSelesai;
-        else return; 
+        let itemsHtml = '';
+        order.items.forEach(item => {
+          itemsHtml += `<p class="order-item-dapur">${item.qty}x ${item.name}</p>`;
+        });
         
-        const itemsList = order.items.map(item => `
-          <li>${item.name} (${item.qty}x)</li>
-        `).join('');
+        let targetList;
+        let actionsHtml = '';
+
+        if (order.status === 'Baru') {
+          targetList = orderListBaru;
+          actionsHtml = `<button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Diproses')">Proses Pesanan</button>`;
+        } else if (order.status === 'Diproses') {
+          targetList = orderListProses;
+          actionsHtml = `<button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')">Selesai/Siap Ambil</button>`;
+        } else if (order.status === 'Selesai') {
+          targetList = orderListSelesai;
+          actionsHtml = `<button class="btn-selesai" disabled>Sudah Selesai</button>`;
+        } else {
+            return; // Lewati status yang tidak dikenal
+        }
 
         const card = document.createElement('div');
-        card.className = `order-card status-${order.status.toLowerCase().replace(' ', '')}`;
+        card.className = 'order-card-dapur';
         card.innerHTML = `
-          <div class="order-header">
-            <h4 style="margin:0; font-size:1.4em;">${order.customerName}</h4> 
-            <span class="order-time">${order.time}</span>
-          </div>
-          <hr style="border:0; border-top:1px solid #eee; margin: 8px 0;">
-          <p style="font-size:0.9em; color:#777; margin-top:5px;">ID Pesanan: ${order.id}</p>
-          <p style="font-weight: 600;">Detail:</p>
-          <ul class="order-items-list">${itemsList}</ul>
-          <div class="order-footer">
-            <span class="order-total">Total: ${formatRupiah(order.total)}</span>
-            <div class="action-buttons">
-              ${order.status === 'Baru' ? `
-                <button onclick="updateOrderStatus(${order.id}, 'Diproses')" class="btn-primary">Proses</button>` : ''}
-              ${order.status === 'Diproses' ? `
-                <button onclick="updateOrderStatus(${order.id}, 'Selesai')" class="btn-success">Selesai</button>` : ''}
-              <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
-            </div>
+          <h4>ID Pesanan: #${order.id.toString().slice(-6)} - ${order.customerName}</h4>
+          <p style="font-size:0.9em; color:#999; margin: 5px 0;">Waktu: ${order.time}</p>
+          <hr style="border:0; border-top:1px dotted #ddd; margin: 5px 0;">
+          ${itemsHtml}
+          <hr style="border:0; border-top:1px dotted #ddd; margin: 5px 0;">
+          <p style="font-weight: 700; color: #068b18;">Total: ${formatRupiah(order.total)}</p>
+          <div class="actions">
+            ${actionsHtml}
+            <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
           </div>
         `;
         targetList.appendChild(card);
@@ -232,7 +226,9 @@
       orders = orders.filter(order => order.id !== id);
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
       loadOrders(); 
+      alert(`Pesanan ID: ${id} berhasil dihapus.`);
     }
-</script>
+  </script>
+
 </body>
 </html>
