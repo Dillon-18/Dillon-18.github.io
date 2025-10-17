@@ -6,11 +6,52 @@
   <title>Pantry - Pemesanan Online</title>
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #D22B2B; /* Merah Maroon/Merah Darah untuk kesan kuat */
+      --color-secondary: #068b18; /* Hijau untuk Lunas/Sukses */
+    }
+    .brand-name, .btn-primary { 
+      color: var(--color-primary); 
+    }
+    .btn-primary { 
+      background-color: var(--color-primary); 
+    }
+    .btn-primary:hover { 
+      background-color: #b02323; 
+    }
+    .payment-status {
+        color: var(--color-primary);
+    }
+    .status-lunas {
+        color: var(--color-secondary) !important;
+    }
+    /* Tambahan style untuk tombol di modal */
+    .modal-button-grid {
+        display:grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px; 
+        margin-top: 20px;
+    }
+    .modal-button-grid button {
+        padding: 12px 10px; 
+        font-size: 1em; 
+        font-weight: 600;
+        border: 1px solid #ddd;
+        background-color: #fff;
+        color: #333;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+    .modal-button-grid button:hover {
+        background-color: #f0f0f0;
+        border-color: var(--color-primary);
+    }
+  </style>
 </head>
 <body>
   <header class="navbar">
     <div class="nav-left">
-      <span class="brand-name">Pantry</span>
+      <span class="brand-name" style="color:var(--color-primary);">Pantry</span>
       <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
     </div>
     <div class="nav-right">
@@ -54,34 +95,19 @@
 
   <footer>© 2025 Pantry — Dibuat dengan ❤️</footer>
 
-  <div id="info-modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal('info')">&times;</span>
-      <h2>Tentang Pantry</h2>
-      <p>Pantry menyediakan makanan dan minuman lezat. Pesan online dan bayar dengan berbagai metode pilihan!</p>
-    </div>
-  </div>
-
-  <div id="contact-modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal('contact')">&times;</span>
-      <h2>Hubungi Kami</h2>
-      <p>📞 <a href="tel:+6287777796610" class="contact-link">+62 877-7779-6610</a></p>
-      <p>💬 <a href="https://wa.me/6287777796610" target="_blank" class="contact-link">Chat via WhatsApp</a></p>
-      <p>📧 <a href="mailto:pantry@gmail.com" class="contact-link">pantry@gmail.com</a></p>
-    </div>
-  </div>
+  <div id="info-modal" class="modal">...</div>
+  <div id="contact-modal" class="modal">...</div>
   
   <div id="method-selection-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('method-selection')">&times;</span>
-      <h2>Pilih Metode Pembayaran</h2>
+      <h2>Pilih Kategori Pembayaran</h2>
       
       <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">
-        <button class="btn-primary" onclick="openDigitalOptions('ewallet')" style="padding: 15px 10px; font-size: 1em; background-color: #ff6347;">
-            E-Wallet (GoPay, OVO, DANA, ShopeePay)
+        <button class="btn-primary" onclick="openDigitalOptions('ewallet')" style="background-color: #ff6347; padding: 15px 10px; font-size: 1em;">
+            E-Wallet (GoPay, OVO, DANA)
         </button>
-        <button class="btn-primary" onclick="openDigitalOptions('transfer')" style="padding: 15px 10px; font-size: 1em; background-color: #068b18;">
+        <button class="btn-primary" onclick="openDigitalOptions('transfer')" style="background-color: #068b18; padding: 15px 10px; font-size: 1em;">
             Transfer Bank (BCA, Mandiri, dll.)
         </button>
       </div>
@@ -92,49 +118,49 @@
   <div id="ewallet-selection-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('ewallet-selection')">&times;</span>
-      <h2>Pilih E-Wallet</h2>
+      <h2>Pilih E-Wallet Tujuan Transfer</h2>
       
-      <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px;">
-        <button class="btn-secondary" onclick="processPayment('GOPAY')" style="padding: 10px 15px; font-size: 0.95em; border: 1px solid #ddd;">GOPAY</button>
-        <button class="btn-secondary" onclick="processPayment('OVO')" style="padding: 10px 15px; font-size: 0.95em; border: 1px solid #ddd;">OVO</button>
-        <button class="btn-secondary" onclick="processPayment('DANA')" style="padding: 10px 15px; font-size: 0.95em; border: 1px solid #ddd;">DANA</button>
-        <button class="btn-secondary" onclick="processPayment('ShopeePay')" style="padding: 10px 15px; font-size: 0.95em; border: 1px solid #ddd;">ShopeePay</button>
-        <button class="btn-secondary" onclick="processPayment('LinkAja')" style="padding: 10px 15px; font-size: 0.95em; border: 1px solid #ddd;">LinkAja</button>
-        </div>
-      <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Anda akan mendapatkan Kode Pembayaran/Virtual Account.</p>
+      <div class="modal-button-grid">
+        <button onclick="processPayment('GOPAY')">GOPAY</button>
+        <button onclick="processPayment('OVO')">OVO</button>
+        <button onclick="processPayment('DANA')">DANA</button>
+        <button onclick="processPayment('ShopeePay')">ShopeePay</button>
+      </div>
+      <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Anda akan mendapatkan kode transfer/VA yang unik.</p>
     </div>
   </div>
 
   <div id="transfer-selection-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('transfer-selection')">&times;</span>
-      <h2>Pilih Bank</h2>
+      <h2>Pilih Bank Tujuan Transfer</h2>
       
-      <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 20px;">
-        <button class="btn-secondary" onclick="processPayment('BCA')" style="padding: 10px 15px; font-size: 0.95em; border: 1px solid #ddd;">BCA</button>
-        <button class="btn-secondary" onclick="processPayment('Mandiri')" style="padding: 10px 15px; font-size: 0.95em; border: 1px solid #ddd;">Mandiri</button>
-        <button class="btn-secondary" onclick="processPayment('BRI')" style="padding: 10px 15px; font-size: 0.95em; border: 1px solid #ddd;">BRI</button>
-        </div>
-      <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Anda akan mendapatkan Kode Virtual Account/Nomor Rekening Tujuan.</p>
+      <div class="modal-button-grid">
+        <button onclick="processPayment('BCA')">BCA Virtual Account</button>
+        <button onclick="processPayment('Mandiri')">Mandiri Virtual Account</button>
+        <button onclick="processPayment('BRI')">BRI Virtual Account</button>
+        <button onclick="processPayment('BNI')">BNI Virtual Account</button>
+      </div>
+      <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Anda akan mendapatkan Kode Virtual Account/Nomor Transfer.</p>
     </div>
   </div>
   
   <div id="payment-detail-modal" class="modal"> 
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('payment-detail')">&times;</span>
-      <h2 id="payment-modal-title">Pembayaran</h2>
+      <h2 id="payment-modal-title" style="color:var(--color-primary);">Rincian Transfer</h2>
       
-      <p>Lakukan transfer ke **Virtual Account** di bawah ini:</p>
+      <p style="font-size: 1.1em; font-weight: 600;">Metode yang dipilih:</p>
+      <p style="font-weight: 700; font-size: 1.5em; color: #068b18; margin-top:-10px;">
+         <span id="payment-method-display"></span>
+      </p>
       
-      <div id="va-content">
-          <img id="va-img" src="codeee.gif" style="width:150px; margin:15px 0; border-radius:10px; display:none;"> <p style="font-weight: 700; font-size: 1.1em;">Metode: <span id="payment-method-display" style="color: #ff6347;"></span></p>
-          <p style="font-weight: 700;">Kode Pembayaran/VA:</p>
-          <p style="font-size: 1.5em; color: #068b18; word-break: break-all;">
-             <b id="payment-code"></b>
-          </p>
-      </div>
+      <p style="font-weight: 700; font-size: 1.1em; margin-top: 20px;">Silakan Transfer ke Virtual Account:</p>
+      <p style="font-size: 1.8em; color: var(--color-primary); word-break: break-all; font-weight: 800; border: 2px dashed #ccc; padding: 10px; border-radius: 8px;">
+         <b id="payment-code"></b>
+      </p>
       
-      <p style="margin-top: 20px;">Tunggu kasir memverifikasi pembayaranmu.</p>
+      <p style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaran Anda.</p>
       <p style="margin-top: 15px; font-weight: bold; color: #ff6347;">Pesanan Terkunci. Tidak bisa diubah.</p>
     </div>
   </div>
@@ -162,7 +188,7 @@
 
     let cart = [];
     let currentPayment = null;
-    let isPaymentInProgress = false; // Status baru untuk mengunci keranjang
+    let isPaymentInProgress = false; 
 
     document.addEventListener('DOMContentLoaded', () => {
       renderMenu();
@@ -188,7 +214,6 @@
         const exist = cart.find(i => i.name === item.name);
         const qty = exist ? exist.qty : 0;
         
-        // Kunci tombol menu jika pembayaran sedang berlangsung
         const disabledAttr = isPaymentInProgress ? 'disabled' : ''; 
 
         const div = document.createElement('div');
@@ -230,24 +255,24 @@
 
       if (cart.length === 0) {
         list.innerHTML = '<li style="color:#999;text-align:center;">Keranjang kosong.</li>';
-        payBtn.disabled = true; // Nonaktifkan tombol Bayar jika keranjang kosong
+        payBtn.disabled = true;
       } else {
         cart.forEach((item, i) => {
           const subtotal = item.price * item.qty;
           total += subtotal;
           list.innerHTML += `<li>${item.name} - Rp${subtotal.toLocaleString('id-ID')} (${item.qty}x)</li>`;
         });
-        payBtn.disabled = isPaymentInProgress; // Nonaktifkan tombol Bayar jika pembayaran sedang diproses
+        payBtn.disabled = isPaymentInProgress; 
       }
 
       const totalRupiah = total.toLocaleString('id-ID');
       checkoutBtn.textContent = (total === 0) ? `Pesan` : `Pesan - Rp${totalRupiah}`;
       
-      const isPaid = document.getElementById('payment-status').textContent.includes('✅');
+      const isPaid = document.getElementById('payment-status').classList.contains('status-lunas');
       checkoutBtn.disabled = (total === 0 || !isPaid);
     }
     
-    // FUNGSI BARU: Membuka modal pilihan kategori utama
+    // FUNGSI 1: Membuka modal pilihan kategori utama
     function openMethodSelection() {
       if (cart.length === 0) return alert("Keranjang kosong!");
       
@@ -259,9 +284,8 @@
       openModal('method-selection');
     }
 
-    // FUNGSI BARU: Membuka modal opsi detail E-Wallet atau TRANSFER
+    // FUNGSI 2: Membuka modal opsi detail E-Wallet atau TRANSFER
     function openDigitalOptions(type) {
-        // Tutup modal utama dan buka modal detail
         closeModal('method-selection'); 
         if (type === 'ewallet') {
             openModal('ewallet-selection');
@@ -271,7 +295,7 @@
     }
 
 
-    // FUNGSI UTAMA: Memproses pembayaran setelah metode SPESIFIK dipilih (DANA, BCA, dll)
+    // FUNGSI 3: Memproses pembayaran setelah metode SPESIFIK dipilih (DANA, BCA, dll)
     function processPayment(methodName) { 
       const name = document.getElementById('customer-name').value.trim();
       
@@ -282,10 +306,12 @@
       
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
       
-      // Buat kode unik (contoh: 3 huruf metode + 5 angka random)
+      // Buat kode Virtual Account/Transfer unik (contoh: VA_BCA_12345)
       const methodCode = methodName.slice(0, 3).toUpperCase();
-      const randomId = Math.floor(10000 + Math.random() * 90000); 
-      const code = "VA" + methodCode + randomId; // Menggunakan VA (Virtual Account)
+      // Kode VA fiktif (Contoh: VA-ID_5 Digit Customer ID_Random 4 Digit)
+      const customerId = Math.floor(10000 + Math.random() * 90000); 
+      const random4Digit = Math.floor(1000 + Math.random() * 9000); 
+      const code = `8888-${methodCode}-${customerId}${random4Digit}`; 
       
       currentPayment = { 
           id: code, 
@@ -293,32 +319,35 @@
           total, 
           cart: [...cart], 
           time: new Date().toLocaleString('id-ID'), 
-          method: methodName, // Menyimpan nama metode spesifik
+          method: methodName, 
           customerName: name 
       };
       isPaymentInProgress = true; 
       
-      renderMenu(); // Kunci tombol +/-
-      updateCart(); // Kunci tombol Bayar
+      renderMenu(); 
+      updateCart(); 
       
       let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
       payments.push(currentPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      // Atur tampilan modal DETAIL PEMBAYARAN
-      document.getElementById('payment-modal-title').textContent = `Pembayaran ${methodName}`;
+      // Atur tampilan modal DETAIL PEMBAYARAN (Transfer/VA)
+      document.getElementById('payment-modal-title').textContent = `Transfer ${methodName}`;
       document.getElementById('payment-method-display').textContent = methodName;
-      document.getElementById('payment-code').textContent = code;
+      document.getElementById('payment-code').textContent = code; // Menampilkan kode VA
       
       // Update status di sidebar
-      document.getElementById('payment-status').textContent = `Menunggu verifikasi pembayaran (${methodName}). 🔒`;
-      document.getElementById('payment-status').style.color = "#ff6347";
+      const statusEl = document.getElementById('payment-status');
+      statusEl.textContent = `Menunggu verifikasi transfer (${methodName}). 🔒`;
+      statusEl.style.color = "var(--color-primary)";
+      statusEl.classList.remove('status-lunas');
 
       // Buka modal detail pembayaran
       openModal('payment-detail');
       document.getElementById('customer-name').disabled = true; // Kunci input nama
     }
 
+    // FUNGSI 4: Memeriksa Status Pembayaran dari Kasir
     function checkPaymentStatus() {
       if (!currentPayment) return;
       
@@ -331,20 +360,19 @@
       if (found && found.status === "paid") {
         // Pembayaran sudah diverifikasi
         paymentStatusEl.textContent = `Sudah dibayar melalui ${found.method} ✅`;
-        paymentStatusEl.style.color = "#068b18";
+        paymentStatusEl.classList.add('status-lunas');
         
-        // Tombol checkout diaktifkan
         const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
         if (total > 0) {
             checkoutBtn.disabled = false;
         }
-        closeModal('payment-detail'); // Tutup modal detail jika sudah lunas
+        closeModal('payment-detail'); // Tutup modal detail
         document.getElementById('customer-name').disabled = false; // Buka input nama
       } else if (found && found.status === "pending") {
          // Pembayaran masih pending, tetap dikunci
          document.getElementById('customer-name').disabled = true;
-         paymentStatusEl.textContent = `Menunggu verifikasi pembayaran (${currentPayment.method}). 🔒`;
-         paymentStatusEl.style.color = "#ff6347";
+         paymentStatusEl.textContent = `Menunggu verifikasi transfer (${currentPayment.method}). 🔒`;
+         paymentStatusEl.classList.remove('status-lunas');
       } else {
         // Jika status hilang/batal, reset
         if(isPaymentInProgress) {
@@ -353,12 +381,14 @@
             renderMenu();
             updateCart();
             paymentStatusEl.textContent = "Belum dibayar ❌";
+            paymentStatusEl.classList.remove('status-lunas');
             paymentStatusEl.style.color = "#555";
             document.getElementById('customer-name').disabled = false;
         }
       }
     }
 
+    // FUNGSI 5: Checkout (Membuat Pesanan)
     function checkout() {
       if (!currentPayment) return alert("Belum ada pembayaran!");
       const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
@@ -376,7 +406,7 @@
         status: 'Baru',
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         paymentId: currentPayment.id,
-        paymentMethod: currentPayment.method // Tambahkan metode pembayaran spesifik
+        paymentMethod: currentPayment.method 
       };
 
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
@@ -394,6 +424,7 @@
       renderMenu(); 
       
       document.getElementById('payment-status').textContent = "Belum dibayar ❌";
+      document.getElementById('payment-status').classList.remove('status-lunas');
       document.getElementById('payment-status').style.color = "#555";
       document.getElementById('customer-name').value = ''; 
       document.getElementById('customer-name').disabled = false;
