@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Khusus Dashboard Pembayaran - Simple Version */
+    /* CSS Khusus Dashboard Pembayaran - Clean Version */
     .container {
       max-width: 1000px;
     }
@@ -32,11 +32,6 @@
         flex-direction: column;
         justify-content: space-between;
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .payment-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
     }
     .payment-card p { margin: 5px 0; }
     .payment-card .pay-total { font-size: 1.3em; color: #068b18; font-weight: 700; }
@@ -49,11 +44,10 @@
         cursor: pointer;
         font-weight: 600;
         margin-top: 10px;
-        transition: background-color 0.3s, transform 0.2s;
+        transition: background-color 0.3s;
     }
     .payment-card button:hover {
         background-color: #b03a2c; 
-        transform: translateY(-2px);
     }
     .payment-status-title {
         border-bottom: 2px solid #d14838; 
@@ -71,14 +65,6 @@
             width: 100%;
             padding: 10px;
             margin: 10px auto;
-        }
-        .navbar {
-            padding: 10px 15px;
-            flex-wrap: wrap;
-        }
-        .nav-right button {
-            padding: 5px 10px;
-            font-size: 0.85em;
         }
     }
   </style>
@@ -158,7 +144,6 @@
                 `<p style="margin:2px 0; font-size:0.9em; color:#555;">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
             ).join('');
 
-            // Keep customer name display
             const customerNameDisplay = payment.customerName ? 
                 `<p style="margin:0; font-weight:700; color:#068b18;">Pelanggan: ${payment.customerName}</p>` : 
                 '';
