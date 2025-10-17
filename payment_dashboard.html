@@ -25,7 +25,7 @@
     }
     .payment-card {
         background: #ffffff;
-        border: 1px solid #d14838; /* Border warna primer baru */
+        border: 1px solid #d14838; /* Border warna primer */
         padding: 15px;
         border-radius: 8px;
         display: flex;
@@ -41,7 +41,7 @@
     .payment-card p { margin: 5px 0; }
     .payment-card .pay-total { font-size: 1.3em; color: #068b18; font-weight: 700; }
     .payment-card button {
-        background-color: #d14838; /* Warna primer baru */
+        background-color: #d14838; 
         color: white; 
         padding: 8px 15px; 
         border: none; 
@@ -52,35 +52,25 @@
         transition: background-color 0.3s, transform 0.2s;
     }
     .payment-card button:hover {
-        background-color: #b03a2c; /* Warna lebih gelap saat hover */
+        background-color: #b03a2c; 
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(209, 72, 56, 0.3);
     }
     .payment-status-title {
-        border-bottom: 2px solid #d14838; /* Warna primer baru */
+        border-bottom: 2px solid #d14838; 
         padding-bottom: 8px; 
-        color: #d14838; /* Diubah menjadi warna primer */
+        color: #d14838; 
         margin-top: 0;
     }
 
-    /* === Responsif Tambahan === */
+    /* === Responsif Tambahan untuk Dashboard Kasir === */
     @media (max-width: 600px) {
         .payment-list {
-            /* Di layar kecil, tampilkan 1 kolom saja */
             grid-template-columns: 1fr;
         }
         .container {
             width: 100%;
             padding: 10px;
             margin: 10px auto;
-        }
-        .navbar {
-            padding: 10px 15px;
-            flex-wrap: wrap;
-        }
-        .nav-right button {
-            padding: 5px 10px;
-            font-size: 0.85em;
         }
     }
   </style>
@@ -150,7 +140,6 @@
     
     function loadPayments() {
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        // Hanya tampilkan pembayaran dengan status 'pending'
         const pendingPayments = payments.filter(p => p.status === 'pending');
         
         const listEl = document.getElementById('payment-verification-list');
@@ -168,7 +157,7 @@
 
             // Tampilkan nama pelanggan
             const customerNameDisplay = payment.customerName ? 
-                `<p style="margin:0; font-weight:700; color:#068b18;">Nama Pelanggan: ${payment.customerName}</p>` : 
+                `<p style="margin:0; font-weight:700; color:#068b18;">Pelanggan: ${payment.customerName}</p>` : 
                 '';
             
             const methodDisplay = payment.method ? `<p style="font-weight: 600; color: #d14838;">Metode: ${payment.method}</p>` : '';
@@ -177,7 +166,7 @@
             div.className = 'payment-card';
             div.innerHTML = `
                 ${customerNameDisplay}
-                <p style="margin:0; font-weight:700;">Kode Pembayaran:</p>
+                <p style="margin:0; font-weight:700; margin-top: 5px;">Kode Pembayaran:</p>
                 <p style="margin:0; color:#d14838; font-size:1.1em; word-break: break-all;"><b>${payment.id}</b></p>
                 ${methodDisplay} <hr style="border:0; border-top:1px dotted #ccc;">
                 <p style="font-weight: 600;">Detail Pesanan:</p>
@@ -203,7 +192,7 @@
             payments[paymentIndex].status = "paid";
             localStorage.setItem('pantryPayments', JSON.stringify(payments));
             alert(`Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa checkout.`);
-            loadPayments(); // Muat ulang daftar pembayaran
+            loadPayments(); 
         }
     }
     
