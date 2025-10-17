@@ -19,65 +19,6 @@
         margin-bottom: 30px;
     }
 
-    /* === Status Stepper === */
-    .status-stepper {
-        display: flex;
-        justify-content: space-between;
-        margin: 30px 0 60px 0;
-        position: relative;
-    }
-
-    .stepper-line {
-        position: absolute;
-        top: 15px;
-        left: 5%;
-        width: 90%;
-        height: 4px;
-        background-color: #ddd;
-        z-index: 1;
-    }
-
-    .stepper-step {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 30%;
-        position: relative;
-        z-index: 2;
-    }
-
-    .stepper-circle {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        background-color: #ddd;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        margin-bottom: 10px;
-        transition: background-color 0.3s, transform 0.2s;
-        border: 2px solid #ddd;
-    }
-    
-    .stepper-step.active .stepper-circle {
-        background-color: #068b18; /* Hijau */
-        border-color: #046e12;
-        transform: scale(1.1);
-        box-shadow: 0 4px 8px rgba(6, 139, 24, 0.3);
-    }
-
-    .stepper-step.active span {
-        font-weight: 600;
-        color: #333;
-    }
-    
-    .stepper-step.done .stepper-circle {
-        background-color: #068b18; /* Hijau */
-        border-color: #046e12;
-    }
-
     /* === Order Card === */
     .order-card {
         background-color: #ffffff;
@@ -145,27 +86,12 @@
   <div class="container">
     <h1>Status Pesanan Anda</h1>
     
-    <div class="status-stepper">
-        <div class="stepper-line"></div>
-        <div class="stepper-step" id="step-Baru">
-            <div class="stepper-circle">1</div>
-            <span>Pesanan Baru</span>
-        </div>
-        <div class="stepper-step" id="step-Diproses">
-            <div class="stepper-circle">2</div>
-            <span>Diproses Dapur</span>
-        </div>
-        <div class="stepper-step" id="step-Selesai">
-            <div class="stepper-circle">3</div>
-            <span>Siap Diambil</span>
-        </div>
-    </div>
-
     <div id="order-details-container">
         <div class="alert-box">
             <p id="alert-message">Memuat status pesanan...</p>
         </div>
     </div>
+    
   </div>
 
   <footer>
@@ -178,74 +104,73 @@
         return `Rp${number.toLocaleString('id-ID')}`;
     }
 
+    // Panggil saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', loadOrderStatus);
+
     function loadOrderStatus() {
         const lastOrderId = localStorage.getItem('pantryLastOrderId');
         const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-        const order = orders.find(o => o.id == lastOrderId);
+        // Mencari pesanan aktif berdasarkan ID terakhir yang disimpan
+        const order = orders.find(o => o.id == lastOrderId); 
         const container = document.getElementById('order-details-container');
-        const alertMessage = document.getElementById('alert-message');
 
         if (!lastOrderId || !order) {
-            alertMessage.textContent = "Anda belum memiliki pesanan aktif. Silakan pesan dari halaman Menu.";
+            container.innerHTML = `
+                <div class="alert-box">
+                    <p>Anda belum memiliki pesanan aktif. Silakan pesan dari halaman Menu.</p>
+                </div>
+            `;
             return;
         }
 
-        // 1. Render Detail Pesanan
         let itemsListHtml = '';
         order.items.forEach(item => {
             itemsListHtml += `
                 <div class="order-item">
-                    <span>${item.name} (x${item.qty})</span>
+                    <span>${item.qty}x ${item.name}</span>
                     <span>${formatRupiah(item.price * item.qty)}</span>
                 </div>
             `;
         });
+        
+        // Tentukan warna status
+        let statusColor;
+        if (order.status === 'Selesai') {
+            statusColor = '#068b18'; // Hijau
+        } else if (order.status === 'Diproses') {
+            statusColor = '#f7b000'; // Kuning
+        } else {
+            statusColor = '#ff6347'; // Merah/Baru
+        }
 
+        // Render Detail Pesanan
         container.innerHTML = `
             <div class="order-card">
-                <h2>ID Pesanan: <span style="color: #ff6347;">#${order.id.toString().slice(-6)}</span></h2>
                 <div class="order-summary">
+                    <p>ID Pesanan: <span>#${order.id.toString().slice(-6)}</span></p>
                     <p>Nama Pelanggan: <span>${order.customerName}</span></p>
-                    <p>Waktu Pesan: <span>${order.time}</span></p>
-                    <p>Status Pembayaran: <span style="color: #068b18;">Lunas</span></p>
+                    <p>Waktu Pesanan: <span>${order.time}</span></p>
+                    <p>Status Saat Ini: <span style="font-size:1.1em; color:${statusColor}">${order.status.toUpperCase()}</span></p>
                 </div>
                 
-                <h3>Daftar Item:</h3>
+                <h3 style="margin-top: 20px;">Item Pesanan</h3>
                 <div class="item-list">
                     ${itemsListHtml}
                 </div>
+
+                <p class="order-total">
+                    Total Bayar: ${formatRupiah(order.total)}
+                </p>
                 
-                <p class="order-total">Total Bayar: ${formatRupiah(order.total)}</p>
+                <p style="text-align: center; margin-top: 30px; font-style: italic; color: #555;">
+                    ${order.status === 'Selesai' 
+                        ? '✅ Pesanan Anda sudah **SIAP DIAMBIL**! Silakan menuju kasir.'
+                        : `⏳ Pesanan Anda saat ini berstatus **${order.status.toUpperCase()}**. Mohon tunggu konfirmasi dari Dapur.`
+                    }
+                </p>
             </div>
         `;
-
-        // 2. Update Status Stepper
-        const statuses = ['Baru', 'Diproses', 'Selesai'];
-        let currentStatusFound = false;
-
-        statuses.forEach(status => {
-            const stepEl = document.getElementById(`step-${status}`);
-            
-            // Tandai langkah yang sudah selesai (Done)
-            if (currentStatusFound) {
-                stepEl.classList.remove('active');
-            } else if (order.status === status) {
-                // Tandai langkah saat ini (Active)
-                stepEl.classList.add('active');
-                stepEl.classList.remove('done');
-                currentStatusFound = true; 
-            } else if (!currentStatusFound) {
-                // Tandai langkah yang sudah dilalui
-                stepEl.classList.add('done');
-            } else {
-                // Langkah yang belum dilalui
-                stepEl.classList.remove('active', 'done');
-            }
-        });
     }
-
-    // Panggil fungsi saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', loadOrderStatus);
   </script>
 
 </body>
