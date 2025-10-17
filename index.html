@@ -76,28 +76,35 @@
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('payment')">&times;</span>
       <h2>Pilih Metode Pembayaran</h2>
-      <p style="margin-bottom: 20px;">Total Pesanan: <b id="payment-total-display" style="color: #ff6347;"></b></p>
+      <p style="margin-bottom: 5px; font-size: 1.1em;">Total Pesanan:</p>
+      <h3 id="payment-total-display" style="color: #d14838; margin: 0 0 20px 0; font-size: 2em;"></h3>
       
-      <div id="payment-options" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
+      <div id="payment-options">
           </div>
       
-      <p style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
+      <p style="margin-top: 25px; font-size: 0.85em; color:#888;">*Pastikan nama pelanggan sudah diisi di halaman utama.</p>
     </div>
   </div>
-  
+
   <div id="transfer-detail-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('transfer-detail')">&times;</span>
-      <h2>Detail Transfer</h2>
-      <p style="margin-bottom: 10px;">Total yang harus dibayar: <b id="transfer-total-display" style="color: #ff6347;"></b></p>
-      <p>Transfer ke rekening:</p>
-      <div style="background:#f0f0f0; padding:15px; border-radius:8px; margin:10px 0;">
-        <p style="font-weight:600; margin:5px 0;">Bank BCA</p>
-        <p style="font-size:1.5em; font-weight:700; color:#004A99; margin:5px 0;">8899 1234 567</p>
-        <p style="font-size:0.9em; margin:5px 0;">A.N. Pantry Jaya Sentosa</p>
+      <h2>Transfer Bank (BCA)</h2>
+      <p style="margin-bottom: 10px;">Total yang harus dibayar:</p>
+      <h3 id="transfer-total-display" style="color: #068b18; margin: 0 0 15px 0; font-size: 2em;"></h3>
+      
+      <div class="transfer-info-box">
+        <p class="bank-name">Bank BCA</p>
+        <p class="account-number" id="bca-account-number">8899 1234 567</p>
+        <p class="account-holder">A.N. Pantry Jaya Sentosa</p>
       </div>
-      <p style="font-size:0.8em; color:#888;">*Pastikan total pembayaran Anda akurat, lalu segera konfirmasi transfer Anda.</p>
-      <button onclick="confirmTransfer()" class="btn-primary" style="margin-top:15px;">Saya Sudah Transfer</button>
+      
+      <p style="font-size:0.85em; color:#555; margin-top:20px;">
+        *Silakan transfer sejumlah **tepat** di atas. Pembayaran akan diverifikasi oleh kasir setelah transfer dilakukan.
+      </p>
+      <button onclick="confirmTransfer()" class="btn-primary" style="margin-top:20px; padding: 12px 30px;">
+        Saya Sudah Transfer dan Konfirmasi
+      </button>
     </div>
   </div>
 
@@ -123,7 +130,7 @@
     ];
 
     const paymentMethods = [
-      { name: 'Transfer Bank (BCA)', type: 'transfer', color: '#004A99' }, // Bank Transfer
+      { name: 'Transfer Bank (BCA)', type: 'transfer', color: '#004A99' }, 
       { name: 'GoPay (QRIS)', type: 'ewallet', color: '#00A389' },
       { name: 'ShopeePay (QRIS)', type: 'ewallet', color: '#FF5733' },
       { name: 'Dana (QRIS)', type: 'ewallet', color: '#1B72E5' },
@@ -135,14 +142,14 @@
     document.addEventListener('DOMContentLoaded', () => {
       renderMenu();
       updateCart();
-      setInterval(checkPaymentStatus, 2000); // cek tiap 2 detik
+      setInterval(checkPaymentStatus, 2000); 
     });
 
     function redirectToCashier() {
       const pass = prompt("Masukkan password kasir:");
       if (pass === "kasir123") {
         sessionStorage.setItem("cashierAuth", "true");
-        window.location.href = "payment_dashboard.html"; // Mengarahkan ke payment_dashboard
+        window.location.href = "payment_dashboard.html"; 
       } else if (pass) alert("Password salah!");
     }
 
@@ -200,11 +207,9 @@
         });
       }
 
-      // Update teks tombol Pesan dengan Total
       const totalRupiah = total.toLocaleString('id-ID');
       checkoutBtn.textContent = (total === 0) ? `Pesan` : `Pesan - Rp${totalRupiah}`;
       
-      // Disable tombol Pesan jika keranjang kosong ATAU belum dibayar
       const isPaid = document.getElementById('payment-status').textContent.includes('✅');
       checkoutBtn.disabled = (total === 0 || !isPaid);
     }
@@ -222,19 +227,14 @@
       
       paymentMethods.forEach(method => {
           const btn = document.createElement('button');
-          btn.textContent = `Bayar dengan ${method.name}`;
+          btn.textContent = method.name;
+          
+          btn.className = 'payment-btn-custom'; 
           btn.style.cssText = `
               background-color: ${method.color};
               color: white;
-              padding: 12px;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              font-weight: 600;
-              transition: opacity 0.2s;
           `;
-          btn.onmouseover = () => btn.style.opacity = '0.9';
-          btn.onmouseout = () => btn.style.opacity = '1';
+          
           btn.onclick = () => selectPaymentMethod(method.name, total, customerName, method.type);
           optionsEl.appendChild(btn);
       });
@@ -243,10 +243,8 @@
     }
 
     function selectPaymentMethod(methodName, total, customerName, methodType) {
-      // Tutup modal pilihan
       closeModal('payment');
       
-      // Buat data pembayaran baru
       const code = "PAY" + Date.now();
       currentPayment = { 
           id: code, 
@@ -255,20 +253,17 @@
           cart: [...cart], 
           time: new Date().toLocaleString('id-ID'),
           method: methodName,
-          customerName: customerName // Tambahkan nama pelanggan
+          customerName: customerName
       };
 
       if (methodType === 'transfer') {
-        // Tampilkan modal detail transfer
         document.getElementById('transfer-total-display').textContent = 'Rp' + total.toLocaleString('id-ID');
         document.getElementById('transfer-detail-modal').style.display = 'block';
       } else {
-        // Untuk QRIS/e-wallet, langsung simpan dan beri notifikasi
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
         payments.push(currentPayment);
         localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-        // Tampilkan notifikasi kepada pelanggan
         alert(`Anda memilih ${methodName}. Total: Rp${total.toLocaleString('id-ID')}.\n\nSilakan scan QRIS lalu tunggu kasir memverifikasi pembayaran Anda.`);
       }
     }
@@ -278,12 +273,11 @@
       
       if (!currentPayment) return alert("Terjadi kesalahan, silakan coba lagi.");
 
-      // Simpan pembayaran yang tertunda ke localStorage setelah konfirmasi
       let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
       payments.push(currentPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      alert(`Pembayaran Transfer Bank BCA sebesar Rp${currentPayment.total.toLocaleString('id-ID')} atas nama ${currentPayment.customerName} telah dicatat.\n\nMohon tunggu kasir memverifikasi transfer Anda.`);
+      alert(`Pembayaran Transfer Bank BCA sebesar Rp${currentPayment.total.toLocaleString('id-ID')} atas nama ${currentPayment.customerName} telah dicatat. Mohon tunggu kasir memverifikasi transfer Anda.`);
     }
 
     function checkPaymentStatus() {
@@ -296,8 +290,6 @@
       
       if (found && found.status === "paid") {
         paymentStatusEl.textContent = `Sudah dibayar melalui ${found.method} ✅`;
-        
-        // Hanya enable jika total > 0 (diperiksa lagi di updateCart)
         const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
         if (total > 0) {
             checkoutBtn.disabled = false;
