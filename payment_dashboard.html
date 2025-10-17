@@ -86,14 +86,14 @@
   <div class="container">
     
     <div class="payment-dashboard-container">
-        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi (Transfer/E-Wallet)</h2>
+        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi (Tunai, Transfer & E-Wallet)</h2>
         <div class="payment-list" id="payment-verification-list">
             <p style="text-align: center; color: #999;">Memuat data...</p>
         </div>
     </div>
 
     <div class="payment-dashboard-container" style="margin-top: 30px;">
-        <h2 class="payment-status-title" style="color: #068b18; border-bottom: 2px solid #068b18;">✅ Riwayat Pembayaran Selesai (Termasuk Tunai)</h2>
+        <h2 class="payment-status-title" style="color: #068b18; border-bottom: 2px solid #068b18;">✅ Riwayat Pembayaran Selesai</h2>
         <div class="payment-list" id="payment-completed-list">
             <p style="text-align: center; color: #999;">Memuat data...</p>
         </div>
@@ -175,7 +175,7 @@
         pendingListEl.innerHTML = ''; 
         completedListEl.innerHTML = '';
         
-        // 1. RENDER PEMBAYARAN PENDING (TRANSFER/E-WALLET)
+        // 1. RENDER PEMBAYARAN PENDING (TUNAI, TRANSFER/E-WALLET)
         if (pendingPayments.length === 0) {
             pendingListEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center; grid-column: 1 / -1;">Tidak ada pembayaran yang menunggu verifikasi.</p>';
         } else {
@@ -184,7 +184,7 @@
             });
         }
         
-        // 2. RENDER PEMBAYARAN SELESAI (TERMASUK TUNAI)
+        // 2. RENDER PEMBAYARAN SELESAI
         if (completedPayments.length === 0) {
             completedListEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center; grid-column: 1 / -1;">Belum ada pembayaran yang diselesaikan.</p>';
         } else {
