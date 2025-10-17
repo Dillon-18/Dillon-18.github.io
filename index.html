@@ -58,7 +58,7 @@
     <div class="modal-content">
       <span class="close" onclick="closeModal('info')">&times;</span>
       <h2>Tentang Pantry</h2>
-      <p>Pantry menyediakan makanan dan minuman lezat. Sekarang kamu bisa pesan online dan bayar lewat QR!</p>
+      <p>Pantry menyediakan makanan dan minuman lezat. Pesan online dan bayar dengan pilihan e-wallet, kartu, atau tunai!</p>
     </div>
   </div>
 
@@ -76,16 +76,42 @@
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('method-selection')">&times;</span>
       <h2>Pilih Metode Pembayaran</h2>
-      <p>Silakan pilih metode yang Anda inginkan:</p>
-      <div style="display:flex; flex-direction: column; gap: 10px; margin-top: 20px;">
-        <button class="btn-primary" onclick="processPayment('QRIS (All E-Wallet)')" style="background-color: #2a3a5b; padding: 10px 20px;">
-            💳 QRIS (GoPay, DANA, ShopeePay, dll)
+      
+      <h4 style="margin-bottom: 5px; color: #333;">E-Wallet (via QRIS)</h4>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+        <button class="btn-primary" onclick="processPayment('DANA (QRIS)')" style="background-color: #108EE9; padding: 10px 15px; font-size: 0.95em;">
+            🔵 DANA
         </button>
-        <button class="btn-primary" onclick="processPayment('Tunai (Cash)')" style="background-color: #068b18; padding: 10px 20px;">
-            💰 Bayar Tunai di Kasir
+        <button class="btn-primary" onclick="processPayment('OVO (QRIS)')" style="background-color: #4C2F95; padding: 10px 15px; font-size: 0.95em;">
+            🟣 OVO
+        </button>
+        <button class="btn-primary" onclick="processPayment('ShopeePay (QRIS)')" style="background-color: #F87727; padding: 10px 15px; font-size: 0.95em;">
+            🟠 ShopeePay
+        </button>
+        <button class="btn-primary" onclick="processPayment('LinkAja (QRIS)')" style="background-color: #F60; padding: 10px 15px; font-size: 0.95em;">
+            🔴 LinkAja
         </button>
       </div>
-      <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Pembayaran QRIS akan menampilkan kode QR untuk di-scan.</p>
+
+      <hr style="border:0; border-top:1px dashed #ccc; margin: 15px 0;">
+
+      <h4 style="margin-bottom: 5px; color: #333;">Transfer & Kartu (via QRIS)</h4>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="btn-primary" onclick="processPayment('Transfer BCA (QRIS)')" style="background-color: #004D99; padding: 10px 15px; font-size: 0.95em;">
+            🟦 Transfer BCA
+        </button>
+        <button class="btn-primary" onclick="processPayment('VISA/Debit (QRIS)')" style="background-color: #1A1F71; padding: 10px 15px; font-size: 0.95em;">
+            💳 VISA/Debit
+        </button>
+      </div>
+
+      <hr style="border:0; border-top:1px solid #ccc; margin: 15px 0;">
+
+      <button class="btn-primary" onclick="processPayment('Tunai (Cash)')" style="background-color: #068b18; padding: 10px 20px;">
+          💰 Bayar Tunai di Kasir
+      </button>
+
+      <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Opsi QRIS akan menampilkan kode QR untuk di-scan.</p>
     </div>
   </div>
   
@@ -94,7 +120,7 @@
       <span class="close" onclick="closeModal('payment')">&times;</span>
       <h2 id="payment-modal-title">Pembayaran</h2>
       
-      <div id="qr-content">
+      <div id="qr-content" style="display:none;">
           <p>Scan QR Code untuk membayar:</p>
           <img id="qr-img" src="codeee.gif" style="width:200px; margin:15px 0; border-radius:10px;">
           <p>Kode Pembayaran: <b id="payment-code"></b></p>
@@ -103,7 +129,7 @@
           <p style="font-size: 1.1em; font-weight: 600;">Silakan serahkan uang tunai Anda ke kasir.</p>
           <p>Kasir akan memverifikasi dan menyelesaikan pesanan Anda.</p>
       </div>
-
+      
       <p>Tunggu kasir memverifikasi pembayaranmu.</p>
       <p style="margin-top: 15px; font-weight: bold; color: #d14838;">Pesanan Terkunci. Tidak bisa diubah.</p>
     </div>
@@ -201,26 +227,25 @@
 
       if (cart.length === 0) {
         list.innerHTML = '<li style="color:#999;text-align:center;">Keranjang kosong.</li>';
+        payBtn.disabled = true;
       } else {
         cart.forEach((item, i) => {
           const subtotal = item.price * item.qty;
           total += subtotal;
           list.innerHTML += `<li>${item.name} - Rp${subtotal.toLocaleString('id-ID')} (${item.qty}x)</li>`;
         });
+        payBtn.disabled = isPaymentInProgress; // Hanya disable jika pembayaran sedang berlangsung
       }
 
       const totalRupiah = total.toLocaleString('id-ID');
       checkoutBtn.textContent = (total === 0) ? `Pesan` : `Pesan - Rp${totalRupiah}`;
-      
-      // Update status tombol bayar
-      payBtn.disabled = (total === 0 || isPaymentInProgress);
       
       // Disable tombol Pesan jika keranjang kosong ATAU belum dibayar
       const isPaid = document.getElementById('payment-status').textContent.includes('✅');
       checkoutBtn.disabled = (total === 0 || !isPaid);
     }
     
-    // FUNGSI BARU: Membuka modal pilihan metode (QRIS/Tunai)
+    // FUNGSI BARU: Membuka modal pilihan metode (E-Wallet/Kartu/Tunai)
     function openMethodSelection() {
       if (cart.length === 0) return alert("Keranjang kosong!");
       
@@ -232,7 +257,7 @@
     }
 
     // FUNGSI BARU: Memproses pembayaran setelah metode dipilih
-    function processPayment(methodName) {
+    function processPayment(methodName) { 
       const name = document.getElementById('customer-name').value.trim();
       
       closeModal('method-selection'); // Tutup modal pilihan metode
@@ -261,17 +286,20 @@
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
       // Atur tampilan modal sesuai metode
-      document.getElementById('payment-modal-title').textContent = `Pembayaran ${methodName}`;
+      const isDigital = methodName.includes('QRIS') || methodName.includes('Transfer');
+      document.getElementById('payment-modal-title').textContent = `Pembayaran ${isDigital ? 'QRIS' : 'Tunai'}`;
       const qrContent = document.getElementById('qr-content');
       const cashContent = document.getElementById('cash-content');
 
-      if (methodName.includes('QRIS')) {
+      if (isDigital) {
+          // E-wallet / Kartu / Transfer (Semua menggunakan QR Code Tunggal)
           qrContent.style.display = 'block';
           cashContent.style.display = 'none';
           document.getElementById('qr-img').src =
             `https://api.qrserver.com/v1/create-qr-code/?data=${code}&size=200x200`;
           document.getElementById('payment-code').textContent = code;
       } else if (methodName === 'Tunai (Cash)') {
+          // Tunai
           qrContent.style.display = 'none';
           cashContent.style.display = 'block';
       }
@@ -298,7 +326,7 @@
         paymentStatusEl.textContent = `Sudah dibayar melalui ${found.method} ✅`;
         paymentStatusEl.style.color = "#068b18";
         
-        // Tombol checkout diaktifkan, tapi isPaymentInProgress tetap TRUE
+        // Tombol checkout diaktifkan
         const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
         if (total > 0) {
             checkoutBtn.disabled = false;
