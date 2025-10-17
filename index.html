@@ -77,19 +77,19 @@
       <span class="close" onclick="closeModal('method-selection')">&times;</span>
       <h2>Pilih Metode Pembayaran</h2>
       
-      <h4 style="margin-bottom: 5px; color: #333;">E-Wallet (via QRIS)</h4>
+      <h4 style="margin-bottom: 5px; color: #333; margin-top: 15px;">E-Wallet (via QRIS)</h4>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-        <button class="btn-primary" onclick="processPayment('DANA (QRIS)')" style="background-color: #108EE9; padding: 10px 15px; font-size: 0.95em;">
-            🔵 DANA
+        <button class="btn-primary" onclick="processPayment('DANA (QRIS)')" style="padding: 10px 15px; font-size: 0.95em;">
+            DANA
         </button>
-        <button class="btn-primary" onclick="processPayment('OVO (QRIS)')" style="background-color: #4C2F95; padding: 10px 15px; font-size: 0.95em;">
-            🟣 OVO
+        <button class="btn-primary" onclick="processPayment('OVO (QRIS)')" style="padding: 10px 15px; font-size: 0.95em;">
+            OVO
         </button>
-        <button class="btn-primary" onclick="processPayment('ShopeePay (QRIS)')" style="background-color: #F87727; padding: 10px 15px; font-size: 0.95em;">
-            🟠 ShopeePay
+        <button class="btn-primary" onclick="processPayment('ShopeePay (QRIS)')" style="padding: 10px 15px; font-size: 0.95em;">
+            ShopeePay
         </button>
-        <button class="btn-primary" onclick="processPayment('LinkAja (QRIS)')" style="background-color: #F60; padding: 10px 15px; font-size: 0.95em;">
-            🔴 LinkAja
+        <button class="btn-primary" onclick="processPayment('LinkAja (QRIS)')" style="padding: 10px 15px; font-size: 0.95em;">
+            LinkAja
         </button>
       </div>
 
@@ -97,27 +97,27 @@
 
       <h4 style="margin-bottom: 5px; color: #333;">Transfer & Kartu (via QRIS)</h4>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <button class="btn-primary" onclick="processPayment('Transfer BCA (QRIS)')" style="background-color: #004D99; padding: 10px 15px; font-size: 0.95em;">
-            🟦 Transfer BCA
+        <button class="btn-primary" onclick="processPayment('Transfer BCA (QRIS)')" style="padding: 10px 15px; font-size: 0.95em;">
+            Transfer BCA
         </button>
-        <button class="btn-primary" onclick="processPayment('VISA/Debit (QRIS)')" style="background-color: #1A1F71; padding: 10px 15px; font-size: 0.95em;">
-            💳 VISA/Debit
+        <button class="btn-primary" onclick="processPayment('VISA/Debit (QRIS)')" style="padding: 10px 15px; font-size: 0.95em;">
+            VISA/Debit
         </button>
       </div>
 
       <hr style="border:0; border-top:1px solid #ccc; margin: 15px 0;">
 
       <button class="btn-primary" onclick="processPayment('Tunai (Cash)')" style="background-color: #068b18; padding: 10px 20px;">
-          💰 Bayar Tunai di Kasir
+          Bayar Tunai
       </button>
 
       <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Opsi QRIS akan menampilkan kode QR untuk di-scan.</p>
     </div>
   </div>
   
-  <div id="payment-modal" class="modal">
+  <div id="payment-detail-modal" class="modal"> 
     <div class="modal-content" style="text-align:center;">
-      <span class="close" onclick="closeModal('payment')">&times;</span>
+      <span class="close" onclick="closeModal('payment-detail')">&times;</span>
       <h2 id="payment-modal-title">Pembayaran</h2>
       
       <div id="qr-content" style="display:none;">
@@ -252,7 +252,9 @@
       // Periksa Nama Pelanggan sebelum membuka modal
       const name = document.getElementById('customer-name').value.trim();
       if (!name) return alert("Masukkan nama Anda sebelum memulai pembayaran!");
-      
+
+      // Tutup modal lama (jika ada) dan buka modal pilihan
+      closeModal('payment');
       openModal('method-selection');
     }
 
@@ -285,9 +287,9 @@
       payments.push(currentPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      // Atur tampilan modal sesuai metode
-      const isDigital = methodName.includes('QRIS') || methodName.includes('Transfer');
-      document.getElementById('payment-modal-title').textContent = `Pembayaran ${isDigital ? 'QRIS' : 'Tunai'}`;
+      // Atur tampilan modal DETAIL PEMBAYARAN sesuai metode
+      const isDigital = methodName.includes('QRIS') || methodName.includes('Transfer') || methodName.includes('VISA/Debit');
+      document.getElementById('payment-modal-title').textContent = `Pembayaran ${isDigital ? 'Digital/Transfer' : 'Tunai'}`;
       const qrContent = document.getElementById('qr-content');
       const cashContent = document.getElementById('cash-content');
 
@@ -308,7 +310,8 @@
       document.getElementById('payment-status').textContent = `Menunggu verifikasi pembayaran (${methodName}). 🔒`;
       document.getElementById('payment-status').style.color = "#d14838";
 
-      document.getElementById('payment-modal').style.display = 'block';
+      // Buka modal detail pembayaran
+      openModal('payment-detail');
       document.getElementById('customer-name').disabled = true; // Kunci input nama
     }
 
@@ -331,7 +334,7 @@
         if (total > 0) {
             checkoutBtn.disabled = false;
         }
-        closeModal('payment'); // Tutup modal jika sudah lunas
+        closeModal('payment-detail'); // Tutup modal detail jika sudah lunas
         document.getElementById('customer-name').disabled = false; // Buka input nama
       } else if (found && found.status === "pending") {
          // Pembayaran masih pending, tetap dikunci
