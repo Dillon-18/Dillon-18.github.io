@@ -155,15 +155,30 @@
       } else if (pass) alert("Password salah!");
     }
 
+    // --- FUNGSI BARU UNTUK KEAMANAN ---
+    function isPaymentVerified() {
+      if (!currentPayment) return false;
+      const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+      const found = payments.find(p => p.id === currentPayment.id);
+      // Pembayaran dianggap terverifikasi jika statusnya "paid"
+      return found && found.status === "paid";
+    }
+    // ------------------------------------
+
     function renderMenu() {
       const makanan = document.getElementById('menu-makanan');
       const minuman = document.getElementById('menu-minuman');
       makanan.innerHTML = '';
       minuman.innerHTML = '';
 
+      const paymentVerified = isPaymentVerified(); // Cek status pembayaran
+
       menuData.forEach(item => {
         const exist = cart.find(i => i.name === item.name);
         const qty = exist ? exist.qty : 0;
+
+        // Tambahkan atribut 'disabled' jika pembayaran sudah diverifikasi
+        const disabledAttr = paymentVerified ? 'disabled' : '';
 
         const div = document.createElement('div');
         div.className = 'menu-item';
@@ -174,9 +189,9 @@
             <div class="menu-price">Rp${item.price.toLocaleString('id-ID')}</div>
           </div>
           <div class="menu-actions">
-            <button class="btn-qty" onclick="changeMenuQty('${item.name}', ${item.price}, -1)">-</button>
+            <button class="btn-qty" onclick="changeMenuQty('${item.name}', ${item.price}, -1)" ${disabledAttr}>-</button>
             <div class="qty-display">${qty}</div>
-            <button class="btn-qty btn-plus" onclick="changeMenuQty('${item.name}', ${item.price}, 1)">+</button>
+            <button class="btn-qty btn-plus" onclick="changeMenuQty('${item.name}', ${item.price}, 1)" ${disabledAttr}>+</button>
           </div>`;
         if (item.category === 'makanan') makanan.appendChild(div);
         else minuman.appendChild(div);
@@ -184,11 +199,19 @@
     }
 
     function changeMenuQty(name, price, delta) {
+      // --- LAPISAN KEAMANAN LOGIKA ---
+      if (isPaymentVerified()) {
+        alert("⚠️ Pesanan tidak bisa diubah setelah pembayaran terverifikasi! Silakan tekan tombol 'Pesan' untuk menyelesaikan transaksi ini atau mulai ulang.");
+        return; 
+      }
+      // --------------------------------
+
       const exist = cart.find(i => i.name === name);
       if (exist) {
         exist.qty += delta;
         if (exist.qty <= 0) cart = cart.filter(i => i.name !== name);
       } else if (delta > 0) cart.push({ name, price, qty: 1 });
+      
       updateCart();
       renderMenu();
     }
@@ -220,6 +243,8 @@
 
     function openPaymentModal() {
       if (cart.length === 0) return alert("Keranjang kosong!");
+      if (isPaymentVerified()) return alert("⚠️ Pembayaran sudah diverifikasi! Harap tekan tombol 'Pesan' untuk menyelesaikan pesanan.");
+
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
       
       document.getElementById('payment-total-display').textContent = 'Rp' + total.toLocaleString('id-ID');
@@ -256,7 +281,7 @@
       // Cari detail metode
       const method = paymentMethods.find(m => m.name === methodName);
       
-      // Buat data pembayaran baru
+      // Buat data pembayaran baru (status: pending)
       const code = "PAY" + Date.now();
       currentPayment = { 
           id: code, 
@@ -291,7 +316,10 @@
       if (found && found.status === "paid") {
         paymentStatusEl.textContent = `Sudah dibayar melalui ${found.method} ✅`; 
         
-        // Hanya enable jika total > 0 (diperiksa lagi di updateCart)
+        // Memastikan tombol menu dinonaktifkan setelah paid
+        renderMenu();
+        
+        // Hanya enable checkout jika total > 0 
         const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
         if (total > 0) {
             checkoutBtn.disabled = false;
@@ -318,7 +346,7 @@
         total: cart.reduce((s, i) => s + i.price * i.qty, 0),
         status: 'Baru',
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-        paymentId: currentPayment.id // Tambahkan kode pembayaran ke pesanan
+        paymentId: currentPayment.id 
       };
 
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
@@ -327,7 +355,7 @@
 
       alert(`✅ Pesanan ${name} berhasil dibuat!`);
       cart = [];
-      currentPayment = null;
+      currentPayment = null; // Reset transaksi
       updateCart();
       renderMenu();
       document.getElementById('payment-status').textContent = "Belum dibayar ❌";
