@@ -155,7 +155,7 @@
       } else if (pass) alert("Password salah!");
     }
 
-    // --- FUNGSI UNTUK KEAMANAN ---
+    // --- FUNGSI UNTUK KEAMANAN (Pelanggan tidak bisa mengubah menu setelah pembayaran) ---
     function isPaymentVerified() {
       if (!currentPayment) return false;
       const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
@@ -275,6 +275,14 @@
     }
 
     function selectPaymentMethod(methodName, total) {
+      // Dapatkan nama pelanggan dari input
+      const customerName = document.getElementById('customer-name').value.trim();
+      if (!customerName) {
+          alert("⚠️ Harap masukkan nama Anda sebelum memilih metode pembayaran.");
+          openModal('payment'); // Buka kembali modal pilihan jika nama kosong
+          return;
+      }
+
       // Tutup modal pilihan
       closeModal('payment');
       
@@ -289,7 +297,9 @@
           total, 
           cart: [...cart], 
           time: new Date().toLocaleString('id-ID'),
-          method: methodName 
+          method: methodName,
+          // === BARU: Tambahkan nama pelanggan ke data pembayaran ===
+          customerName: customerName 
       };
 
       let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
