@@ -165,17 +165,16 @@
     function loadPayments() {
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
         
-        // Pisahkan menjadi dua kategori
         const pendingPayments = payments.filter(p => p.status === 'pending');
-        const completedPayments = payments.filter(p => p.status === 'paid').reverse(); // Urutkan terbaru di atas
+        const completedPayments = payments.filter(p => p.status === 'paid').reverse(); 
         
         const pendingListEl = document.getElementById('payment-verification-list');
-        const completedListEl = document.getElementById('payment-completed-list'); // Ambil elemen baru
+        const completedListEl = document.getElementById('payment-completed-list'); 
         
         pendingListEl.innerHTML = ''; 
         completedListEl.innerHTML = '';
         
-        // 1. RENDER PEMBAYARAN PENDING (TUNAI, TRANSFER/E-WALLET)
+        // 1. RENDER PEMBAYARAN PENDING 
         if (pendingPayments.length === 0) {
             pendingListEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center; grid-column: 1 / -1;">Tidak ada pembayaran yang menunggu verifikasi.</p>';
         } else {
@@ -195,7 +194,7 @@
     }
 
     function verifyPayment(paymentId) {
-        if (!confirm(`Yakin ingin memverifikasi pembayaran dengan kode ${paymentId}? Pelanggan akan bisa checkout.`)) return;
+        if (!confirm(`Yakin ingin memverifikasi pembayaran dengan kode ${paymentId}? Pelanggan akan bisa checkout secara otomatis.`)) return;
 
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
         const paymentIndex = payments.findIndex(p => p.id === paymentId);
@@ -203,8 +202,8 @@
         if (paymentIndex !== -1) {
             payments[paymentIndex].status = "paid";
             localStorage.setItem('pantryPayments', JSON.stringify(payments));
-            alert(`Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa checkout.`);
-            loadPayments(); // Muat ulang daftar pembayaran
+            alert(`Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini akan otomatis checkout.`);
+            loadPayments(); 
         }
     }
     
