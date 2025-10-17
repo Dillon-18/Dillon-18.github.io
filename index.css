@@ -29,7 +29,7 @@ html, body {
 .brand-name {
   font-size: 24px;
   font-weight: 700;
-  color: #068b18;
+  /* Warna akan diambil dari var(--color-primary) di <style> HTML */
 }
 
 .brand-logo {
@@ -53,13 +53,13 @@ html, body {
 }
 
 .btn-primary {
-  background-color: #ff6347;
+  background-color: var(--color-primary); /* Dari style HTML */
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #e5533d;
-  box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
+  background-color: #b02323; 
+  box-shadow: 0 4px 8px rgba(210, 43, 43, 0.3);
 }
 
 .btn-secondary {
@@ -92,9 +92,9 @@ html, body {
 
 /* === JUDUL === */
 h2 {
-  border-bottom: 2px solid #067c0c;
+  border-bottom: 2px solid var(--color-secondary); 
   padding-bottom: 8px;
-  color: #ff6347;
+  color: var(--color-primary); 
   margin-top: 40px;
 }
 
@@ -141,7 +141,7 @@ h2 {
 }
 
 .menu-price {
-  color: #ff6347;
+  color: var(--color-primary); 
   font-weight: 700;
   font-size: 1.1em;
 }
@@ -171,9 +171,9 @@ h2 {
 }
 
 .btn-plus {
-  background-color: #068b18;
+  background-color: var(--color-secondary); 
   color: white;
-  border-color: #068b18;
+  border-color: var(--color-secondary);
 }
 
 .btn-plus:hover {
@@ -186,18 +186,16 @@ h2 {
   font-weight: 600;
 }
 
-/* === SIDEBAR STICKY WRAPPER (BARU) === */
+/* === SIDEBAR STICKY WRAPPER === */
 #sticky-sidebar {
-  /* Membungkus keranjang dan info pelanggan agar ikut sticky */
   position: sticky; 
-  top: 80px; /* Jarak dari atas layar (di bawah navbar) */
-  height: fit-content; /* Penting agar sticky berfungsi */
+  top: 80px; 
+  height: fit-content; 
   align-self: flex-start;
 }
 
-/* === CUSTOMER INFO (DIUBAH) === */
+/* === CUSTOMER INFO === */
 .customer-info {
-  /* Hapus margin-top lama, sekarang margin diatur oleh #cart di bawahnya */
   padding: 15px;
   background: #ffffff;
   border-radius: 10px;
@@ -206,7 +204,7 @@ h2 {
 
 .customer-info h3 {
   margin-top: 0;
-  color: #068b18;
+  color: var(--color-secondary); 
   border-bottom: 1px solid #eee;
   padding-bottom: 5px;
 }
@@ -220,13 +218,13 @@ h2 {
   box-sizing: border-box;
 }
 
-/* === KERANJANG (DIUBAH) === */
+/* === KERANJANG === */
 #cart {
   background: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-top: 30px; /* Jarak antara Customer Info dan Keranjang */
+  margin-top: 30px; 
 }
 
 #cart h2 {
@@ -254,29 +252,21 @@ h2 {
   border-bottom: none;
 }
 
-/* Tombol di keranjang */
-.cart-actions .btn-qty {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  width: 25px;
-  height: 25px;
-  border-radius: 4px;
-  font-size: 14px;
-  padding: 0;
-  line-height: 1;
+/* === PAYMENT STATUS DI SIDEBAR === */
+#payment-section {
+    text-align: center;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
 }
 
-.cart-actions .btn-plus {
-  background-color: #068b18;
-  color: white;
-  border-color: #068b18;
+.payment-status {
+    font-weight: 600;
+    /* Warna default diambil dari var(--color-primary) */
 }
 
-.btn-remove {
-  background-color: #ff4d4d;
-  color: white;
-  border-color: #ff4d4d;
+.status-lunas {
+    /* Warna status lunas diambil dari var(--color-secondary) */
+    font-weight: 700;
 }
 
 /* === CHECKOUT BUTTON === */
@@ -284,7 +274,7 @@ h2 {
   display: block;
   width: 100%;
   padding: 15px;
-  background-color: #ff6347;
+  background-color: var(--color-primary); 
   color: white;
   font-size: 1.2em;
   font-weight: 700;
@@ -297,15 +287,13 @@ h2 {
 }
 
 #checkout-btn:hover:not(:disabled) {
-  background-color: #e5533d;
+  background-color: #b02323;
 }
 
 #checkout-btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
-
-/* ... (Kode CSS untuk Modal dan Footer) ... */
 
 /* === FOOTER === */
 footer {
@@ -315,28 +303,6 @@ footer {
   border-top: 1px solid #eee;
   color: #999;
   font-size: 0.9em;
-}
-
-/* === NOTIFIKASI === */
-.notification {
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  z-index: 1001;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.notification.show {
-  opacity: 1;
-  visibility: visible;
 }
 
 /* === MODAL POPUP === */
@@ -373,6 +339,7 @@ footer {
   position: absolute;
   top: 10px;
   right: 20px;
+  cursor: pointer;
 }
 
 .close:focus {
@@ -382,17 +349,101 @@ footer {
 }
 
 .modal-content h2 {
-  color: #ff6347;
-  border-bottom: 2px solid #068b18;
+  color: var(--color-primary); 
+  border-bottom: 2px solid var(--color-secondary); 
   padding-bottom: 10px;
 }
 
 .contact-link {
-  color: #068b18;
+  color: var(--color-secondary); 
   text-decoration: none;
   font-weight: 600;
 }
 
 .contact-link:hover {
   text-decoration: underline;
+}
+
+/* === GRID TOMBOL DI MODAL (Contoh: Pilihan Bank) === */
+.modal-button-grid {
+    display:grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px; 
+    margin-top: 20px;
+}
+.modal-button-grid button {
+    padding: 12px 10px; 
+    font-size: 1em; 
+    font-weight: 600;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    color: #333;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.modal-button-grid button:hover {
+    background-color: #f0f0f0;
+    border-color: var(--color-primary); 
+}
+
+/* === Style untuk Tombol Kategori Utama di Modal Pemilihan Metode === */
+.payment-category-grid button {
+    color: white !important; 
+    border: none !important;
+}
+
+/* =======================================
+   RESPONSIVE DESIGN (Smartphone View) 
+   ======================================= */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px 15px;
+    }
+    .container {
+        width: 100%;
+        margin: 15px auto;
+        padding: 10px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    
+    /* Grid utama berubah menjadi satu kolom */
+    .content-grid {
+        grid-template-columns: 1fr; 
+    }
+    
+    /* Sidebar tidak lagi sticky di mobile */
+    #sticky-sidebar {
+        position: static;
+        top: auto;
+    }
+
+    /* Menu list menjadi grid satu kolom yang lebih padat */
+    .menu-list {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Modal content menjadi lebih lebar */
+    .modal-content {
+        width: 95%;
+        margin: 10% auto;
+        padding: 20px;
+    }
+    
+    /* Grid 3 kolom (Kategori Pembayaran) berubah menjadi 1 kolom */
+    .payment-category-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Grid 2 kolom (Pilihan Bank/E-Wallet) berubah menjadi 1 kolom */
+    .modal-button-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .brand-name {
+        font-size: 20px;
+    }
+    .nav-btn {
+        padding: 6px 10px;
+        font-size: 0.9em;
+    }
 }
