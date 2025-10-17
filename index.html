@@ -44,7 +44,7 @@
                 <button id="checkout-btn" onclick="checkout()" disabled>Pesan</button>
 
                 <div id="payment-section" style="margin-top:20px; text-align:center;">
-                    <button id="pay-btn" onclick="startPaymentAndLock()" class="btn-primary">💳 Bayar Sekarang</button>
+                    <button id="pay-btn" onclick="openMethodSelection()" class="btn-primary">💳 Bayar Sekarang</button>
                     <p id="payment-status" style="color:#555; margin-top:10px;">Belum dibayar ❌</p>
                 </div>
             </div>
@@ -72,10 +72,30 @@
     </div>
   </div>
 
+  <div id="method-selection-modal" class="modal">
+    <div class="modal-content" style="text-align:center;">
+      <span class="close" onclick="closeModal('method-selection')">&times;</span>
+      <h2>Pilih Metode Pembayaran</h2>
+      <p>Silakan pilih metode yang Anda inginkan:</p>
+      <div style="display:flex; flex-direction: column; gap: 10px; margin-top: 20px;">
+        <button class="btn-primary" onclick="processPayment('QRIS (All E-Wallet)')" style="background-color: #2a3a5b; padding: 10px 20px;">
+            💳 QRIS (GoPay, DANA, LinkAja, dll)
+        </button>
+        <button class="btn-primary" onclick="processPayment('GoPay')" style="background-color: #00A9F4; padding: 10px 20px;">
+            🟢 Bayar dengan GoPay
+        </button>
+        <button class="btn-primary" onclick="processPayment('DANA')" style="background-color: #108EE9; padding: 10px 20px;">
+            🔵 Bayar dengan DANA
+        </button>
+      </div>
+      <p style="margin-top: 15px; font-size: 0.9em; color: #777;">Anda akan diarahkan ke detail pembayaran setelah memilih.</p>
+    </div>
+  </div>
+  
   <div id="payment-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('payment')">&times;</span>
-      <h2>Pembayaran QR</h2>
+      <h2 id="payment-modal-title">Pembayaran QR</h2>
       <p>Scan QR Code untuk membayar:</p>
       <img id="qr-img" src="codeee.gif" style="width:200px; margin:15px 0; border-radius:10px;">
       <p>Kode Pembayaran: <b id="payment-code"></b></p>
@@ -107,7 +127,7 @@
 
     let cart = [];
     let currentPayment = null;
-    let isPaymentInProgress = false; // VARIABEL KUNCI BARU
+    let isPaymentInProgress = false; // VARIABEL KUNCI
 
     document.addEventListener('DOMContentLoaded', () => {
       renderMenu();
@@ -194,15 +214,22 @@
       const isPaid = document.getElementById('payment-status').textContent.includes('✅');
       checkoutBtn.disabled = (total === 0 || !isPaid);
     }
-
-    function startPaymentAndLock() {
+    
+    // FUNGSI BARU: Membuka modal pilihan metode
+    function openMethodSelection() {
       if (cart.length === 0) return alert("Keranjang kosong!");
+      openModal('method-selection');
+    }
+
+    // FUNGSI BARU: Memproses pembayaran setelah metode dipilih
+    function processPayment(methodName) {
+      closeModal('method-selection'); // Tutup modal pilihan metode
       
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
       const code = "PAY" + Date.now();
       
       // Tetapkan status pembayaran dan kunci
-      currentPayment = { id: code, status: "pending", total, cart: [...cart], time: new Date().toLocaleString('id-ID'), method: 'QRIS/Transfer' };
+      currentPayment = { id: code, status: "pending", total, cart: [...cart], time: new Date().toLocaleString('id-ID'), method: methodName };
       isPaymentInProgress = true; 
       
       // Render ulang menu dan keranjang untuk mengunci tombol (+) dan (-)
@@ -213,14 +240,16 @@
       payments.push(currentPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      // Tampilkan modal pembayaran
+      // Tampilkan modal pembayaran QR
       document.getElementById('qr-img').src =
         `https://api.qrserver.com/v1/create-qr-code/?data=${code}&size=200x200`;
       document.getElementById('payment-code').textContent = code;
       
-      document.getElementById('payment-status').textContent = "Menunggu verifikasi pembayaran... 🔒";
+      // Update status di sidebar
+      document.getElementById('payment-status').textContent = `Menunggu verifikasi pembayaran (${methodName}). 🔒`;
       document.getElementById('payment-status').style.color = "#d14838";
 
+      document.getElementById('payment-modal-title').textContent = `Pembayaran ${methodName}`;
       document.getElementById('payment-modal').style.display = 'block';
       document.getElementById('customer-name').disabled = true; // Kunci input nama
     }
@@ -249,10 +278,11 @@
       } else if (found && found.status === "pending") {
          // Pembayaran masih pending, tetap dikunci
          document.getElementById('customer-name').disabled = true;
-         paymentStatusEl.textContent = "Menunggu verifikasi pembayaran... 🔒";
+         // Pastikan status tetap menunjukkan metode pembayaran
+         paymentStatusEl.textContent = `Menunggu verifikasi pembayaran (${currentPayment.method}). 🔒`;
          paymentStatusEl.style.color = "#d14838";
       } else {
-        // Jika currentPayment ada tapi statusnya hilang/batal, reset
+        // Jika status hilang/batal, reset
         if(isPaymentInProgress) {
             isPaymentInProgress = false;
             currentPayment = null;
@@ -260,6 +290,7 @@
             updateCart();
             paymentStatusEl.textContent = "Belum dibayar ❌";
             paymentStatusEl.style.color = "#555";
+            document.getElementById('customer-name').disabled = false;
         }
       }
     }
