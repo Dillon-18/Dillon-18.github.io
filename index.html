@@ -117,12 +117,15 @@
       <span class="close" onclick="closeModal('method-selection')">&times;</span>
       <h2>Pilih Kategori Pembayaran</h2>
       
-      <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;">
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px;">
         <button class="btn-primary" onclick="openDigitalOptions('ewallet')" style="background-color: #ff6347; padding: 15px 10px; font-size: 1em;">
-            E-Wallet (GoPay, OVO, DANA)
+            E-Wallet
         </button>
         <button class="btn-primary" onclick="openDigitalOptions('transfer')" style="background-color: #068b18; padding: 15px 10px; font-size: 1em;">
-            Transfer Bank (BCA, Mandiri, dll.)
+            Transfer Bank
+        </button>
+        <button class="btn-primary" onclick="processPayment('Tunai')" style="background-color: #333; padding: 15px 10px; font-size: 1em;">
+            Tunai (Bayar di Kasir)
         </button>
       </div>
 
@@ -162,19 +165,20 @@
   <div id="payment-detail-modal" class="modal"> 
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('payment-detail')">&times;</span>
-      <h2 id="payment-modal-title" style="color:var(--color-primary);">Rincian Transfer</h2>
+      <h2 id="payment-modal-title" style="color:var(--color-primary);">Rincian Pembayaran</h2>
       
       <p style="font-size: 1.1em; font-weight: 600;">Metode yang dipilih:</p>
       <p style="font-weight: 700; font-size: 1.5em; color: #068b18; margin-top:-10px;">
-         <span id="payment-method-display"></span>
+          <span id="payment-method-display"></span>
       </p>
       
-      <p style="font-weight: 700; font-size: 1.1em; margin-top: 20px;">Silakan Transfer ke Virtual Account:</p>
-      <p style="font-size: 1.8em; color: var(--color-primary); word-break: break-all; font-weight: 800; border: 2px dashed #ccc; padding: 10px; border-radius: 8px;">
-         <b id="payment-code"></b>
+      <p style="font-weight: 700; font-size: 1.1em; margin-top: 20px;" id="va-code-text">Silakan Transfer ke Virtual Account:</p>
+      
+      <p style="word-break: break-all; font-weight: 800; border: 2px dashed #ccc; padding: 10px; border-radius: 8px;"
+         id="payment-code">
       </p>
       
-      <p style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaran Anda.</p>
+      <p style="margin-top: 30px;" id="confirmation-text">Tunggu kasir memverifikasi pembayaran Anda.</p>
       <p style="margin-top: 15px; font-weight: bold; color: #ff6347;">Pesanan Terkunci. Tidak bisa diubah.</p>
     </div>
   </div>
@@ -309,23 +313,33 @@
     }
 
 
-    // FUNGSI 3: Memproses pembayaran (Hanya Transfer/VA)
+    // FUNGSI 3: Memproses pembayaran (Tunai, Transfer, atau VA)
     function processPayment(methodName) { 
       const name = document.getElementById('customer-name').value.trim();
       
-      // Tutup SEMUA modal pemilihan:
-      closeModal('ewallet-selection'); 
-      closeModal('transfer-selection');
-      closeModal('method-selection');
-      
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-      
-      // Buat kode Virtual Account/Transfer unik (contoh: VA_BCA_12345)
-      const methodCode = methodName.slice(0, 3).toUpperCase();
-      // Kode VA fiktif (Contoh: VA-ID_5 Digit Customer ID_Random 4 Digit)
-      const customerId = Math.floor(10000 + Math.random() * 90000); 
-      const random4Digit = Math.floor(1000 + Math.random() * 9000); 
-      const code = `8888-${methodCode}-${customerId}${random4Digit}`; 
+      let code;
+      let modalTitle;
+
+      if (methodName === 'Tunai') {
+          // LOGIC FOR CASH PAYMENT
+          code = "CASH-" + Date.now().toString().slice(-6); // Simple unique ID for cash
+          modalTitle = "Pembayaran Tunai";
+          // Close method selection modal
+          closeModal('method-selection'); 
+      } else {
+          // LOGIC FOR VA/TRANSFER PAYMENT
+          const methodCode = methodName.slice(0, 3).toUpperCase();
+          const customerId = Math.floor(10000 + Math.random() * 90000); 
+          const random4Digit = Math.floor(1000 + Math.random() * 9000); 
+          code = `8888-${methodCode}-${customerId}${random4Digit}`; 
+          modalTitle = `Transfer ${methodName}`;
+          
+          // Tutup SEMUA modal pemilihan:
+          closeModal('ewallet-selection'); 
+          closeModal('transfer-selection');
+          closeModal('method-selection');
+      }
       
       currentPayment = { 
           id: code, 
@@ -345,14 +359,37 @@
       payments.push(currentPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      // Atur tampilan modal DETAIL PEMBAYARAN (Transfer/VA)
-      document.getElementById('payment-modal-title').textContent = `Transfer ${methodName}`;
+      // Atur tampilan modal DETAIL PEMBAYARAN (Transfer/VA/Tunai)
+      document.getElementById('payment-modal-title').textContent = modalTitle;
       document.getElementById('payment-method-display').textContent = methodName;
-      document.getElementById('payment-code').textContent = code; // Menampilkan kode VA
+
+      const paymentCodeEl = document.getElementById('payment-code');
+      const vaCodeTextEl = document.getElementById('va-code-text');
+      const confirmationTextEl = document.getElementById('confirmation-text');
+
+      if (methodName === 'Tunai') {
+          // Tampilan untuk Tunai: menampilkan total harga
+          vaCodeTextEl.textContent = "Jumlah yang harus dibayar:";
+          paymentCodeEl.textContent = `Rp${total.toLocaleString('id-ID')}`; 
+          paymentCodeEl.style.fontSize = "2.5em";
+          paymentCodeEl.style.color = "#333";
+          paymentCodeEl.style.border = "2px solid #ccc";
+          
+          confirmationTextEl.textContent = "Silakan menuju kasir untuk melakukan pembayaran tunai.";
+      } else {
+          // Tampilan untuk Transfer/VA: menampilkan kode VA
+          vaCodeTextEl.textContent = "Silakan Transfer ke Virtual Account:";
+          paymentCodeEl.textContent = code; 
+          paymentCodeEl.style.fontSize = "1.8em";
+          paymentCodeEl.style.color = "var(--color-primary)";
+          paymentCodeEl.style.border = "2px dashed #ccc";
+
+          confirmationTextEl.textContent = "Tunggu kasir memverifikasi pembayaran Anda.";
+      }
       
       // Update status di sidebar
       const statusEl = document.getElementById('payment-status');
-      statusEl.textContent = `Menunggu verifikasi transfer (${methodName}). 🔒`;
+      statusEl.textContent = `Menunggu verifikasi ${methodName}. 🔒`;
       statusEl.style.color = "var(--color-primary)";
       statusEl.classList.remove('status-lunas');
 
@@ -385,7 +422,7 @@
       } else if (found && found.status === "pending") {
          // Pembayaran masih pending, tetap dikunci
          document.getElementById('customer-name').disabled = true;
-         paymentStatusEl.textContent = `Menunggu verifikasi transfer (${currentPayment.method}). 🔒`;
+         paymentStatusEl.textContent = `Menunggu verifikasi ${currentPayment.method}. 🔒`;
          paymentStatusEl.classList.remove('status-lunas');
       } else {
         // Jika status hilang/batal, reset
