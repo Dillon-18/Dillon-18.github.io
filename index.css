@@ -71,17 +71,23 @@ html, body {
   background-color: #e0e0e0;
 }
 
-/* === KONTEN UTAMA === */
+/* === KONTEN UTAMA DUA KOLOM === */
 .container {
   width: 95%;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 30px auto;
   background: white;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  /* Tambahkan padding di bawah agar tidak tertutup bottom bar */
-  padding-bottom: 120px; 
+}
+
+.content-grid {
+    display: grid;
+    /* Kolom kiri (Menu) 2 bagian, Kolom kanan (Sticky Sidebar) 1 bagian */
+    grid-template-columns: 2fr 1fr; 
+    gap: 30px;
+    margin-top: 10px; 
 }
 
 /* === JUDUL === */
@@ -180,46 +186,22 @@ h2 {
   font-weight: 600;
 }
 
-
-/* ================================================= */
-/* === BILAH BAWAH (FIXED & HORIZONTAL SCROLL) === */
-/* ================================================= */
-
-#bottom-cart-bar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: #333; /* Background gelap untuk kontras */
-    color: white;
-    padding: 10px 0;
-    z-index: 1500;
-    box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
-    
-    /* Properti untuk horizontal scroll */
-    overflow-x: auto; 
-    overflow-y: hidden;
-    white-space: nowrap; /* Memaksa konten ke satu baris */
-    display: flex; /* Mengatur tata letak anak-anak secara horizontal */
+/* === SIDEBAR STICKY WRAPPER (BARU) === */
+#sticky-sidebar {
+  /* Membungkus keranjang dan info pelanggan agar ikut sticky */
+  position: sticky; 
+  top: 80px; /* Jarak dari atas layar (di bawah navbar) */
+  height: fit-content; /* Penting agar sticky berfungsi */
+  align-self: flex-start;
 }
 
-/* Mengatur anak-anak di dalam bottom bar */
-#bottom-cart-bar > div {
-    display: inline-block; 
-    white-space: normal; /* Mengembalikan wrapping teks */
-    vertical-align: top;
-    flex-shrink: 0; /* Mencegah elemen menciut */
-    margin: 0 10px; /* Jarak antar elemen */
-}
-
-/* === CUSTOMER INFO (DI BOTTOM BAR) === */
+/* === CUSTOMER INFO (DIUBAH) === */
 .customer-info {
-  background: #ffffff;
+  /* Hapus margin-top lama, sekarang margin diatur oleh #cart di bawahnya */
   padding: 15px;
+  background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 300px; /* Lebar tetap untuk membuat scroll */
-  color: #333; /* Warna teks agar terlihat di background putih */
 }
 
 .customer-info h3 {
@@ -238,14 +220,13 @@ h2 {
   box-sizing: border-box;
 }
 
-/* === KERANJANG (DI BOTTOM BAR) === */
+/* === KERANJANG (DIUBAH) === */
 #cart {
   background: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  width: 350px; /* Lebar tetap untuk membuat scroll */
-  color: #333;
+  margin-top: 30px; /* Jarak antara Customer Info dan Keranjang */
 }
 
 #cart h2 {
@@ -253,42 +234,76 @@ h2 {
   border-bottom: 1px solid #ddd;
   margin-top: 0;
   padding-bottom: 10px;
-  font-size: 1.2em;
-  border: none;
 }
 
 #cart-items {
   list-style: none;
   padding: 0;
-  max-height: 100px; /* Batasi tinggi agar tidak terlalu besar */
-  overflow-y: auto;
 }
 
 #cart-items li {
-  padding: 8px 0;
+  padding: 10px 0;
   border-bottom: 1px dotted #eee;
-  font-size: 0.85em; /* Ukuran font lebih kecil */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95em;
+}
+
+#cart-items li:last-child {
+  border-bottom: none;
 }
 
 /* Tombol di keranjang */
 .cart-actions .btn-qty {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
   width: 25px;
   height: 25px;
+  border-radius: 4px;
   font-size: 14px;
   padding: 0;
   line-height: 1;
+}
+
+.cart-actions .btn-plus {
+  background-color: #068b18;
+  color: white;
+  border-color: #068b18;
+}
+
+.btn-remove {
+  background-color: #ff4d4d;
+  color: white;
+  border-color: #ff4d4d;
 }
 
 /* === CHECKOUT BUTTON === */
 #checkout-btn {
   display: block;
   width: 100%;
-  padding: 10px; /* Lebih kecil */
-  font-size: 1.1em;
-  margin-top: 15px;
+  padding: 15px;
+  background-color: #ff6347;
+  color: white;
+  font-size: 1.2em;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+  text-align: center; 
 }
 
-/* === MODAL DAN LAINNYA (SAMA) === */
+#checkout-btn:hover:not(:disabled) {
+  background-color: #e5533d;
+}
+
+#checkout-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
 
 /* ... (Kode CSS untuk Modal dan Footer) ... */
 
