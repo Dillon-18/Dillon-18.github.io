@@ -71,6 +71,27 @@ html, body {
   background-color: #e0e0e0;
 }
 
+/* === TOMBOL BAYAR SEKARANG (BARU) === */
+.btn-pay-now {
+    background-color: #068b18; /* Hijau */
+    color: white; 
+    padding: 10px 15px; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 10px;
+    transition: background-color 0.3s, transform 0.2s;
+    width: 100%; 
+    font-size: 1.1em; /* Agak lebih besar */
+    box-shadow: 0 4px 8px rgba(6, 139, 24, 0.3);
+}
+.btn-pay-now:hover {
+    background-color: #046e12; /* Hijau lebih gelap saat hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(6, 139, 24, 0.4);
+}
+
 /* === KONTEN UTAMA DUA KOLOM === */
 .container {
   width: 95%;
@@ -304,8 +325,6 @@ h2 {
   background-color: #cccccc;
   cursor: not-allowed;
 }
-
-/* ... (Kode CSS untuk Modal dan Footer) ... */
 
 /* === FOOTER === */
 footer {
