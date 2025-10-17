@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pantry - Status Pesanan Anda</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* CSS Tambahan untuk Status Pesanan */
+    .container {
+        max-width: 800px;
+    }
+    .status-container {
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        margin-top: 20px;
+    }
+    .status-card {
+        border: 2px solid #ddd;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        transition: all 0.3s;
+    }
+    .status-card.Baru {
+        border-left: 5px solid #d14838;
+        background-color: #fff8f8;
+    }
+    .status-card.Diproses {
+        border-left: 5px solid #f7b000; /* Kuning/Oranye */
+        background-color: #fffdf0;
+    }
+    .status-card.Selesai {
+        border-left: 5px solid #068b18;
+        background-color: #f0fff0;
+    }
+    .status-card h3 {
+        margin-top: 0;
+        font-size: 1.5em;
+        color: #333;
+    }
+    .status-card .status-label {
+        font-size: 1.2em;
+        font-weight: 700;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: inline-block;
+        margin-bottom: 15px;
+        color: white;
+    }
+    .status-card .status-label.Baru { background-color: #d14838; }
+    .status-card .status-label.Diproses { background-color: #f7b000; }
+    .status-card .status-label.Selesai { background-color: #068b18; }
+    
+    .status-message {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <span class="brand-name">Pantry</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
+      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Status Pesanan Anda</span>
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn btn-primary" onclick="window.location.href='index.html'">Kembali ke Menu</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='cashier.html'">Dashboard Kasir</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="status-container" id="order-status-display">
+        <p style="text-align: center; color: #999;">Memuat status pesanan...</p>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Pantry — Terima kasih telah memesan!
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', loadOrderStatus);
+
+    const LAST_ORDER_KEY = 'pantryLastOrderId';
+
+    function loadOrderStatus() {
+        const lastOrderId = localStorage.getItem(LAST_ORDER_KEY);
+        const displayEl = document.getElementById('order-status-display');
+        
+        if (!lastOrderId) {
+            displayEl.innerHTML = '<p style="text-align:center; color:#d14838; font-weight:600;">⚠️ Anda belum memiliki pesanan aktif yang tercatat.</p>';
+            return;
+        }
+
+        const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+        const order = orders.find(o => o.id == lastOrderId);
+
+        if (!order) {
+            displayEl.innerHTML = '<p style="text-align:center; color:#d14838; font-weight:600;">⚠️ Pesanan Anda tidak ditemukan atau sudah dihapus dari riwayat.</p>';
+            localStorage.removeItem(LAST_ORDER_KEY);
+            return;
+        }
+
+        renderOrderStatus(order, displayEl);
+        
+        // Auto-refresh status setiap 3 detik
+        setInterval(() => {
+            const currentOrders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+            const currentOrder = currentOrders.find(o => o.id == lastOrderId);
+            if (currentOrder) {
+                renderOrderStatus(currentOrder, displayEl);
+            }
+        }, 3000);
+    }
+
+    function formatRupiah(number) {
+        return `Rp${number.toLocaleString('id-ID')}`;
+    }
+
+    function renderOrderStatus(order, displayEl) {
+        let statusMessage = '';
+        if (order.status === 'Baru') {
+            statusMessage = 'Pesanan Anda telah diterima dan sedang menunggu untuk diproses oleh dapur.';
+        } else if (order.status === 'Diproses') {
+            statusMessage = 'Pesanan Anda sedang dimasak. Harap tunggu sebentar.';
+        } else if (order.status === 'Selesai') {
+            statusMessage = 'Pesanan Anda sudah selesai dibuat! Silakan ambil pesanan Anda di konter.';
+        }
+
+        const itemsList = order.items.map(item => 
+            `<p style="margin:2px 0; font-size:1em; color:#555;">${item.name} (x${item.qty})</p>`
+        ).join('');
+
+        displayEl.innerHTML = `
+            <div class="status-card ${order.status}">
+                <h3>Hai, ${order.customerName}! 👋</h3>
+                <span class="status-label ${order.status}">Status: ${order.status}</span>
+                
+                <p><strong>Total Pembayaran:</strong> ${formatRupiah(order.total)}</p>
+                <p><strong>Waktu Pesan:</strong> ${order.time}</p>
+                <p><strong>Kode Pesanan (Internal):</strong> ${order.id}</p>
+                
+                <hr style="border:0; border-top:1px dashed #ccc;">
+                
+                <h4>Detail Pesanan:</h4>
+                ${itemsList}
+                
+                <div class="status-message">
+                    <p style="margin: 0;"><strong>Info:</strong> ${statusMessage}</p>
+                </div>
+                
+                ${order.status === 'Selesai' ? '<p style="color:#068b18; font-weight:700; margin-top:20px;">Terima kasih telah memesan!</p>' : ''}
+            </div>
+        `;
+    }
+  </script>
+
+</body>
+</html>
