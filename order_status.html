@@ -3,166 +3,249 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pantry - Status Pesanan Anda</title>
+  <title>Pantry - Status Pesanan</title>
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Tambahan untuk Status Pesanan */
+    /* CSS Khusus Status Pesanan */
     .container {
-        max-width: 800px;
+      max-width: 800px;
+      margin-top: 50px;
     }
-    .status-container {
-        background-color: #ffffff;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-        margin-top: 20px;
+    
+    h1 {
+        color: #ff6347;
+        text-align: center;
+        margin-bottom: 30px;
     }
-    .status-card {
+
+    /* === Status Stepper === */
+    .status-stepper {
+        display: flex;
+        justify-content: space-between;
+        margin: 30px 0 60px 0;
+        position: relative;
+    }
+
+    .stepper-line {
+        position: absolute;
+        top: 15px;
+        left: 5%;
+        width: 90%;
+        height: 4px;
+        background-color: #ddd;
+        z-index: 1;
+    }
+
+    .stepper-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 30%;
+        position: relative;
+        z-index: 2;
+    }
+
+    .stepper-circle {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background-color: #ddd;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-bottom: 10px;
+        transition: background-color 0.3s, transform 0.2s;
         border: 2px solid #ddd;
-        padding: 20px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        transition: all 0.3s;
     }
-    .status-card.Baru {
-        border-left: 5px solid #d14838;
-        background-color: #fff8f8;
+    
+    .stepper-step.active .stepper-circle {
+        background-color: #068b18; /* Hijau */
+        border-color: #046e12;
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(6, 139, 24, 0.3);
     }
-    .status-card.Diproses {
-        border-left: 5px solid #f7b000; /* Kuning/Oranye */
-        background-color: #fffdf0;
-    }
-    .status-card.Selesai {
-        border-left: 5px solid #068b18;
-        background-color: #f0fff0;
-    }
-    .status-card h3 {
-        margin-top: 0;
-        font-size: 1.5em;
+
+    .stepper-step.active span {
+        font-weight: 600;
         color: #333;
     }
-    .status-card .status-label {
-        font-size: 1.2em;
-        font-weight: 700;
-        padding: 5px 10px;
-        border-radius: 5px;
-        display: inline-block;
-        margin-bottom: 15px;
-        color: white;
-    }
-    .status-card .status-label.Baru { background-color: #d14838; }
-    .status-card .status-label.Diproses { background-color: #f7b000; }
-    .status-card .status-label.Selesai { background-color: #068b18; }
     
-    .status-message {
-        margin-top: 15px;
-        padding: 10px;
-        background-color: #f0f0f0;
-        border-radius: 5px;
+    .stepper-step.done .stepper-circle {
+        background-color: #068b18; /* Hijau */
+        border-color: #046e12;
+    }
+
+    /* === Order Card === */
+    .order-card {
+        background-color: #ffffff;
+        border: 1px solid #ff6347;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .order-summary, .item-list {
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .order-summary p {
+        margin: 5px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .order-summary span {
+        font-weight: 600;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 5px 0;
+        font-size: 0.9em;
         color: #555;
     }
+    
+    .order-total {
+        font-size: 1.5em;
+        font-weight: 700;
+        color: #ff6347;
+        text-align: right;
+        margin-top: 15px;
+    }
+    
+    .alert-box {
+        text-align: center;
+        padding: 20px;
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+        border-radius: 5px;
+    }
+    
   </style>
 </head>
 <body>
-
   <header class="navbar">
     <div class="nav-left">
       <span class="brand-name">Pantry</span>
-      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Status Pesanan Anda</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-primary" onclick="window.location.href='index.html'">Kembali ke Menu</button>
-      <button class="nav-btn btn-secondary" onclick="window.location.href='cashier.html'">Dashboard Kasir</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Kembali ke Menu</button>
+      <button class="nav-btn btn-primary" onclick="window.location.href='payment_dashboard.html'">Dashboard Kasir</button>
     </div>
   </header>
-
+  
   <div class="container">
-    <div class="status-container" id="order-status-display">
-        <p style="text-align: center; color: #999;">Memuat status pesanan...</p>
+    <h1>Status Pesanan Anda</h1>
+    
+    <div class="status-stepper">
+        <div class="stepper-line"></div>
+        <div class="stepper-step" id="step-Baru">
+            <div class="stepper-circle">1</div>
+            <span>Pesanan Baru</span>
+        </div>
+        <div class="stepper-step" id="step-Diproses">
+            <div class="stepper-circle">2</div>
+            <span>Diproses Dapur</span>
+        </div>
+        <div class="stepper-step" id="step-Selesai">
+            <div class="stepper-circle">3</div>
+            <span>Siap Diambil</span>
+        </div>
+    </div>
+
+    <div id="order-details-container">
+        <div class="alert-box">
+            <p id="alert-message">Memuat status pesanan...</p>
+        </div>
     </div>
   </div>
 
   <footer>
-    © 2025 Pantry — Terima kasih telah memesan!
+    © 2025 Pantry — Dibuat dengan ❤️
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', loadOrderStatus);
-
-    const LAST_ORDER_KEY = 'pantryLastOrderId';
-
-    function loadOrderStatus() {
-        const lastOrderId = localStorage.getItem(LAST_ORDER_KEY);
-        const displayEl = document.getElementById('order-status-display');
-        
-        if (!lastOrderId) {
-            displayEl.innerHTML = '<p style="text-align:center; color:#d14838; font-weight:600;">⚠️ Anda belum memiliki pesanan aktif yang tercatat.</p>';
-            return;
-        }
-
-        const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-        const order = orders.find(o => o.id == lastOrderId);
-
-        if (!order) {
-            displayEl.innerHTML = '<p style="text-align:center; color:#d14838; font-weight:600;">⚠️ Pesanan Anda tidak ditemukan atau sudah dihapus dari riwayat.</p>';
-            localStorage.removeItem(LAST_ORDER_KEY);
-            return;
-        }
-
-        renderOrderStatus(order, displayEl);
-        
-        // Auto-refresh status setiap 3 detik
-        setInterval(() => {
-            const currentOrders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-            const currentOrder = currentOrders.find(o => o.id == lastOrderId);
-            if (currentOrder) {
-                renderOrderStatus(currentOrder, displayEl);
-            }
-        }, 3000);
-    }
-
+    // Fungsi utilitas untuk memformat harga
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
     }
 
-    function renderOrderStatus(order, displayEl) {
-        let statusMessage = '';
-        if (order.status === 'Baru') {
-            statusMessage = 'Pesanan Anda telah diterima dan sedang menunggu untuk diproses oleh dapur.';
-        } else if (order.status === 'Diproses') {
-            statusMessage = 'Pesanan Anda sedang dimasak. Harap tunggu sebentar.';
-        } else if (order.status === 'Selesai') {
-            statusMessage = 'Pesanan Anda sudah selesai dibuat! Silakan ambil pesanan Anda di konter.';
+    function loadOrderStatus() {
+        const lastOrderId = localStorage.getItem('pantryLastOrderId');
+        const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+        const order = orders.find(o => o.id == lastOrderId);
+        const container = document.getElementById('order-details-container');
+        const alertMessage = document.getElementById('alert-message');
+
+        if (!lastOrderId || !order) {
+            alertMessage.textContent = "Anda belum memiliki pesanan aktif. Silakan pesan dari halaman Menu.";
+            return;
         }
 
-        const itemsList = order.items.map(item => 
-            `<p style="margin:2px 0; font-size:1em; color:#555;">${item.name} (x${item.qty})</p>`
-        ).join('');
+        // 1. Render Detail Pesanan
+        let itemsListHtml = '';
+        order.items.forEach(item => {
+            itemsListHtml += `
+                <div class="order-item">
+                    <span>${item.name} (x${item.qty})</span>
+                    <span>${formatRupiah(item.price * item.qty)}</span>
+                </div>
+            `;
+        });
 
-        displayEl.innerHTML = `
-            <div class="status-card ${order.status}">
-                <h3>Hai, ${order.customerName}! 👋</h3>
-                <span class="status-label ${order.status}">Status: ${order.status}</span>
-                
-                <p><strong>Total Pembayaran:</strong> ${formatRupiah(order.total)}</p>
-                <p><strong>Waktu Pesan:</strong> ${order.time}</p>
-                <p><strong>Kode Pesanan (Internal):</strong> ${order.id}</p>
-                
-                <hr style="border:0; border-top:1px dashed #ccc;">
-                
-                <h4>Detail Pesanan:</h4>
-                ${itemsList}
-                
-                <div class="status-message">
-                    <p style="margin: 0;"><strong>Info:</strong> ${statusMessage}</p>
+        container.innerHTML = `
+            <div class="order-card">
+                <h2>ID Pesanan: <span style="color: #ff6347;">#${order.id.toString().slice(-6)}</span></h2>
+                <div class="order-summary">
+                    <p>Nama Pelanggan: <span>${order.customerName}</span></p>
+                    <p>Waktu Pesan: <span>${order.time}</span></p>
+                    <p>Status Pembayaran: <span style="color: #068b18;">Lunas</span></p>
                 </div>
                 
-                ${order.status === 'Selesai' ? '<p style="color:#068b18; font-weight:700; margin-top:20px;">Terima kasih telah memesan!</p>' : ''}
+                <h3>Daftar Item:</h3>
+                <div class="item-list">
+                    ${itemsListHtml}
+                </div>
+                
+                <p class="order-total">Total Bayar: ${formatRupiah(order.total)}</p>
             </div>
         `;
+
+        // 2. Update Status Stepper
+        const statuses = ['Baru', 'Diproses', 'Selesai'];
+        let currentStatusFound = false;
+
+        statuses.forEach(status => {
+            const stepEl = document.getElementById(`step-${status}`);
+            
+            // Tandai langkah yang sudah selesai (Done)
+            if (currentStatusFound) {
+                stepEl.classList.remove('active');
+            } else if (order.status === status) {
+                // Tandai langkah saat ini (Active)
+                stepEl.classList.add('active');
+                stepEl.classList.remove('done');
+                currentStatusFound = true; 
+            } else if (!currentStatusFound) {
+                // Tandai langkah yang sudah dilalui
+                stepEl.classList.add('done');
+            } else {
+                // Langkah yang belum dilalui
+                stepEl.classList.remove('active', 'done');
+            }
+        });
     }
+
+    // Panggil fungsi saat halaman dimuat
+    document.addEventListener('DOMContentLoaded', loadOrderStatus);
   </script>
 
 </body>
