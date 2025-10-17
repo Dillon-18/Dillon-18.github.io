@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Tambahan untuk Dashboard Dapur - Clean Version */
+    /* CSS Tambahan untuk Dashboard Dapur */
     .container {
         max-width: 1400px; 
     }
@@ -32,122 +32,96 @@
         color: #333;
     }
     .order-card {
-        background-color: #fff;
-        border: 1px solid #e0e0e0;
+        background: white;
+        border: 1px solid #eee;
         padding: 15px;
         margin-bottom: 15px;
         border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     .order-card h4 {
-        margin: 0 0 10px 0;
+        margin-top: 0;
+        margin-bottom: 5px;
         color: #d14838;
-        font-weight: 700;
-        font-size: 1.2em;
-        border-bottom: 1px dotted #ccc;
-        padding-bottom: 5px;
     }
-    .order-card ul {
-        list-style-type: none;
-        padding: 0;
+    .order-card .items-list {
+        border-top: 1px dotted #ccc;
+        margin: 10px 0;
+        padding-top: 10px;
+    }
+    .order-card .items-list p {
+        margin: 3px 0;
         font-size: 0.9em;
-        margin-bottom: 10px;
-    }
-    .order-card ul li {
-        padding: 3px 0;
         color: #555;
     }
+    .order-card .order-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+    .order-card .order-footer .total {
+        font-weight: 700;
+        color: #068b18;
+    }
     .order-actions button {
-        padding: 8px 12px;
+        padding: 6px 10px;
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        font-weight: 600;
-        margin-right: 5px;
-        transition: opacity 0.2s;
+        font-size: 0.85em;
+        margin-left: 5px;
     }
-    .btn-proses {
-        background-color: #ffc107;
-        color: #333;
-    }
-    .btn-selesai {
-        background-color: #068b18;
-        color: white;
-    }
-    .btn-hapus {
-        background-color: #f44336;
-        color: white;
-    }
-    .order-card .order-time {
-        display: block;
-        font-size: 0.8em;
-        color: #999;
-        margin-bottom: 10px;
-    }
-    .order-card .order-total {
-        font-weight: 700;
-        color: #333;
-        margin-top: 5px;
-        border-top: 1px solid #eee;
-        padding-top: 5px;
-    }
+    .btn-proses { background-color: #f39c12; color: white; }
+    .btn-selesai { background-color: #068b18; color: white; }
+    .btn-hapus { background-color: #e74c3c; color: white; }
     .empty-column-msg {
         text-align: center;
         color: #999;
-        padding: 20px 0;
-        font-style: italic;
-    }
-    
-    /* === Responsif Dashboard Dapur === */
-    @media (max-width: 1200px) {
-        .kanban-container {
-            grid-template-columns: repeat(2, 1fr); 
-        }
-    }
-    @media (max-width: 768px) {
-        .kanban-container {
-            grid-template-columns: 1fr; 
-        }
-        .order-actions button {
-            width: 100%;
-            margin-bottom: 5px;
-        }
+        margin-top: 30px;
     }
   </style>
 </head>
 <body>
-  
   <header class="navbar">
     <div class="nav-left">
-      <span class="brand-name">Pantry</span>
+      <span class="brand-name">Pantry - Dashboard Dapur</span>
       <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #068b18;">Dashboard Dapur</span>
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-secondary" onclick="window.location.href='payment_dashboard.html'">Dashboard Pembayaran</button>
-      <button class="nav-btn btn-primary" onclick="window.location.href='index.html'">Menu Utama</button>
+      <button class="nav-btn btn-primary" onclick="window.location.href='payment_dashboard.html'">Verifikasi Pembayaran</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Menu Utama</button>
     </div>
   </header>
   
   <div class="container">
+    <h1>Manajemen Pesanan</h1>
     <div class="kanban-container">
         
-        <div class="kanban-column" id="order-list-baru">
-            <h3>⭐ Pesanan Baru</h3>
-            </div>
-
-        <div class="kanban-column" id="order-list-proses">
-            <h3>⏳ Sedang Diproses</h3>
-            </div>
-
-        <div class="kanban-column" id="order-list-selesai">
-            <h3>✅ Siap Diambil/Selesai</h3>
-            </div>
+        <div class="kanban-column">
+            <h3>Baru Masuk</h3>
+            <div id="order-list-baru">
+                </div>
+        </div>
         
+        <div class="kanban-column">
+            <h3>Sedang Diproses</h3>
+            <div id="order-list-proses">
+                </div>
+        </div>
+        
+        <div class="kanban-column">
+            <h3>Selesai</h3>
+            <div id="order-list-selesai">
+                </div>
+        </div>
+
     </div>
   </div>
 
-  <footer>© 2025 Pantry — Dibuat dengan ❤️</footer>
+  <footer>
+    <p>&copy; 2024 Pantry. All rights reserved.</p>
+  </footer>
 
   <script>
     // === MEKANISME PROTEKSI AKSES KASIR ===
@@ -168,54 +142,59 @@
     })();
     // ======================================
     
-    document.addEventListener('DOMContentLoaded', loadOrders);
-    setInterval(loadOrders, 5000); 
+    document.addEventListener('DOMContentLoaded', initializeDashboard);
 
+    function initializeDashboard() {
+        loadOrders();
+        // Muat ulang data pesanan setiap 5 detik
+        setInterval(loadOrders, 5000); 
+    }
+
+    // Fungsi utilitas untuk memformat harga
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
     }
 
     function loadOrders() {
-      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       
       const orderListBaru = document.getElementById('order-list-baru');
       const orderListProses = document.getElementById('order-list-proses');
       const orderListSelesai = document.getElementById('order-list-selesai');
-      
+
       orderListBaru.innerHTML = '';
       orderListProses.innerHTML = '';
       orderListSelesai.innerHTML = '';
 
       orders.forEach(order => {
         const itemsList = order.items.map(item => 
-          `<li>${item.name} (${item.qty}x)</li>`
+            `<p>${item.name} (x${item.qty})</p>`
         ).join('');
-        
-        let targetList;
-        let actionsHtml = '';
-        
-        if (order.status === 'Baru') {
-          targetList = orderListBaru;
-          actionsHtml = `<button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Diproses')">Proses Pesanan</button>`;
-        } else if (order.status === 'Diproses') {
-          targetList = orderListProses;
-          actionsHtml = `<button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')">Selesaikan</button>`;
-        } else if (order.status === 'Selesai') {
-          targetList = orderListSelesai;
-          actionsHtml = `<button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>`;
-        }
 
         const card = document.createElement('div');
         card.className = 'order-card';
         card.innerHTML = `
-          <h4>${order.customerName}</h4>
-          <span class="order-time">${order.time} | ID Pembayaran: ${order.paymentId.substring(0, 10)}...</span>
-          <ul>${itemsList}</ul>
-          <div class="order-total">Total: ${formatRupiah(order.total)}</div>
-          <div class="order-actions" style="margin-top: 10px;">
-            ${actionsHtml}
+          <h4>Pesanan ${order.customerName} - ID: ${order.id.toString().slice(-4)}</h4>
+          <p style="font-size: 0.9em; color: #d14838; margin: 5px 0;">Bayar: ${order.paymentMethod || 'Tunai/Tidak diketahui'}</p>
+          <div class="items-list">${itemsList}</div>
+          <div class="order-footer">
+            <span class="total">${formatRupiah(order.total)}</span>
+            <div class="order-actions">
+                ${order.status === 'Baru' ? `<button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Diproses')">Proses</button>` : ''}
+                ${order.status === 'Diproses' ? `<button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')">Selesai</button>` : ''}
+                <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
+            </div>
           </div>
         `;
+        
+        let targetList;
+        if (order.status === 'Baru') {
+            targetList = orderListBaru;
+        } else if (order.status === 'Diproses') {
+            targetList = orderListProses;
+        } else {
+            targetList = orderListSelesai;
+        }
         targetList.appendChild(card);
       });
       
@@ -247,9 +226,8 @@
       let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       orders = orders.filter(order => order.id !== id);
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
-      loadOrders();
+      loadOrders(); 
     }
   </script>
-
 </body>
 </html>
