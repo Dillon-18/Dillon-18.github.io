@@ -198,7 +198,7 @@
           totalPrice += itemTotal;
 
           const itemEl = document.createElement('div');
-          // Menggunakan kelas cart-item dan item-controls (versi lama)
+          // Menggunakan kelas cart-item dan item-controls (versi ringkas)
           itemEl.className = 'cart-item'; 
           itemEl.innerHTML = `
             <span>${item.name}</span>
@@ -298,6 +298,7 @@
       orders.unshift(order);
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
 
+      // Simpan ID pesanan terakhir untuk fitur status pesanan
       localStorage.setItem('pantryLastOrderId', newOrderId); 
       
       cart = [];
@@ -309,6 +310,7 @@
       document.getElementById('payment-status').textContent = "Belum dibayar ❌";
       
       alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
+      // Redirect ke halaman status pesanan
       window.location.href = 'order_status.html';
     }
 
