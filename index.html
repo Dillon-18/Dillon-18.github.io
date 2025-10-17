@@ -67,16 +67,12 @@
   </footer>
 
   <script>
-    // Data dummy untuk menu
     const menuItems = [
-      // Makanan 
       { id: 1, name: "Nasi Goreng Spesial", price: 25000, category: "makanan" },
       { id: 2, name: "Mie Ayam Bakso", price: 22000, category: "makanan" },
       { id: 3, name: "Ayam Geprek Sambal Matah", price: 28000, category: "makanan" },
       { id: 7, name: "Kwetiau Goreng Seafood", price: 30000, category: "makanan" },
       { id: 8, name: "Capcay Kuah", price: 24000, category: "makanan" },
-      
-      // Minuman 
       { id: 4, name: "Kopi Susu Gula Aren", price: 18000, category: "minuman" },
       { id: 5, name: "Es Teh Manis Jumbo", price: 8000, category: "minuman" },
       { id: 6, name: "Jus Alpukat", price: 20000, category: "minuman" },
@@ -203,13 +199,12 @@
         customerName: name,
         items: [...cart],
         total: cart.reduce((s, i) => s + i.price * i.qty, 0),
-        status: 'Baru', // Default status awal
+        status: 'Baru', 
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
       };
 
-      // Simpan pesanan ke Local Storage untuk dilihat di Dashboard Dapur
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-      orders.unshift(order); // Tambahkan pesanan baru di awal
+      orders.unshift(order); 
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
       
       cart = [];
