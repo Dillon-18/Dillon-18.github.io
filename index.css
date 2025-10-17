@@ -53,6 +53,7 @@ html, body {
 }
 
 .btn-primary {
+  /* Tombol Utama (Pesan Sekarang) - Merah */
   background-color: #ff6347;
   color: white;
 }
@@ -71,7 +72,7 @@ html, body {
   background-color: #e0e0e0;
 }
 
-/* === TOMBOL BAYAR SEKARANG (BARU) === */
+/* === TOMBOL BAYAR SEKARANG (BARU - HIJAU) === */
 .btn-pay-now {
     background-color: #068b18; /* Hijau */
     color: white; 
@@ -83,7 +84,7 @@ html, body {
     margin-top: 10px;
     transition: background-color 0.3s, transform 0.2s;
     width: 100%; 
-    font-size: 1.1em; /* Agak lebih besar */
+    font-size: 1.1em;
     box-shadow: 0 4px 8px rgba(6, 139, 24, 0.3);
 }
 .btn-pay-now:hover {
@@ -105,7 +106,6 @@ html, body {
 
 .content-grid {
     display: grid;
-    /* Kolom kiri (Menu) 2 bagian, Kolom kanan (Sticky Sidebar) 1 bagian */
     grid-template-columns: 2fr 1fr; 
     gap: 30px;
     margin-top: 10px; 
@@ -207,18 +207,16 @@ h2 {
   font-weight: 600;
 }
 
-/* === SIDEBAR STICKY WRAPPER (BARU) === */
+/* === SIDEBAR STICKY WRAPPER === */
 #sticky-sidebar {
-  /* Membungkus keranjang dan info pelanggan agar ikut sticky */
   position: sticky; 
-  top: 80px; /* Jarak dari atas layar (di bawah navbar) */
-  height: fit-content; /* Penting agar sticky berfungsi */
+  top: 80px; 
+  height: fit-content; 
   align-self: flex-start;
 }
 
-/* === CUSTOMER INFO (DIUBAH) === */
+/* === CUSTOMER INFO === */
 .customer-info {
-  /* Hapus margin-top lama, sekarang margin diatur oleh #cart di bawahnya */
   padding: 15px;
   background: #ffffff;
   border-radius: 10px;
@@ -241,13 +239,13 @@ h2 {
   box-sizing: border-box;
 }
 
-/* === KERANJANG (DIUBAH) === */
+/* === KERANJANG === */
 #cart {
   background: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-top: 30px; /* Jarak antara Customer Info dan Keranjang */
+  margin-top: 30px; 
 }
 
 #cart h2 {
