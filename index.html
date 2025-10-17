@@ -155,7 +155,7 @@
       } else if (pass) alert("Password salah!");
     }
 
-    // --- FUNGSI BARU UNTUK KEAMANAN ---
+    // --- FUNGSI UNTUK KEAMANAN ---
     function isPaymentVerified() {
       if (!currentPayment) return false;
       const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
@@ -163,7 +163,7 @@
       // Pembayaran dianggap terverifikasi jika statusnya "paid"
       return found && found.status === "paid";
     }
-    // ------------------------------------
+    // ----------------------------
 
     function renderMenu() {
       const makanan = document.getElementById('menu-makanan');
