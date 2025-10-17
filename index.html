@@ -1,398 +1,228 @@
-html, body {
-  font-family: 'Poppins', Arial, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
-  margin: 0;
-  padding: 0;
-}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pantry - Pemesanan Online (Default)</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-left">
+      <span class="brand-name">Pantry</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn btn-secondary" onclick="openModal('contact')">Contact Me</button>
+      <button class="nav-btn btn-primary" onclick="window.location.href='cashier.html'">Dashboard Dapur</button>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="content-grid">
+        
+        <div id="menu-section">
+            <h2>Menu Makanan</h2>
+            <div class="menu-list" id="menu-makanan"></div>
 
-/* === NAVBAR === */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #ffffff;
-  border-bottom: 1px solid #eee;
-  padding: 12px 25px;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
+            <h2 style="margin-top: 30px;">Menu Minuman</h2>
+            <div class="menu-list" id="menu-minuman"></div>
+        </div>
 
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+        <div id="cart-section">
+            <div class="cart-box">
+                <h2>🛒 Keranjang Anda</h2>
+                <div id="cart-list">
+                    <p style="text-align: center; color: #999;">Keranjang kosong.</p>
+                </div>
+                
+                <hr>
+                <div class="cart-summary">
+                    <p>Total Item: <span id="total-items">0</span></p>
+                    <p class="total-price">Total Bayar: <span id="total-price">Rp0</span></p>
+                </div>
 
-.brand-name {
-  font-size: 24px;
-  font-weight: 700;
-  color: #068b18;
-}
+                <input type="text" id="customer-name" placeholder="Masukkan Nama Anda (Wajib)" required style="width: 95%; margin: 15px 0 10px 0; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
 
-.brand-logo {
-  height: 30px;
-  width: auto;
-}
+                <button class="btn-primary" onclick="placeOrder()" style="width: 100%; margin-top: 10px;">Pesan Sekarang</button>
+                <button class="btn-secondary" onclick="clearCart()" style="width: 100%; margin-top: 10px; background-color: #999;">Kosongkan Keranjang</button>
+            </div>
+        </div>
+    </div>
+  </div>
 
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+  <div id="contact-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('contact')">&times;</span>
+      <h2>Kontak Kami</h2>
+      <p>Jika ada pertanyaan atau masalah dengan pesanan, silakan hubungi kami di:</p>
+      <p>Telepon: (021) 123-456</p>
+      <p>Email: support@pantry.com</p>
+    </div>
+  </div>
 
-.nav-btn {
-  padding: 8px 15px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.2s, box-shadow 0.2s;
-}
+  <footer>
+    © 2025 Pantry — Dibuat dengan ❤️
+  </footer>
 
-.btn-primary {
-  background-color: #ff6347;
-  color: white;
-}
+  <script>
+    const menuItems = [
+      { id: 1, name: "Nasi Goreng Spesial", price: 25000, category: "makanan" },
+      { id: 2, name: "Mie Ayam Bakso", price: 22000, category: "makanan" },
+      { id: 3, name: "Ayam Geprek Sambal Matah", price: 28000, category: "makanan" },
+      { id: 7, name: "Kwetiau Goreng Seafood", price: 30000, category: "makanan" },
+      { id: 8, name: "Capcay Kuah", price: 24000, category: "makanan" },
+      { id: 4, name: "Kopi Susu Gula Aren", price: 18000, category: "minuman" },
+      { id: 5, name: "Es Teh Manis Jumbo", price: 8000, category: "minuman" },
+      { id: 6, name: "Jus Alpukat", price: 20000, category: "minuman" },
+      { id: 9, name: "Lemon Tea Dingin", price: 15000, category: "minuman" },
+      { id: 10, name: "Air Mineral", price: 5000, category: "minuman" },
+    ];
 
-.btn-primary:hover {
-  background-color: #e5533d;
-  box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
-}
+    let cart = [];
 
-.btn-secondary {
-  background-color: #f0f0f0;
-  color: #333;
-}
+    document.addEventListener('DOMContentLoaded', () => {
+        const storedCart = sessionStorage.getItem('pantryCart');
+        if (storedCart) { cart = JSON.parse(storedCart); }
+        renderMenu();
+        updateCart();
+    });
 
-.btn-secondary:hover {
-  background-color: #e0e0e0;
-}
+    function formatRupiah(number) {
+        return `Rp${number.toLocaleString('id-ID')}`;
+    }
 
-/* === KONTEN UTAMA DUA KOLOM === */
-.container {
-  width: 95%;
-  max-width: 1200px;
-  margin: 30px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+    function renderMenu() {
+      const menuMakananEl = document.getElementById('menu-makanan');
+      const menuMinumanEl = document.getElementById('menu-minuman');
+      menuMakananEl.innerHTML = '';
+      menuMinumanEl.innerHTML = '';
 
-.content-grid {
-    display: grid;
-    /* Kolom kiri (Menu) 2 bagian, Kolom kanan (Sticky Sidebar) 1 bagian */
-    grid-template-columns: 2fr 1fr; 
-    gap: 30px;
-    margin-top: 10px; 
-}
+      menuItems.forEach(item => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'menu-item';
+        itemEl.innerHTML = `
+          <div class="item-info">
+            <h3>${item.name}</h3>
+            <p>${formatRupiah(item.price)}</p>
+          </div>
+          <button onclick="addToCart(${item.id})">Tambah +</button>
+        `;
+        
+        if (item.category === 'makanan') {
+          menuMakananEl.appendChild(itemEl);
+        } else {
+          menuMinumanEl.appendChild(itemEl);
+        }
+      });
+    }
 
-/* === JUDUL === */
-h2 {
-  border-bottom: 2px solid #067c0c;
-  padding-bottom: 8px;
-  color: #ff6347;
-  margin-top: 40px;
-}
+    function addToCart(itemId) {
+        const item = menuItems.find(i => i.id === itemId);
+        const existingItem = cart.find(i => i.id === itemId);
 
-/* === MENU === */
-.menu-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 15px;
-}
+        if (existingItem) {
+            existingItem.qty += 1;
+        } else {
+            cart.push({ ...item, qty: 1 });
+        }
+        sessionStorage.setItem('pantryCart', JSON.stringify(cart));
+        updateCart();
+    }
 
-.menu-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  background-color: #fffaf7;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
-}
+    function updateCart() {
+      const cartListEl = document.getElementById('cart-list');
+      const totalItemsEl = document.getElementById('total-items');
+      const totalPriceEl = document.getElementById('total-price');
 
-.menu-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+      cartListEl.innerHTML = '';
+      let totalItems = 0;
+      let totalPrice = 0;
 
-.menu-item img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-right: 15px;
-  flex-shrink: 0;
-}
+      if (cart.length === 0) {
+        cartListEl.innerHTML = '<p style="text-align: center; color: #999;">Keranjang kosong.</p>';
+      } else {
+        cart.forEach(item => {
+          const itemTotal = item.price * item.qty;
+          totalItems += item.qty;
+          totalPrice += itemTotal;
 
-.menu-info {
-  flex-grow: 1;
-}
+          const itemEl = document.createElement('div');
+          itemEl.className = 'cart-item'; 
+          itemEl.innerHTML = `
+            <span>${item.name}</span>
+            <div class="item-controls">
+                <button class="btn-cart-qty" onclick="changeQty(${item.id}, -1)">-</button>
+                <span class="qty-display">${item.qty}</span>
+                <button class="btn-cart-qty" onclick="changeQty(${item.id}, 1)">+</button>
+            </div>
+            <span>${formatRupiah(itemTotal)}</span>
+          `;
+          cartListEl.appendChild(itemEl);
+        });
+      }
 
-.menu-name {
-  font-weight: 600;
-  color: #333;
-}
+      totalItemsEl.textContent = totalItems;
+      totalPriceEl.textContent = formatRupiah(totalPrice);
+    }
+    
+    function changeQty(itemId, delta) {
+        const item = cart.find(i => i.id === itemId);
+        if (!item) return;
 
-.menu-price {
-  color: #ff6347;
-  font-weight: 700;
-  font-size: 1.1em;
-}
+        item.qty += delta;
 
-/* === TOMBOL DI MENU === */
-.menu-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
-}
+        if (item.qty <= 0) {
+            cart = cart.filter(i => i.id !== itemId);
+        }
+        sessionStorage.setItem('pantryCart', JSON.stringify(cart));
+        updateCart();
+    }
 
-.btn-qty {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s;
-}
+    function clearCart() {
+        if (confirm("Yakin ingin mengosongkan keranjang?")) {
+            cart = [];
+            sessionStorage.removeItem('pantryCart');
+            updateCart();
+        }
+    }
 
-.btn-qty:hover {
-  background-color: #ddd;
-}
+    function placeOrder() {
+      if (cart.length === 0) return alert("Keranjang kosong!");
+      
+      const name = document.getElementById('customer-name').value.trim();
+      if (!name) return alert("Masukkan nama Anda untuk pesanan ini!");
 
-.btn-plus {
-  background-color: #068b18;
-  color: white;
-  border-color: #068b18;
-}
+      const order = {
+        id: Date.now(),
+        customerName: name,
+        items: [...cart],
+        total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+        status: 'Baru', 
+        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+      };
 
-.btn-plus:hover {
-  background-color: #046b13;
-}
+      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      orders.unshift(order); 
+      localStorage.setItem('pantryOrders', JSON.stringify(orders));
+      
+      cart = [];
+      sessionStorage.removeItem('pantryCart');
+      updateCart();
+      renderMenu();
+      
+      alert(`✅ Pesanan atas nama ${name} berhasil dibuat! Mohon tunggu pesanan Anda diproses di dapur.`);
+    }
+    
+    function openModal(id) { document.getElementById(id + "-modal").style.display = "block"; }
+    function closeModal(id) { document.getElementById(id + "-modal").style.display = "none"; }
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = "none";
+      }
+    }
+  </script>
 
-.qty-display {
-  width: 28px;
-  text-align: center;
-  font-weight: 600;
-}
-
-/* === SIDEBAR STICKY WRAPPER (BARU) === */
-#sticky-sidebar {
-  /* Membungkus keranjang dan info pelanggan agar ikut sticky */
-  position: sticky; 
-  top: 80px; /* Jarak dari atas layar (di bawah navbar) */
-  height: fit-content; /* Penting agar sticky berfungsi */
-  align-self: flex-start;
-}
-
-/* === CUSTOMER INFO (DIUBAH) === */
-.customer-info {
-  /* Hapus margin-top lama, sekarang margin diatur oleh #cart di bawahnya */
-  padding: 15px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.customer-info h3 {
-  margin-top: 0;
-  color: #068b18;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.customer-info input {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-/* === KERANJANG (DIUBAH) === */
-#cart {
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-top: 30px; /* Jarak antara Customer Info dan Keranjang */
-}
-
-#cart h2 {
-  color: #333;
-  border-bottom: 1px solid #ddd;
-  margin-top: 0;
-  padding-bottom: 10px;
-}
-
-#cart-items {
-  list-style: none;
-  padding: 0;
-}
-
-#cart-items li {
-  padding: 10px 0;
-  border-bottom: 1px dotted #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.95em;
-}
-
-#cart-items li:last-child {
-  border-bottom: none;
-}
-
-/* Tombol di keranjang */
-.cart-actions .btn-qty {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  width: 25px;
-  height: 25px;
-  border-radius: 4px;
-  font-size: 14px;
-  padding: 0;
-  line-height: 1;
-}
-
-.cart-actions .btn-plus {
-  background-color: #068b18;
-  color: white;
-  border-color: #068b18;
-}
-
-.btn-remove {
-  background-color: #ff4d4d;
-  color: white;
-  border-color: #ff4d4d;
-}
-
-/* === CHECKOUT BUTTON === */
-#checkout-btn {
-  display: block;
-  width: 100%;
-  padding: 15px;
-  background-color: #ff6347;
-  color: white;
-  font-size: 1.2em;
-  font-weight: 700;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.2s;
-  text-align: center; 
-}
-
-#checkout-btn:hover:not(:disabled) {
-  background-color: #e5533d;
-}
-
-#checkout-btn:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-/* ... (Kode CSS untuk Modal dan Footer) ... */
-
-/* === FOOTER === */
-footer {
-  text-align: center;
-  padding: 20px;
-  margin-top: 40px;
-  border-top: 1px solid #eee;
-  color: #999;
-  font-size: 0.9em;
-}
-
-/* === NOTIFIKASI === */
-.notification {
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  z-index: 1001;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.notification.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* === MODAL POPUP === */
-.modal {
-  display: none; 
-  position: fixed; 
-  z-index: 2000; 
-  left: 0;
-  top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
-  background-color: rgba(0,0,0,0.4); 
-  padding-top: 60px;
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 5% auto; 
-  padding: 30px;
-  border: 1px solid #888;
-  width: 80%; 
-  max-width: 500px;
-  border-radius: 10px;
-  position: relative;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  position: absolute;
-  top: 10px;
-  right: 20px;
-}
-
-.close:focus {
-  color: #333;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.modal-content h2 {
-  color: #ff6347;
-  border-bottom: 2px solid #068b18;
-  padding-bottom: 10px;
-}
-
-.contact-link {
-  color: #068b18;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.contact-link:hover {
-  text-decoration: underline;
-}
+</body>
+</html>
