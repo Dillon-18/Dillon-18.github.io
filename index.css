@@ -72,7 +72,7 @@ html, body {
   background-color: #e0e0e0;
 }
 
-/* === TOMBOL BAYAR SEKARANG (BARU - HIJAU) === */
+/* === TOMBOL BAYAR SEKARANG (HIJAU) === */
 .btn-pay-now {
     background-color: #068b18; /* Hijau */
     color: white; 
@@ -91,6 +91,25 @@ html, body {
     background-color: #046e12; /* Hijau lebih gelap saat hover */
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(6, 139, 24, 0.4);
+}
+
+/* === TOMBOL CEK STATUS PESANAN (BARU) === */
+.btn-check-status-cart {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 10px; 
+    transition: background-color 0.3s;
+    width: 100%;
+    font-size: 1em;
+    text-align: center;
+}
+.btn-check-status-cart:hover {
+    background-color: #e0e0e0;
 }
 
 /* === KONTEN UTAMA DUA KOLOM === */
