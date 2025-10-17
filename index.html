@@ -81,7 +81,7 @@
       <div id="payment-options" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
           </div>
       
-      <p id="payment-note" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
+      <p style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
     </div>
   </div>
 
@@ -102,7 +102,7 @@
       <p style="font-size: 1.1em; color: #555;">Kode Pembayaran Anda (Simpan):</p>
       <p id="payment-detail-code" style="font-size: 1.2em; font-weight: 700; color: #ff6347; margin-top: 5px; margin-bottom: 30px; padding: 10px; border: 1px dashed #ff6347; display: inline-block;">PAY0000</p>
       
-      <p id="payment-detail-note" style="margin-top: 20px; color: #555;">
+      <p style="margin-top: 20px; color: #555;">
           **TIPS:** Silakan lakukan transfer/pembayaran di aplikasi terkait.
           <br>Kasir akan memverifikasi status pembayaran Anda setiap 2 detik.
       </p>
@@ -132,12 +132,10 @@
     ];
 
     const paymentMethods = [
-      // Metode Tunai/Langsung (status: 'paid' di awal)
-      { name: 'Tunai/Langsung', img: 'kasir.png', color: '#068b18', type: 'cash' },
-      { name: 'GoPay', img: 'gopay.png', color: '#00A389', type: 'transfer' },
-      { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733', type: 'transfer' },
-      { name: 'Dana', img: 'dana.png', color: '#1B72E5', type: 'transfer' },
-      { name: 'Bank Transfer (BCA)', img: 'bca.png', color: '#004A99', type: 'transfer' },
+      { name: 'GoPay', img: 'gopay.png', color: '#00A389' },
+      { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733' },
+      { name: 'Dana', img: 'dana.png', color: '#1B72E5' },
+      { name: 'Bank Transfer (BCA)', img: 'bca.png', color: '#004A99' },
     ];
 
     let cart = [];
@@ -249,11 +247,6 @@
 
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
       
-      // KEWAJIBAN INPUT NAMA SEBELUM BAYAR
-      const customerName = document.getElementById('customer-name').value.trim();
-      if (!customerName) return alert("⚠️ Harap masukkan nama Anda di kolom 'Masukkan Nama Anda' sebelum melanjutkan pembayaran.");
-      // ==========================================
-
       document.getElementById('payment-total-display').textContent = 'Rp' + total.toLocaleString('id-ID');
       
       const optionsEl = document.getElementById('payment-options');
@@ -278,37 +271,34 @@
           optionsEl.appendChild(btn);
       });
       
-      // Update note di modal
-      document.getElementById('payment-note').textContent = "Untuk Transfer/E-Wallet: Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer. Untuk Tunai: langsung proses checkout setelah ini.";
-
       document.getElementById('payment-modal').style.display = 'block';
     }
 
     function selectPaymentMethod(methodName, total) {
+      // Dapatkan nama pelanggan dari input
       const customerName = document.getElementById('customer-name').value.trim();
       if (!customerName) {
-          alert("⚠️ Terjadi kesalahan. Harap masukkan nama Anda.");
-          closeModal('payment');
+          alert("⚠️ Harap masukkan nama Anda sebelum memilih metode pembayaran.");
+          openModal('payment'); // Buka kembali modal pilihan jika nama kosong
           return;
       }
 
       // Tutup modal pilihan
       closeModal('payment');
       
+      // Cari detail metode
       const method = paymentMethods.find(m => m.name === methodName);
       
+      // Buat data pembayaran baru (status: pending)
       const code = "PAY" + Date.now();
-      
-      // Tentukan status awal: "paid" jika Tunai, "pending" jika Transfer/E-Wallet
-      const initialStatus = (method.type === 'cash') ? "paid" : "pending";
-      
       currentPayment = { 
           id: code, 
-          status: initialStatus, // Status ditentukan di sini
+          status: "pending", 
           total, 
           cart: [...cart], 
           time: new Date().toLocaleString('id-ID'),
           method: methodName,
+          // === BARU: Tambahkan nama pelanggan ke data pembayaran ===
           customerName: customerName 
       };
 
@@ -316,24 +306,12 @@
       payments.push(currentPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      // Jika tunai, langsung update status dan skip detail modal
-      if (method.type === 'cash') {
-          checkPaymentStatus(); // Update status pembayaran di sidebar
-          alert(`✅ Pembayaran Tunai berhasil dicatat. Silakan lakukan Checkout.`);
-          return;
-      }
-      
-      // Jika transfer/ewallet, tampilkan Modal Detail Pembayaran
+      // Tampilkan Modal Detail Pembayaran
       document.getElementById('payment-method-img').src = method.img;
       document.getElementById('payment-method-name').textContent = method.name;
       document.getElementById('payment-detail-total').textContent = 'Rp' + total.toLocaleString('id-ID');
       document.getElementById('payment-detail-code').textContent = code;
       
-      document.getElementById('payment-detail-note').innerHTML = `
-          **TIPS:** Silakan lakukan transfer/pembayaran di aplikasi terkait.
-          <br>Kasir akan memverifikasi status pembayaran Anda setiap 2 detik.
-      `;
-
       openModal('payment-detail');
     }
 
@@ -348,8 +326,10 @@
       if (found && found.status === "paid") {
         paymentStatusEl.textContent = `Sudah dibayar melalui ${found.method} ✅`; 
         
+        // Memastikan tombol menu dinonaktifkan setelah paid
         renderMenu();
         
+        // Hanya enable checkout jika total > 0 
         const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
         if (total > 0) {
             checkoutBtn.disabled = false;
@@ -367,7 +347,7 @@
       if (!found || found.status !== "paid") return alert("Pembayaran belum diverifikasi oleh kasir!");
 
       const name = document.getElementById('customer-name').value.trim();
-      if (!name) return alert("Masukkan nama Anda!"); 
+      if (!name) return alert("Masukkan nama Anda!");
 
       const order = {
         id: Date.now(),
