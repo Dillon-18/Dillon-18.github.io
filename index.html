@@ -101,16 +101,14 @@
   </footer>
 
   <script>
-    // Data dummy untuk menu (Menu yang diperbarui dipertahankan)
+    // Data dummy untuk menu
     const menuItems = [
-      // Makanan 
       { id: 1, name: "Nasi Goreng Spesial", price: 25000, category: "makanan" },
       { id: 2, name: "Mie Ayam Bakso", price: 22000, category: "makanan" },
       { id: 3, name: "Ayam Geprek Sambal Matah", price: 28000, category: "makanan" },
       { id: 7, name: "Kwetiau Goreng Seafood", price: 30000, category: "makanan" },
       { id: 8, name: "Capcay Kuah", price: 24000, category: "makanan" },
       
-      // Minuman 
       { id: 4, name: "Kopi Susu Gula Aren", price: 18000, category: "minuman" },
       { id: 5, name: "Es Teh Manis Jumbo", price: 8000, category: "minuman" },
       { id: 6, name: "Jus Alpukat", price: 20000, category: "minuman" },
@@ -121,19 +119,24 @@
     let cart = [];
     let currentPayment = null;
 
+    // Inisialisasi
     document.addEventListener('DOMContentLoaded', () => {
         const storedCart = sessionStorage.getItem('pantryCart');
-        if (storedCart) { cart = JSON.parse(storedCart); }
+        if (storedCart) {
+            cart = JSON.parse(storedCart);
+        }
         const storedPayment = sessionStorage.getItem('pantryCurrentPayment');
         if (storedPayment) {
             currentPayment = JSON.parse(storedPayment);
             document.getElementById('payment-status').textContent = `Menunggu Verifikasi (${currentPayment.method}) ⏳`;
             document.getElementById('payment-status').style.color = '#f7b000';
         }
+        
         renderMenu();
         updateCart();
     });
 
+    // Fungsi utilitas untuk memformat harga
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
     }
@@ -141,6 +144,7 @@
     function renderMenu() {
       const menuMakananEl = document.getElementById('menu-makanan');
       const menuMinumanEl = document.getElementById('menu-minuman');
+      
       menuMakananEl.innerHTML = '';
       menuMinumanEl.innerHTML = '';
 
@@ -165,7 +169,7 @@
 
     function addToCart(itemId) {
         if (currentPayment) {
-            alert("Anda sedang menunggu verifikasi pembayaran. Selesaikan pembayaran dahulu.");
+            alert("Anda sedang menunggu verifikasi pembayaran. Selesaikan pembayaran dahulu!");
             return;
         }
         const item = menuItems.find(i => i.id === itemId);
@@ -198,15 +202,17 @@
           totalPrice += itemTotal;
 
           const itemEl = document.createElement('div');
-          itemEl.className = 'cart-item';
+          // Menggunakan kelas 'cart-item-list' untuk item di keranjang
+          itemEl.className = 'cart-item-list'; 
           itemEl.innerHTML = `
-            <span>${item.name}</span>
-            <div class="item-controls">
-                <button onclick="changeQty(${item.id}, -1)">-</button>
-                <span>${item.qty}</span>
-                <button onclick="changeQty(${item.id}, 1)">+</button>
+            <div class="item-details">
+                <span>${item.name}</span>
+                <span class="item-price-qty">${formatRupiah(item.price)} x ${item.qty}</span>
             </div>
-            <span>${formatRupiah(itemTotal)}</span>
+            <div class="cart-actions">
+                <button class="btn-qty btn-minus" onclick="changeQty(${item.id}, -1)">-</button>
+                <button class="btn-qty btn-plus" onclick="changeQty(${item.id}, 1)">+</button>
+            </div>
           `;
           cartListEl.appendChild(itemEl);
         });
@@ -246,6 +252,7 @@
         
         const totalAmount = cart.reduce((s, i) => s + i.price * i.qty, 0);
         const method = document.getElementById('payment-method').value;
+        
         const paymentId = 'PAY-' + Date.now().toString().slice(-6); 
 
         currentPayment = {
@@ -311,10 +318,12 @@
       window.location.href = 'order_status.html';
     }
 
+    // Fungsi Navigasi
     function redirectToCashier() {
       window.location.href = 'payment_dashboard.html';
     }
     
+    // Fungsi Modal
     function openModal(id) { document.getElementById(id + "-modal").style.display = "block"; }
     function closeModal(id) { document.getElementById(id + "-modal").style.display = "none"; }
     window.onclick = function(event) {
