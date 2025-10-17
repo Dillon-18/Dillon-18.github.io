@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pantry - Dashboard Dapur</title>
+  <title>Pantry - Dashboard Dapur (Default)</title>
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -99,7 +99,6 @@
       <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-secondary" onclick="window.location.href='payment_dashboard.html'">Dashboard Kasir</button>
       <button class="nav-btn btn-primary" onclick="window.location.href='index.html'">Pemesanan Pelanggan</button>
     </div>
   </header>
@@ -141,7 +140,6 @@
         return `Rp${number.toLocaleString('id-ID')}`;
     }
 
-    // Panggil saat halaman dimuat
     document.addEventListener('DOMContentLoaded', loadOrders);
 
     function loadOrders() {
@@ -177,7 +175,7 @@
           targetList = orderListSelesai;
           actionsHtml = `<button class="btn-selesai" disabled>Sudah Selesai</button>`;
         } else {
-            return; // Lewati status yang tidak dikenal
+            return; 
         }
 
         const card = document.createElement('div');
@@ -197,6 +195,7 @@
         targetList.appendChild(card);
       });
       
+      // Tampilkan pesan kosong jika tidak ada pesanan
       if (orderListBaru.children.length === 0) {
         orderListBaru.innerHTML = '<p class="empty-column-msg">Tidak ada pesanan baru.</p>';
       }
