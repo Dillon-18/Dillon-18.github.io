@@ -123,7 +123,7 @@
         <h2 class="payment-status-title" style="color: #068b18; border-bottom: 2px solid #068b18;">✅ Riwayat Pembayaran Selesai</h2>
         
         <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px;">
-            <input type="text" id="search-completed-payments" placeholder="Cari Nama, Kode Bayar, atau Metode..." style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; flex-grow: 1;">
+            <input type="text" id="search-completed-payments" placeholder="Cari Nama, Kode Bayar, Metode, atau Nama Menu..." style="padding: 8px; border: 1px solid #ccc; border-radius: 5px; flex-grow: 1;">
             <span style="font-size: 0.9em; color: #555; white-space: nowrap;">(Data dikelompokkan per Bulan)</span>
         </div>
         <div id="payment-completed-container">
@@ -226,7 +226,6 @@
             <span style="font-size:0.8em; color:#999; margin-top: 5px;">Waktu Pesanan: <b>${dateInfo.fullDate}</b></span>
             
             ${!isCompleted 
-                // Diubah: panggil verifyPayment dengan data tambahan
                 ? `<button onclick="verifyPayment('${payment.id}', ${payment.total}, '${payment.method}')">✅ Verifikasi Bayar</button>` 
                 : `<button class="btn-delete-payment" onclick="deletePayment('${payment.id}')">🗑️ Hapus Riwayat</button>`
             }
@@ -241,13 +240,20 @@
         let completedPayments = payments.filter(p => p.status === 'paid');
         
         const normalizedSearchTerm = searchTerm.toLowerCase().trim();
+        
+        // === LOGIKA PENCARIAN BARU DAN KOMPREHENSIF ===
         if (normalizedSearchTerm) {
-            completedPayments = completedPayments.filter(p => 
-                p.customerName.toLowerCase().includes(normalizedSearchTerm) ||
-                p.id.toLowerCase().includes(normalizedSearchTerm) ||
-                p.method.toLowerCase().includes(normalizedSearchTerm)
-            );
+            completedPayments = completedPayments.filter(p => {
+                // Kumpulkan semua nama menu menjadi satu string untuk pencarian
+                const itemNames = p.cart.map(item => item.name).join(' ').toLowerCase();
+                
+                return p.customerName.toLowerCase().includes(normalizedSearchTerm) ||
+                       p.id.toLowerCase().includes(normalizedSearchTerm) ||
+                       p.method.toLowerCase().includes(normalizedSearchTerm) ||
+                       itemNames.includes(normalizedSearchTerm); // Mencari berdasarkan Nama Menu
+            });
         }
+        // ===============================================
 
         completedPayments.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
 
@@ -274,7 +280,7 @@
             });
         }
         
-        // RENDER PEMBAYARAN SELESAI
+        // RENDER PEMBAYARAN SELESAI (Dikelompokkan dan Dicari)
         const monthKeys = Object.keys(groupedPayments);
         if (monthKeys.length === 0) {
             completedContainerEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center;">Tidak ada riwayat pembayaran yang diselesaikan atau tidak ditemukan dalam pencarian.</p>';
@@ -304,7 +310,6 @@
         }
     }
     
-    // === FUNGSI UTAMA VERIFIKASI PEMBAYARAN (DENGAN LOGIKA KURANG BAYAR/KEMBALIAN) ===
     function verifyPayment(paymentId, total, method) {
         
         // 1. Logika NON-CASH (Transfer/E-Wallet)
@@ -319,7 +324,7 @@
         // 2. Logika CASH (Tunai/Langsung)
         const amountReceivedStr = prompt(`PEMBAYARAN TUNAI. Total: ${formatRupiah(total)}. Masukkan jumlah uang yang diterima dari pelanggan:`);
 
-        if (!amountReceivedStr) return; // Dibatalkan
+        if (!amountReceivedStr) return; 
 
         const amountReceived = parseInt(amountReceivedStr.replace(/\D/g, ''));
         if (isNaN(amountReceived) || amountReceived <= 0) {
@@ -327,23 +332,19 @@
             return;
         }
         
-        // Periksa Kekurangan Bayar / Kembalian
         if (amountReceived < total) {
             const shortage = total - amountReceived;
             alert(`⚠️ KURANG BAYAR: Pelanggan hanya membayar ${formatRupiah(amountReceived)}. Kekurangan: ${formatRupiah(shortage)}. Status pembayaran TIDAK diubah. Harap minta pelanggan melunasi.`);
         } else {
-            // LUNAS
             const change = amountReceived - total;
             if (change > 0) {
                 alert(`✅ LUNAS. Kembalian: ${formatRupiah(change)}. Pesanan akan otomatis dilanjutkan ke dapur.`);
             } else {
                  alert(`✅ LUNAS. Uang diterima pas. Pesanan akan otomatis dilanjutkan ke dapur.`);
             }
-            // Lanjutkan ke tahap PAID
             _markAsPaid(paymentId);
         }
     }
-    // ===========================================
 
     // FUNGSI HAPUS RIWAYAT PEMBAYARAN
     function deletePayment(paymentId) {
