@@ -132,9 +132,9 @@
     ];
 
     const paymentMethods = [
-      // === BARU: TUNAI/LANGSUNG ===
-      { name: 'Tunai/Langsung', img: 'kasir.png', color: '#00A389', type: 'cash' },
-      // ===========================
+      // === METODE TUNAI/LANGSUNG BARU ===
+      { name: 'Tunai/Langsung', img: 'kasir.png', color: '#068b18', type: 'cash' },
+      // =================================
       { name: 'GoPay', img: 'gopay.png', color: '#00A389', type: 'transfer' },
       { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733', type: 'transfer' },
       { name: 'Dana', img: 'dana.png', color: '#1B72E5', type: 'transfer' },
@@ -300,7 +300,7 @@
       
       const code = "PAY" + Date.now();
       
-      // Tentukan status awal: "paid" jika Tunai, "pending" jika Transfer
+      // Tentukan status awal: "paid" jika Tunai, "pending" jika Transfer/E-Wallet
       const initialStatus = (method.type === 'cash') ? "paid" : "pending";
       
       currentPayment = { 
