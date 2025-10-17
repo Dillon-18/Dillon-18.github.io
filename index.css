@@ -29,7 +29,7 @@ html, body {
 .brand-name {
   font-size: 24px;
   font-weight: 700;
-  color: #068b18; /* Hijau */
+  color: #068b18; 
 }
 
 .brand-logo {
@@ -53,7 +53,7 @@ html, body {
 }
 
 .btn-primary {
-  background-color: #d14838; /* Merah Maroon/Primer */
+  background-color: #d14838; 
   color: white;
 }
 
@@ -79,13 +79,13 @@ html, body {
 
 .content-grid {
   display: grid;
-  grid-template-columns: 2.5fr 1fr; /* Menu lebih besar dari sidebar */
+  grid-template-columns: 2.5fr 1fr;
   gap: 30px;
 }
 
 #sticky-sidebar {
   position: sticky;
-  top: 80px; /* Di bawah navbar */
+  top: 80px; 
   height: fit-content;
   background-color: #ffffff;
   padding: 20px;
@@ -106,7 +106,6 @@ html, body {
     border-radius: 6px;
     box-sizing: border-box;
 }
-
 
 /* === MENU LIST === */
 .menu-list {
@@ -142,7 +141,7 @@ html, body {
 }
 
 .menu-price {
-  color: #d14838; /* Warna primer */
+  color: #d14838; 
   font-weight: 700;
 }
 
@@ -170,7 +169,7 @@ html, body {
 }
 
 .btn-plus {
-  background-color: #068b18; /* Hijau */
+  background-color: #068b18; 
   color: white;
 }
 
@@ -226,7 +225,7 @@ footer {
   font-size: 0.9em;
 }
 
-/* === MODAL POPUP (Perlu Dipertahankan) === */
+/* === MODAL POPUP (Sederhana) === */
 .modal {
   display: none; 
   position: fixed; 
@@ -236,25 +235,19 @@ footer {
   width: 100%; 
   height: 100%; 
   overflow: auto; 
-  background-color: rgba(0,0,0,0.6); 
-  padding-top: 50px; 
-  backdrop-filter: blur(3px); 
+  background-color: rgba(0,0,0,0.4); 
+  padding-top: 60px;
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: 5% auto; 
-  padding: 30px;
-  border-radius: 12px;
-  max-width: 450px; 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  position: relative;
-  animation: modal-fade-in 0.3s ease-out;
-}
-
-@keyframes modal-fade-in {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 400px; 
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .close {
@@ -262,107 +255,29 @@ footer {
   float: right;
   font-size: 28px;
   font-weight: bold;
-  position: absolute;
-  top: 10px;
-  right: 15px;
 }
 
 .close:hover,
 .close:focus {
-  color: #333;
+  color: #000;
   text-decoration: none;
   cursor: pointer;
 }
 
-/* === MODAL PEMBAYARAN KUSTOM (TAMPILAN MENARIK) === */
-#payment-modal h2, #transfer-detail-modal h2 {
-    color: #d14838; 
-    font-weight: 700;
-    margin-top: 0;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-}
-
-/* Styling untuk container pilihan pembayaran */
-#payment-options {
-    display: flex;
-    flex-direction: column;
-    gap: 15px; 
-    margin-top: 20px !important; 
-}
-
-/* Styling untuk tombol pilihan pembayaran */
-.payment-btn-custom {
-    padding: 15px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.05em;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.payment-btn-custom:hover {
-    filter: brightness(1.1);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 10px rgba(0,0,0,0.15);
-}
-
-/* Style khusus untuk indikator ikon/panah */
-.payment-btn-custom::after {
-    content: '→';
-    font-size: 1.2em;
-    font-weight: 700;
-    opacity: 0.8;
-}
-
-/* Styling untuk modal detail transfer */
-.transfer-info-box {
-    background: #fff8f5; 
-    border: 1px solid #ff6347;
-    padding: 20px;
-    border-radius: 10px;
-    margin: 15px 0;
-    text-align: left;
-}
-.transfer-info-box .bank-name {
-    font-weight: 700;
-    color: #004A99; 
-    font-size: 1.2em;
-    margin-bottom: 5px;
-}
-.transfer-info-box .account-number {
-    font-size: 2em;
-    font-weight: 800;
-    color: #333;
-    margin: 5px 0;
-    word-break: break-all;
-}
-.transfer-info-box .account-holder {
-    font-size: 0.9em;
-    color: #555;
-}
-
-
-/* === RESPONSIF UNTUK MOBILE (FLEXIBLE) === */
+/* === RESPONSIF UNTUK MOBILE === */
 @media (max-width: 900px) {
   .content-grid {
-    grid-template-columns: 1fr; /* Semua kolom jadi satu baris */
+    grid-template-columns: 1fr; 
   }
 
   #sticky-sidebar {
-    position: relative; /* Non-sticky di mobile */
+    position: relative; 
     top: 0;
-    order: -1; /* Pindahkan keranjang ke atas menu */
+    order: -1; 
   }
 
   .menu-list {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Kolom menu jadi lebih kecil */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
   }
 }
 
@@ -382,20 +297,5 @@ footer {
     }
     .container {
         padding: 0 10px;
-    }
-    
-    /* Responsivitas Modal */
-    .modal-content {
-        margin: 0;
-        width: 100%;
-        max-width: none;
-        height: auto;
-        min-height: 100vh; 
-        border-radius: 0;
-        padding-top: 50px;
-        box-sizing: border-box;
-    }
-    .modal {
-        padding-top: 0;
     }
 }
