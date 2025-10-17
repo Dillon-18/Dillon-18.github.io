@@ -132,9 +132,8 @@
     ];
 
     const paymentMethods = [
-      // === METODE TUNAI/LANGSUNG BARU ===
+      // Metode Tunai/Langsung kini juga perlu verifikasi (type: 'cash', tapi status awal 'pending')
       { name: 'Tunai/Langsung', img: 'kasir.png', color: '#068b18', type: 'cash' },
-      // =================================
       { name: 'GoPay', img: 'gopay.png', color: '#00A389', type: 'transfer' },
       { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733', type: 'transfer' },
       { name: 'Dana', img: 'dana.png', color: '#1B72E5', type: 'transfer' },
@@ -280,7 +279,7 @@
       });
       
       // Update note di modal
-      document.getElementById('payment-note').textContent = "Untuk Transfer/E-Wallet: Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer. Untuk Tunai: langsung proses checkout setelah ini.";
+      document.getElementById('payment-note').textContent = "Semua metode memerlukan verifikasi kasir. Untuk Tunai: serahkan uang ke kasir. Untuk Transfer/E-Wallet: lakukan transfer dan tunggu kasir memverifikasi.";
 
       document.getElementById('payment-modal').style.display = 'block';
     }
@@ -300,12 +299,13 @@
       
       const code = "PAY" + Date.now();
       
-      // Tentukan status awal: "paid" jika Tunai, "pending" jika Transfer/E-Wallet
-      const initialStatus = (method.type === 'cash') ? "paid" : "pending";
+      // === PERUBAHAN UTAMA: SEMUA STATUS AWAL ADALAH PENDING ===
+      const initialStatus = "pending"; 
+      // =======================================================
       
       currentPayment = { 
           id: code, 
-          status: initialStatus, // Status ditentukan di sini
+          status: initialStatus,
           total, 
           cart: [...cart], 
           time: new Date().toLocaleString('id-ID'),
@@ -317,23 +317,28 @@
       payments.push(currentPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      // Jika tunai, langsung update status dan skip detail modal
-      if (method.type === 'cash') {
-          checkPaymentStatus(); // Update status pembayaran di sidebar
-          alert(`✅ Pembayaran Tunai berhasil dicatat. Silakan lakukan Checkout.`);
-          return;
-      }
-      
-      // Jika transfer/ewallet, tampilkan Modal Detail Pembayaran
+      // Tampilkan Modal Detail Pembayaran (untuk semua metode)
       document.getElementById('payment-method-img').src = method.img;
       document.getElementById('payment-method-name').textContent = method.name;
       document.getElementById('payment-detail-total').textContent = 'Rp' + total.toLocaleString('id-ID');
-      document.getElementById('payment-detail-code').textContent = code;
       
-      document.getElementById('payment-detail-note').innerHTML = `
-          **TIPS:** Silakan lakukan transfer/pembayaran di aplikasi terkait.
-          <br>Kasir akan memverifikasi status pembayaran Anda setiap 2 detik.
-      `;
+      // === LOGIKA TAMPILAN KHUSUS UNTUK TUNAI VS TRANSFER ===
+      if (method.type === 'cash') {
+          // Untuk Tunai: Tampilkan kode (untuk verifikasi kasir) dan instruksi Tunai
+          document.getElementById('payment-detail-code').textContent = code;
+          document.getElementById('payment-detail-note').innerHTML = `
+              **INSTRUKSI:** Pembayaran **Tunai/Langsung** telah dicatat.
+              <br>Harap serahkan uang fisik ke kasir. Kasir akan memverifikasi pembayaran Anda.
+          `;
+      } else {
+          // Untuk Transfer/E-wallet: Tampilkan kode dan instruksi transfer
+          document.getElementById('payment-detail-code').textContent = code;
+          document.getElementById('payment-detail-note').innerHTML = `
+              **TIPS:** Silakan lakukan transfer/pembayaran di aplikasi terkait.
+              <br>Kasir akan memverifikasi status pembayaran Anda setiap 2 detik.
+          `;
+      }
+      // =======================================================
 
       openModal('payment-detail');
     }
@@ -356,7 +361,7 @@
             checkoutBtn.disabled = false;
         }
       } else {
-        paymentStatusEl.textContent = "Belum dibayar ❌";
+        paymentStatusEl.textContent = `Menunggu verifikasi pembayaran (${currentPayment ? currentPayment.method : ''}) ⏳`;
         checkoutBtn.disabled = true;
       }
     }
