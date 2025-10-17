@@ -32,141 +32,123 @@
         color: #333;
     }
     .order-card {
-        background-color: #ffffff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
         padding: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        transition: all 0.3s; /* Transisi */
-        position: relative;
+        margin-bottom: 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    .order-card:hover {
-        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        transform: translateY(-2px);
-    }
-    .order-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      border-bottom: 1px dashed #ccc;
-      padding-bottom: 5px;
-    }
-    .order-customer {
+    .order-card h4 {
+        margin: 0 0 10px 0;
+        color: #d14838;
         font-weight: 700;
-        font-size: 1.1em;
+        font-size: 1.2em;
+        border-bottom: 1px dotted #ccc;
+        padding-bottom: 5px;
+    }
+    .order-card ul {
+        list-style-type: none;
+        padding: 0;
+        font-size: 0.9em;
+        margin-bottom: 10px;
+    }
+    .order-card ul li {
+        padding: 3px 0;
+        color: #555;
+    }
+    .order-actions button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-right: 5px;
+        transition: opacity 0.2s;
+    }
+    .btn-proses {
+        background-color: #ffc107;
         color: #333;
     }
-    .order-time {
-      font-weight: bold;
-      color: #ff6347; /* Warna primer baru */
-      font-size: 1.2em;
-    }
-    .order-status {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 0.9em;
-    }
-    .status-baru { background-color: #fee2e2; color: #ef4444; }
-    .status-proses { background-color: #fef3c7; color: #f59e0b; }
-    .status-selesai { background-color: #d1fae5; color: #10b981; }
-    .item-list {
-        list-style: none;
-        padding: 0;
-        margin: 10px 0;
-        font-size: 0.95em;
-    }
-    .item-list li {
-        border-bottom: 1px dotted #eee;
-        padding: 6px 0;
-        display: flex;
-        justify-content: space-between;
-    }
-    .order-total {
-      font-size: 1.5em;
-      font-weight: 700;
-      color: #068b18;
-      display: block;
-      margin-top: 10px;
-    }
-    .action-btn-group {
-        display: flex;
-        gap: 8px;
-        margin-top: 15px;
-    }
-    .action-btn-group button {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
+    .btn-selesai {
+        background-color: #068b18;
         color: white;
-        font-weight: 600;
-        transition: background-color 0.3s, transform 0.2s; /* Transisi */
     }
-    .action-btn-group button:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    .btn-hapus {
+        background-color: #f44336;
+        color: white;
     }
-    /* WARNA TOMBOL AKSI LEBIH GELAP */
-    .btn-proses { background-color: #e68a00; } 
-    .btn-proses:hover:not(:disabled) { background-color: #cc7800; }
-    .btn-selesai { background-color: #056b12; }
-    .btn-selesai:hover:not(:disabled) { background-color: #04520e; }
-    .btn-hapus { background-color: #c44336; }
-    .btn-hapus:hover:not(:disabled) { background-color: #a3322b; }
-    .order-list { 
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
+    .order-card .order-time {
+        display: block;
+        font-size: 0.8em;
+        color: #999;
+        margin-bottom: 10px;
+    }
+    .order-card .order-total {
+        font-weight: 700;
+        color: #333;
+        margin-top: 5px;
+        border-top: 1px solid #eee;
+        padding-top: 5px;
     }
     .empty-column-msg {
         text-align: center;
         color: #999;
-        margin-top: 50px;
+        padding: 20px 0;
+        font-style: italic;
     }
+    
+    /* === Responsif Dashboard Dapur === */
+    @media (max-width: 1200px) {
+        .kanban-container {
+            grid-template-columns: repeat(2, 1fr); /* 2 kolom di tablet */
+        }
+    }
+    @media (max-width: 768px) {
+        .kanban-container {
+            grid-template-columns: 1fr; /* 1 kolom di mobile */
+        }
+        .order-actions button {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+    }
+
   </style>
 </head>
 <body>
-
+  
   <header class="navbar">
     <div class="nav-left">
       <span class="brand-name">Pantry</span>
-      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #ff6347;">Dashboard Dapur</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
+      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #068b18;">Dashboard Dapur</span>
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-primary" onclick="window.location.href='payment_dashboard.html'">💳 Dashboard Pembayaran</button>
-      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Kembali ke Menu Utama</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='payment_dashboard.html'">Dashboard Pembayaran</button>
+      <button class="nav-btn btn-primary" onclick="window.location.href='index.html'">Menu Utama</button>
     </div>
   </header>
-
+  
   <div class="container">
-    
-    <div class="order-dashboard-container">
-        <h2>👨‍🍳 Daftar Pesanan </h2>
-        <div class="kanban-container">
-            <div class="kanban-column">
-                <h3>Baru</h3>
-                <div class="order-list" id="order-list-baru"></div>
+    <div class="kanban-container">
+        
+        <div class="kanban-column" id="order-list-baru">
+            <h3>⭐ Pesanan Baru</h3>
             </div>
-            <div class="kanban-column">
-                <h3>Diproses</h3>
-                <div class="order-list" id="order-list-proses"></div>
+
+        <div class="kanban-column" id="order-list-proses">
+            <h3>⏳ Sedang Diproses</h3>
             </div>
-            <div class="kanban-column">
-                <h3>Selesai</h3>
-                <div class="order-list" id="order-list-selesai"></div>
+
+        <div class="kanban-column" id="order-list-selesai">
+            <h3>✅ Siap Diambil/Selesai</h3>
             </div>
-        </div>
+        
     </div>
   </div>
 
-  <footer>
-    © 2025 Pantry — Dibuat dengan ❤️
-  </footer>
+  <footer>© 2025 Pantry — Dibuat dengan ❤️</footer>
 
   <script>
     // === MEKANISME PROTEKSI AKSES KASIR ===
@@ -188,69 +170,51 @@
     // ======================================
     
     document.addEventListener('DOMContentLoaded', loadOrders);
+    setInterval(loadOrders, 5000); // Auto-refresh setiap 5 detik
 
-    // Fungsi utilitas untuk memformat harga
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
     }
-    
-    // ======================================
-    // === FUNGSI MANAJEMEN PESANAN (ORDER) ===
-    // ======================================
 
     function loadOrders() {
+      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      
       const orderListBaru = document.getElementById('order-list-baru');
       const orderListProses = document.getElementById('order-list-proses');
       const orderListSelesai = document.getElementById('order-list-selesai');
-      let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       
       orderListBaru.innerHTML = '';
       orderListProses.innerHTML = '';
       orderListSelesai.innerHTML = '';
-      
+
       orders.forEach(order => {
+        const itemsList = order.items.map(item => 
+          `<li>${item.name} (${item.qty}x)</li>`
+        ).join('');
+        
+        let targetList;
+        let actionsHtml = '';
+        
+        if (order.status === 'Baru') {
+          targetList = orderListBaru;
+          actionsHtml = `<button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Diproses')">Proses Pesanan</button>`;
+        } else if (order.status === 'Diproses') {
+          targetList = orderListProses;
+          actionsHtml = `<button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')">Selesaikan</button>`;
+        } else if (order.status === 'Selesai') {
+          targetList = orderListSelesai;
+          actionsHtml = `<button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>`;
+        }
+
         const card = document.createElement('div');
         card.className = 'order-card';
-        card.id = 'order-' + order.id;
-        
-        const itemList = order.items.map(item => 
-          `<li><span>${item.name} x${item.qty}</span> <span>${formatRupiah(item.price * item.qty)}</span></li>`
-        ).join('');
-
-        let statusClass = 'status-baru';
-        let targetList = orderListBaru;
-        
-        if (order.status === 'Proses') {
-            statusClass = 'status-proses';
-            targetList = orderListProses;
-        } else if (order.status === 'Selesai') {
-            statusClass = 'status-selesai';
-            targetList = orderListSelesai;
-        }
-        
-        const isDisabled = order.status === 'Selesai' ? 'disabled' : '';
-        
-        // Perubahan: Menampilkan Metode Pembayaran spesifik
-        const paymentInfo = order.paymentMethod 
-            ? `<span style="font-size:0.8em; color:#ff6347; font-weight:600;">Metode Bayar: ${order.paymentMethod}</span>`
-            : `<span style="font-size:0.8em; color:#999;">Kode Bayar: ${order.paymentId || 'N/A'}</span>`;
-
         card.innerHTML = `
-          <div class="order-header">
-            <div class="order-info">
-                <span class="order-customer">${order.customerName || 'Nama Tidak Diketahui'}</span>
-                <span class="order-time">#${order.time}</span>
-                ${paymentInfo} </div>
-            <span class="order-status ${statusClass}">${order.status}</span>
-          </div>
-          <ul class="item-list">${itemList}</ul>
-          <div style="text-align: right; margin-top: 10px;">
-            <span class="order-total">${formatRupiah(order.total)}</span>
-          </div>
-          <div class="action-btn-group">
-            <button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')" ${isDisabled}>Proses</button>
-            <button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')" ${isDisabled}>Selesai</button>
-            <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
+          <h4>${order.customerName}</h4>
+          <span class="order-time">${order.time} | ID Pembayaran: ${order.paymentId.substring(0, 10)}...</span>
+          <ul>${itemsList}</ul>
+          <div class="order-total">Total: ${formatRupiah(order.total)}</div>
+          <div class="order-actions" style="margin-top: 10px;">
+            ${actionsHtml}
           </div>
         `;
         targetList.appendChild(card);
@@ -286,9 +250,6 @@
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
       loadOrders();
     }
-    
-    // Auto-refresh untuk pesanan setiap 5 detik
-    setInterval(loadOrders, 5000);
   </script>
 
 </body>
