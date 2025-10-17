@@ -30,78 +30,60 @@
             <h2 style="margin-top: 30px;">Menu Minuman</h2>
             <div class="menu-list" id="menu-minuman"></div>
         </div>
-        
-        <div id="sticky-sidebar">
-            
-            <div class="customer-info">
-                <h3>Masukkan Nama Anda</h3>
-                <input type="text" id="customer-name" placeholder="Contoh: Budi" required>
-            </div>
 
-            <div id="cart">
-                <h2>🛒 Keranjang Pesanan</h2>
-                <ul id="cart-items"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul>
-                <button id="checkout-btn" onclick="checkout()" disabled>Pesan</button>
-
-                <div id="payment-section" style="margin-top:20px; text-align:center;">
-                    <button id="pay-btn" onclick="openPaymentModal()" class="btn-primary">💳 Bayar Sekarang</button>
-                    <p id="payment-status" style="color:#555; margin-top:10px;">Belum dibayar ❌</p>
+        <div id="cart-section">
+            <div class="cart-box">
+                <h3>Keranjang Belanja</h3>
+                <label for="customer-name" style="font-size: 0.9em; font-weight: 600; margin-top: 10px; display: block;">Masukkan Nama Anda:</label>
+                <input type="text" id="customer-name" placeholder="Nama Pelanggan" class="input-name">
+                <ul id="cart-items" class="cart-items">
+                    </ul>
+                <div class="payment-status-info">
+                    Status Pembayaran: <span id="payment-status" style="font-weight: 600;">Belum dibayar ❌</span>
                 </div>
+                <button id="pay-btn" class="btn-primary" onclick="openPaymentModal()" disabled>Bayar Sekarang</button>
+                <button id="checkout-btn" class="btn-primary" onclick="checkout()" disabled style="background-color: #068b18;">
+                    Checkout & Buat Pesanan
+                </button>
             </div>
-        </div>
         </div>
     </div>
+  </div>
 
-  <footer>© 2025 Pantry — Dibuat dengan ❤️</footer>
+  <footer>
+    <p>&copy; 2024 Pantry. All rights reserved.</p>
+  </footer>
+
+  <div id="payment-modal" class="modal">
+    <div class="modal-content payment-modal-content">
+      <span class="close" onclick="closeModal('payment')">&times;</span>
+      <h2>Pilih Metode Pembayaran</h2>
+      <p style="font-size: 1.2em; font-weight: 700; color: #d14838; margin-bottom: 20px;">Total Tagihan: <span id="payment-total-display">Rp0</span></p>
+      
+      <div id="payment-options" class="payment-options-grid">
+        </div>
+
+      <p style="margin-top: 30px; color: #666; font-size: 0.9em;">*Pastikan nama pelanggan sudah terisi sebelum memilih metode pembayaran.</p>
+    </div>
+  </div>
 
   <div id="info-modal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('info')">&times;</span>
-      <h2>Tentang Pantry</h2>
-      <p>Pantry menyediakan makanan dan minuman lezat. Sekarang kamu bisa pesan online dan bayar lewat QR!</p>
+      <h2>Informasi</h2>
+      <p>Aplikasi Pemesanan & Kasir Sederhana berbasis HTML, CSS, dan JavaScript (Local Storage).</p>
     </div>
   </div>
 
   <div id="contact-modal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('contact')">&times;</span>
-      <h2>Hubungi Kami</h2>
-      <p>📞 <a href="tel:+6287777796610" class="contact-link">+62 877-7779-6610</a></p>
-      <p>💬 <a href="https://wa.me/6287777796610" target="_blank" class="contact-link">Chat via WhatsApp</a></p>
-      <p>📧 <a href="mailto:pantry@gmail.com" class="contact-link">pantry@gmail.com</a></p>
+      <h2>Kontak</h2>
+      <p>Silakan hubungi pengembang untuk informasi lebih lanjut.</p>
     </div>
   </div>
 
-  <div id="payment-modal" class="modal">
-    <div class="modal-content" style="text-align:center;">
-      <span class="close" onclick="closeModal('payment')">&times;</span>
-      <h2>Pilih Metode Pembayaran</h2>
-      <p style="margin-bottom: 20px;">Total Pesanan: <b id="payment-total-display" style="color: #ff6347;"></b></p>
-      
-      <div id="payment-options" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
-          </div>
-      
-      <p style="margin-top: 30px; font-size: 0.8em; color: #888;">*Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer/scan QR.</p>
-    </div>
-  </div>
-  
-  <div id="transfer-detail-modal" class="modal">
-    <div class="modal-content" style="text-align:center;">
-      <span class="close" onclick="closeModal('transfer-detail')">&times;</span>
-      <h2>Detail Transfer</h2>
-      <p style="margin-bottom: 10px;">Total yang harus dibayar: <b id="transfer-total-display" style="color: #ff6347;"></b></p>
-      <p>Transfer ke rekening:</p>
-      <div style="background:#f0f0f0; padding:15px; border-radius:8px; margin:10px 0;">
-        <p style="font-weight:600; margin:5px 0;">Bank BCA</p>
-        <p style="font-size:1.5em; font-weight:700; color:#004A99; margin:5px 0;">8899 1234 567</p>
-        <p style="font-size:0.9em; margin:5px 0;">A.N. Pantry Jaya Sentosa</p>
-      </div>
-      <p style="font-size:0.8em; color:#888;">*Pastikan total pembayaran Anda akurat, lalu segera konfirmasi transfer Anda.</p>
-      <button onclick="confirmTransfer()" class="btn-primary" style="margin-top:15px;">Saya Sudah Transfer</button>
-    </div>
-  </div>
-
-  <script>
+<script>
     const menuData = [
       { name: 'Nasi Goreng Spesial', price: 25000, category: 'makanan', img: 'nasgor.jpg' },
       { name: 'Mie Ayam Bakso', price: 20000, category: 'makanan', img: 'yamyam.jpg' },
@@ -123,26 +105,36 @@
     ];
 
     const paymentMethods = [
-      { name: 'Transfer Bank (BCA)', type: 'transfer', color: '#004A99' }, 
-      { name: 'GoPay (QRIS)', type: 'ewallet', color: '#00A389' },
-      { name: 'ShopeePay (QRIS)', type: 'ewallet', color: '#FF5733' },
-      { name: 'Dana (QRIS)', type: 'ewallet', color: '#1B72E5' },
+      { name: 'QRIS (Gopay/Dana/Shopee)', img: 'qris.png', color: '#068b18' },
+      { name: 'Bank Transfer (BCA)', img: 'bca.png', color: '#004A99' },
+      { name: 'Tunai', img: 'cash.png', color: '#999999' },
     ];
 
     let cart = [];
-    let currentPayment = null;
+    let currentPayment = null; // Menyimpan status pembayaran yang sedang berjalan
 
     document.addEventListener('DOMContentLoaded', () => {
       renderMenu();
       updateCart();
-      setInterval(checkPaymentStatus, 2000); 
+      // Muat ulang currentPayment dari localStorage saat halaman dimuat
+      const lastPaymentId = sessionStorage.getItem('lastPaymentId');
+      if (lastPaymentId) {
+          const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+          currentPayment = payments.find(p => p.id === lastPaymentId) || null;
+      }
+      setInterval(checkPaymentStatus, 2000); // cek tiap 2 detik
     });
+
+    // Fungsi utilitas untuk memformat harga
+    function formatRupiah(number) {
+        return `Rp${number.toLocaleString('id-ID')}`;
+    }
 
     function redirectToCashier() {
       const pass = prompt("Masukkan password kasir:");
       if (pass === "kasir123") {
         sessionStorage.setItem("cashierAuth", "true");
-        window.location.href = "payment_dashboard.html"; 
+        window.location.href = "payment_dashboard.html"; // Arahkan ke payment_dashboard dulu
       } else if (pass) alert("Password salah!");
     }
 
@@ -155,153 +147,208 @@
       menuData.forEach(item => {
         const exist = cart.find(i => i.name === item.name);
         const qty = exist ? exist.qty : 0;
-
         const div = document.createElement('div');
         div.className = 'menu-item';
         div.innerHTML = `
           <img src="${item.img}" alt="${item.name}">
           <div class="menu-info">
             <div class="menu-name">${item.name}</div>
-            <div class="menu-price">Rp${item.price.toLocaleString('id-ID')}</div>
+            <div class="menu-price">${formatRupiah(item.price)}</div>
           </div>
           <div class="menu-actions">
             <button class="btn-qty" onclick="changeMenuQty('${item.name}', ${item.price}, -1)">-</button>
             <div class="qty-display">${qty}</div>
             <button class="btn-qty btn-plus" onclick="changeMenuQty('${item.name}', ${item.price}, 1)">+</button>
-          </div>`;
-        if (item.category === 'makanan') makanan.appendChild(div);
-        else minuman.appendChild(div);
+          </div>
+        `;
+        
+        if (item.category === 'makanan') {
+          makanan.appendChild(div);
+        } else {
+          minuman.appendChild(div);
+        }
       });
     }
 
-    function changeMenuQty(name, price, delta) {
-      const exist = cart.find(i => i.name === name);
-      if (exist) {
-        exist.qty += delta;
-        if (exist.qty <= 0) cart = cart.filter(i => i.name !== name);
-      } else if (delta > 0) cart.push({ name, price, qty: 1 });
+    function changeMenuQty(name, price, change) {
+      const existingItem = cart.find(item => item.name === name);
+
+      if (existingItem) {
+        existingItem.qty += change;
+        if (existingItem.qty <= 0) {
+          cart = cart.filter(item => item.name !== name);
+        }
+      } else if (change > 0) {
+        cart.push({ name, price, qty: 1 });
+      }
+
+      // Reset payment status if cart changes significantly
+      if (currentPayment && currentPayment.status === 'pending') {
+          // Hanya beri peringatan, status pending tetap ada untuk jaga-jaga
+          // alert("Keranjang berubah. Pastikan jumlah pembayaran sesuai.");
+      }
+
       updateCart();
       renderMenu();
     }
 
     function updateCart() {
-      const list = document.getElementById('cart-items');
-      const checkoutBtn = document.getElementById('checkout-btn');
-      list.innerHTML = '';
+      const cartEl = document.getElementById('cart-items');
+      const payBtn = document.getElementById('pay-btn');
+      cartEl.innerHTML = '';
       let total = 0;
 
       if (cart.length === 0) {
-        list.innerHTML = '<li style="color:#999;text-align:center;">Keranjang kosong.</li>';
+        cartEl.innerHTML = '<li style="color: #999; text-align: center;">Keranjang kosong.</li>';
+        payBtn.disabled = true;
       } else {
-        cart.forEach((item, i) => {
-          const subtotal = item.price * item.qty;
-          total += subtotal;
-          list.innerHTML += `<li>${item.name} - Rp${subtotal.toLocaleString('id-ID')} (${item.qty}x)</li>`;
-        });
-      }
-
-      const totalRupiah = total.toLocaleString('id-ID');
-      checkoutBtn.textContent = (total === 0) ? `Pesan` : `Pesan - Rp${totalRupiah}`;
-      
-      const isPaid = document.getElementById('payment-status').textContent.includes('✅');
-      checkoutBtn.disabled = (total === 0 || !isPaid);
-    }
-
-    function openPaymentModal() {
-      if (cart.length === 0) return alert("Keranjang kosong!");
-      const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-      const customerName = document.getElementById('customer-name').value.trim();
-      if (!customerName) return alert("Mohon masukkan Nama Anda sebelum membayar!");
-      
-      document.getElementById('payment-total-display').textContent = 'Rp' + total.toLocaleString('id-ID');
-      
-      const optionsEl = document.getElementById('payment-options');
-      optionsEl.innerHTML = '';
-      
-      paymentMethods.forEach(method => {
-          const btn = document.createElement('button');
-          btn.textContent = `Bayar dengan ${method.name}`;
-          btn.style.cssText = `
-              background-color: ${method.color};
-              color: white;
-              padding: 12px;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              font-weight: 600;
-              transition: opacity 0.2s;
-              width: 100%;
+        cart.forEach(item => {
+          total += item.price * item.qty;
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <span>${item.name} (x${item.qty})</span>
+            <span>${formatRupiah(item.price * item.qty)}</span>
           `;
-          btn.onmouseover = () => btn.style.opacity = '0.9';
-          btn.onmouseout = () => btn.style.opacity = '1';
-          btn.onclick = () => selectPaymentMethod(method.name, total, customerName, method.type);
-          optionsEl.appendChild(btn);
-      });
-      
-      document.getElementById('payment-modal').style.display = 'block';
+          cartEl.appendChild(li);
+        });
+
+        const totalLi = document.createElement('li');
+        totalLi.className = 'cart-total';
+        totalLi.innerHTML = `<b>Total</b> <b>${formatRupiah(total)}</b>`;
+        cartEl.appendChild(totalLi);
+
+        payBtn.disabled = false;
+        // checkoutBtn.disabled is handled by checkPaymentStatus
+      }
     }
 
-    function selectPaymentMethod(methodName, total, customerName, methodType) {
-      closeModal('payment');
-      
-      const code = "PAY" + Date.now();
-      currentPayment = { 
-          id: code, 
-          status: "pending", 
-          total, 
-          cart: [...cart], 
-          time: new Date().toLocaleString('id-ID'),
-          method: methodName,
-          customerName: customerName
-      };
+    // NEW FUNCTION: Render payment options dynamically
+    function renderPaymentOptions(total) {
+        const optionsEl = document.getElementById('payment-options');
+        optionsEl.innerHTML = ''; // Clear previous options
 
-      if (methodType === 'transfer') {
-        document.getElementById('transfer-total-display').textContent = 'Rp' + total.toLocaleString('id-ID');
-        document.getElementById('transfer-detail-modal').style.display = 'block';
-      } else {
+        paymentMethods.forEach(method => {
+            const button = document.createElement('button');
+            button.className = 'btn-payment';
+            button.style.backgroundColor = method.color;
+            
+            button.innerHTML = `
+                <img src="${method.img}" alt="${method.name}" style="height: 25px; border-radius: 4px; background: white; padding: 2px;">
+                <span>Bayar dengan ${method.name}</span>
+            `;
+            
+            button.onclick = () => startPayment(method.name, total);
+            
+            optionsEl.appendChild(button);
+        });
+    }
+
+    // NEW FUNCTION: Logic to start payment
+    function startPayment(methodName, total) {
+        const customerName = document.getElementById('customer-name').value.trim();
+        
+        if (!customerName) {
+            alert("Silakan masukkan nama Anda terlebih dahulu.");
+            closeModal('payment');
+            return;
+        }
+
+        // Cek apakah sudah ada pembayaran pending yang sama untuk orang ini
+        if (currentPayment && currentPayment.status === 'pending') {
+             alert(`Anda sudah memulai pembayaran (${currentPayment.method}). Tunggu verifikasi atau batalkan dari kasir.`);
+             closeModal('payment');
+             return;
+        }
+        
+        const paymentId = 'PAY-' + Date.now().toString().slice(-6); // Simple ID generator
+        
+        const paymentData = {
+            id: paymentId,
+            customerName: customerName, // SIMPAN NAMA PELANGGAN
+            total: total,
+            cart: [...cart],
+            method: methodName, // SIMPAN METODE PEMBAYARAN
+            status: 'pending',
+            time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        };
+
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        payments.push(currentPayment);
+        payments.unshift(paymentData);
         localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-        alert(`Anda memilih ${methodName}. Total: Rp${total.toLocaleString('id-ID')}.\n\nSilakan scan QRIS lalu tunggu kasir memverifikasi pembayaran Anda.`);
-      }
-    }
-    
-    function confirmTransfer() {
-      closeModal('transfer-detail');
-      
-      if (!currentPayment) return alert("Terjadi kesalahan, silakan coba lagi.");
-
-      let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-      payments.push(currentPayment);
-      localStorage.setItem('pantryPayments', JSON.stringify(payments));
-
-      alert(`Pembayaran Transfer Bank BCA sebesar Rp${currentPayment.total.toLocaleString('id-ID')} atas nama ${currentPayment.customerName} telah dicatat.\n\nMohon tunggu kasir memverifikasi transfer Anda.`);
-    }
-
-    function checkPaymentStatus() {
-      if (!currentPayment) return;
-      const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-      const found = payments.find(p => p.id === currentPayment.id);
-      
-      const checkoutBtn = document.getElementById('checkout-btn');
-      const paymentStatusEl = document.getElementById('payment-status');
-      
-      if (found && found.status === "paid") {
-        paymentStatusEl.textContent = `Sudah dibayar melalui ${found.method} ✅`;
+        currentPayment = paymentData; // Set the global payment state
+        sessionStorage.setItem('lastPaymentId', paymentId); // Simpan ID agar persisten saat reload
         
-        const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
-        if (total > 0) {
-            checkoutBtn.disabled = false;
-        }
-      } else {
-        paymentStatusEl.textContent = "Belum dibayar ❌";
-        checkoutBtn.disabled = true;
-      }
+        // Update UI
+        document.getElementById('payment-status').innerHTML = `Menunggu verifikasi (${methodName}) <span style="color:orange;">⏳</span>`;
+        document.getElementById('pay-btn').disabled = true;
+        document.getElementById('checkout-btn').disabled = true;
+        closeModal('payment');
+        
+        alert(`Pembayaran ${formatRupiah(total)} menggunakan ${methodName} oleh ${customerName} sedang menunggu verifikasi kasir. ID: ${paymentId}.`);
     }
+
+    // UPDATED FUNCTION: Show payment modal
+    function openPaymentModal() {
+        if (cart.length === 0) return alert("Keranjang masih kosong!");
+        
+        const customerName = document.getElementById('customer-name').value.trim();
+        if (!customerName) return alert("Silakan masukkan nama Anda terlebih dahulu.");
+        
+        const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+        document.getElementById('payment-total-display').textContent = formatRupiah(total);
+        
+        renderPaymentOptions(total);
+        openModal('payment');
+    }
+
+    // UPDATED FUNCTION: Check payment status periodically
+    function checkPaymentStatus() {
+        const statusEl = document.getElementById('payment-status');
+        const payBtn = document.getElementById('pay-btn');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        
+        if (!currentPayment) {
+             statusEl.textContent = "Belum dibayar ❌";
+             payBtn.disabled = (cart.length === 0);
+             payBtn.style.display = 'block';
+             checkoutBtn.disabled = true;
+             return;
+        }
+        
+        const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        const found = payments.find(p => p.id === currentPayment.id);
+        
+        if (found && found.status === 'paid') {
+            currentPayment = found; // Update currentPayment status
+            statusEl.innerHTML = `Berhasil dibayar (${found.method}) ✅`;
+            checkoutBtn.disabled = false;
+            payBtn.style.display = 'none'; 
+            payBtn.disabled = true;
+        } else if (found && found.status === 'pending') {
+             currentPayment = found;
+             statusEl.innerHTML = `Menunggu verifikasi (${found.method}) <span style="color:orange;">⏳</span>`;
+             payBtn.disabled = true;
+             payBtn.style.display = 'block';
+             checkoutBtn.disabled = true;
+        } else {
+            // Payment cancelled or not found (e.g., after successful checkout)
+            statusEl.textContent = "Belum dibayar ❌";
+            payBtn.disabled = (cart.length === 0);
+            payBtn.style.display = 'block';
+            checkoutBtn.disabled = true;
+            currentPayment = null;
+            sessionStorage.removeItem('lastPaymentId');
+        }
+    }
+
 
     function checkout() {
-      if (!currentPayment) return alert("Belum ada pembayaran!");
+      // 1. Check if payment is successful
+      if (!currentPayment || !currentPayment.id) {
+          return alert("Anda belum melakukan pembayaran!");
+      }
+
       const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
       const found = payments.find(p => p.id === currentPayment.id);
       if (!found || found.status !== "paid") return alert("Pembayaran belum diverifikasi oleh kasir!");
@@ -316,16 +363,18 @@
         total: cart.reduce((s, i) => s + i.price * i.qty, 0),
         status: 'Baru',
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-        paymentId: currentPayment.id
+        paymentId: currentPayment.id,
+        paymentMethod: found.method // TAMBAH METODE PEMBAYARAN KE ORDER
       };
 
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       orders.unshift(order);
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
 
-      alert(`✅ Pesanan ${name} berhasil dibuat!`);
+      alert(`✅ Pesanan ${name} berhasil dibuat! Pembayaran ID: ${found.id} (${found.method}).`);
       cart = [];
       currentPayment = null;
+      sessionStorage.removeItem('lastPaymentId');
       updateCart();
       renderMenu();
       document.getElementById('payment-status').textContent = "Belum dibayar ❌";
@@ -333,7 +382,6 @@
 
     function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; }
     function closeModal(t) { document.getElementById(t + "-modal").style.display = "none"; }
-    window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; };
   </script>
 </body>
 </html>
