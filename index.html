@@ -247,6 +247,11 @@
 
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
       
+      // === KEWAJIBAN INPUT NAMA SEBELUM BAYAR ===
+      const customerName = document.getElementById('customer-name').value.trim();
+      if (!customerName) return alert("⚠️ Harap masukkan nama Anda di kolom 'Masukkan Nama Anda' sebelum melanjutkan pembayaran.");
+      // ==========================================
+
       document.getElementById('payment-total-display').textContent = 'Rp' + total.toLocaleString('id-ID');
       
       const optionsEl = document.getElementById('payment-options');
@@ -275,11 +280,11 @@
     }
 
     function selectPaymentMethod(methodName, total) {
-      // Dapatkan nama pelanggan dari input
+      // Dapatkan nama pelanggan dari input (sudah dicek di openPaymentModal, tapi dicek lagi untuk keamanan)
       const customerName = document.getElementById('customer-name').value.trim();
       if (!customerName) {
-          alert("⚠️ Harap masukkan nama Anda sebelum memilih metode pembayaran.");
-          openModal('payment'); // Buka kembali modal pilihan jika nama kosong
+          alert("⚠️ Terjadi kesalahan. Harap masukkan nama Anda.");
+          closeModal('payment');
           return;
       }
 
@@ -298,7 +303,7 @@
           cart: [...cart], 
           time: new Date().toLocaleString('id-ID'),
           method: methodName,
-          // === BARU: Tambahkan nama pelanggan ke data pembayaran ===
+          // === DISIMPAN DI SINI: customerName dari inputan ===
           customerName: customerName 
       };
 
@@ -347,7 +352,7 @@
       if (!found || found.status !== "paid") return alert("Pembayaran belum diverifikasi oleh kasir!");
 
       const name = document.getElementById('customer-name').value.trim();
-      if (!name) return alert("Masukkan nama Anda!");
+      if (!name) return alert("Masukkan nama Anda!"); // Seharusnya sudah diisi saat bayar
 
       const order = {
         id: Date.now(),
