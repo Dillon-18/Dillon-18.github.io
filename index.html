@@ -27,36 +27,28 @@
     <h2 style="margin-top: 30px;">Menu Minuman</h2>
     <div class="menu-list" id="menu-minuman"></div>
     
-    <h2 style="margin-top: 50px; color: #068b18; border-bottom: 2px solid #ff6347;">Detail Pesanan Anda</h2>
-    
-    <div id="non-sticky-cart-details" style="display:flex; gap: 30px; margin-top: 20px;">
-        <div style="flex: 1; background: #fffaf7; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
-            <h3 style="margin-top: 0; color: #ff6347;">Nama Anda</h3>
-            <input type="text" id="customer-name" placeholder="Contoh: Budi" required 
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
-            <p id="payment-status" style="margin-top:15px; font-weight: 600;">Belum dibayar ❌</p>
-            <button id="pay-btn" onclick="openPaymentModal()" class="btn-primary" style="margin-top: 10px; padding: 8px 15px; font-weight: 600; display:none;">💳 Bayar Sekarang</button>
-        </div>
-
-        <div style="flex: 2; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-            <h3 style="margin-top: 0; color: #068b18; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">Ringkasan Keranjang</h3>
-            <ul id="cart-items" style="list-style: none; padding: 0;">
-                <li style="color: #999; text-align: center;">Keranjang kosong.</li>
-            </ul>
-        </div>
-    </div>
-    
   </div>
 
   <footer>© 2025 Pantry — Dibuat dengan ❤️</footer>
 
   <div id="bottom-cart-bar">
-    <div id="cart-summary-text">
-        <span class="total-price">Rp0</span>
-        <span class="total-items">0 item</span>
-    </div>
     
-    <button id="checkout-btn-fixed" onclick="checkout()" disabled>Pesan Sekarang</button>
+    <div class="customer-info">
+        <h3>Masukkan Nama Anda</h3>
+        <input type="text" id="customer-name" placeholder="Contoh: Budi" required>
+        <p id="payment-status" style="color:#555; margin-top:5px; font-size: 0.8em; display: none;">Belum dibayar ❌</p>
+    </div>
+
+    <div id="cart">
+        <h2>🛒 Keranjang Pesanan</h2>
+        <ul id="cart-items"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul>
+        
+        <button id="checkout-btn" onclick="checkout()" disabled>Pesan</button>
+
+        <div id="payment-section" style="margin-top:10px; text-align:center;">
+            <button id="pay-btn" onclick="openPaymentModal()" class="btn-primary">💳 Bayar Sekarang</button>
+        </div>
+    </div>
   </div>
 
   <div id="info-modal" class="modal">
@@ -166,44 +158,35 @@
 
     function updateCart() {
       const list = document.getElementById('cart-items');
-      const checkoutBtnFixed = document.getElementById('checkout-btn-fixed');
-      const paymentStatusEl = document.getElementById('payment-status');
-      const payBtn = document.getElementById('pay-btn');
-      const summaryPrice = document.querySelector('#cart-summary-text .total-price');
-      const summaryItems = document.querySelector('#cart-summary-text .total-items');
-      
+      const checkoutBtn = document.getElementById('checkout-btn');
       list.innerHTML = '';
       let total = 0;
-      let totalQty = 0;
 
       if (cart.length === 0) {
         list.innerHTML = '<li style="color:#999;text-align:center;">Keranjang kosong.</li>';
       } else {
-        cart.forEach((item) => {
+        cart.forEach((item, i) => {
           const subtotal = item.price * item.qty;
           total += subtotal;
-          totalQty += item.qty;
-          list.innerHTML += `<li><span>${item.name}</span> <span>${item.qty}x - Rp${subtotal.toLocaleString('id-ID')}</span></li>`;
+          list.innerHTML += `<li>${item.name} - Rp${subtotal.toLocaleString('id-ID')} (${item.qty}x)</li>`;
         });
       }
 
-      // Update Summary Bar
+      // Update teks tombol Pesan dengan Total
       const totalRupiah = total.toLocaleString('id-ID');
-      summaryPrice.textContent = `Rp${totalRupiah}`;
-      summaryItems.textContent = `${totalQty} item`;
-      checkoutBtnFixed.textContent = (total === 0) ? `Pesan Sekarang` : `Pesan - Rp${totalRupiah}`;
-      
-      // Cek status pembayaran
-      const isPaid = paymentStatusEl.textContent.includes('✅');
+      checkoutBtn.textContent = (total === 0) ? `Pesan` : `Pesan - Rp${totalRupiah}`;
       
       // Disable tombol Pesan jika keranjang kosong ATAU belum dibayar
-      checkoutBtnFixed.disabled = (total === 0 || !isPaid);
+      const isPaid = document.getElementById('payment-status').textContent.includes('✅');
+      checkoutBtn.disabled = (total === 0 || !isPaid);
       
-      // Tampilkan tombol Bayar jika keranjang tidak kosong DAN belum dibayar
+      // Tampilkan tombol Bayar jika keranjang tidak kosong
+      const payBtn = document.getElementById('pay-btn');
       payBtn.style.display = (total > 0 && !isPaid) ? 'block' : 'none';
       
-      // Tampilkan/Sembunyikan bottom bar jika total 0
-      document.getElementById('bottom-cart-bar').style.display = (total > 0) ? 'flex' : 'none';
+      // Sembunyikan/Tampilkan bottom bar
+      const bottomBar = document.getElementById('bottom-cart-bar');
+      bottomBar.style.display = (total > 0 || document.getElementById('customer-name').value.trim() !== '') ? 'flex' : 'none';
     }
 
     function openPaymentModal() {
@@ -227,14 +210,22 @@
       const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
       const found = payments.find(p => p.id === currentPayment.id);
       
+      const checkoutBtn = document.getElementById('checkout-btn');
       const paymentStatusEl = document.getElementById('payment-status');
       
       if (found && found.status === "paid") {
         paymentStatusEl.textContent = "Sudah dibayar ✅";
+        
+        // Hanya enable jika total > 0 (diperiksa lagi di updateCart)
+        const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        if (total > 0) {
+            checkoutBtn.disabled = false;
+        }
       } else {
         paymentStatusEl.textContent = "Belum dibayar ❌";
+        checkoutBtn.disabled = true;
       }
-      updateCart(); 
+      updateCart(); // Panggil updateCart untuk menyesuaikan tampilan tombol Bayar
     }
 
     function checkout() {
@@ -253,7 +244,7 @@
         total: cart.reduce((s, i) => s + i.price * i.qty, 0),
         status: 'Baru',
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-        paymentId: currentPayment.id 
+        paymentId: currentPayment.id // Tambahkan kode pembayaran ke pesanan
       };
 
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
@@ -273,7 +264,10 @@
     function closeModal(t) { document.getElementById(t + "-modal").style.display = "none"; }
     window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; };
     
-    // Sembunyikan bottom bar di awal
+    // Tambahkan listener untuk input nama agar bar muncul saat diketik
+    document.getElementById('customer-name').addEventListener('input', updateCart);
+    
+    // Sembunyikan bottom bar di awal jika keranjang kosong dan nama kosong
     document.getElementById('bottom-cart-bar').style.display = 'none';
 
   </script>
