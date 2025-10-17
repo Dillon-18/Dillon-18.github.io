@@ -229,13 +229,17 @@
         }
         
         const isDisabled = order.status === 'Selesai' ? 'disabled' : '';
+        // Tampilkan Metode Pembayaran
+        const paymentInfo = order.paymentMethod 
+            ? `<span style="font-size:0.8em; color:#d14838; font-weight:600;">Bayar: ${order.paymentMethod}</span>`
+            : `<span style="font-size:0.8em; color:#999;">Kode Bayar: ${order.paymentId || 'N/A'}</span>`;
 
         card.innerHTML = `
           <div class="order-header">
             <div class="order-info">
                 <span class="order-customer">${order.customerName || 'Nama Tidak Diketahui'}</span>
                 <span class="order-time">#${order.time}</span>
-                <span style="font-size:0.8em; color:#999;">Kode Bayar: ${order.paymentId || 'N/A'}</span>
+                ${paymentInfo}
             </div>
             <span class="order-status ${statusClass}">${order.status}</span>
           </div>
