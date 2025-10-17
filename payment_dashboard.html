@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS Khusus Dashboard Pembayaran - Clean Version */
+    /* CSS Khusus Dashboard Pembayaran */
     .container {
       max-width: 1000px;
     }
@@ -25,77 +25,60 @@
     }
     .payment-card {
         background: #ffffff;
-        border: 1px solid #d14838; 
+        border: 1px solid #d14838; /* Border warna primer baru */
         padding: 15px;
         border-radius: 8px;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        gap: 10px;
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
-    .payment-card p { margin: 5px 0; }
-    .payment-card .pay-total { font-size: 1.3em; color: #068b18; font-weight: 700; }
     .payment-card button {
-        background-color: #d14838; 
-        color: white; 
-        padding: 8px 15px; 
-        border: none; 
-        border-radius: 5px; 
+        background-color: #068b18; 
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s;
         font-weight: 600;
         margin-top: 10px;
-        transition: background-color 0.3s;
     }
     .payment-card button:hover {
-        background-color: #b03a2c; 
+        background-color: #046a13;
     }
-    .payment-status-title {
-        border-bottom: 2px solid #d14838; 
-        padding-bottom: 8px; 
-        color: #d14838; 
-        margin-top: 0;
-    }
-
-    /* === Responsif Tambahan === */
-    @media (max-width: 600px) {
-        .payment-list {
-            grid-template-columns: 1fr;
-        }
-        .container {
-            width: 100%;
-            padding: 10px;
-            margin: 10px auto;
-        }
+    .pay-total {
+        font-size: 1.3em;
+        font-weight: 700;
+        color: #d14838;
+        margin: 5px 0;
     }
   </style>
 </head>
 <body>
-
   <header class="navbar">
     <div class="nav-left">
-      <span class="brand-name">Pantry</span>
-      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Dashboard Pembayaran</span>
+      <span class="brand-name">Pantry - Dashboard Pembayaran</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo"> 
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-primary" onclick="window.location.href='cashier.html'">Dashboard Dapur</button>
+      <button class="nav-btn btn-primary" onclick="window.location.href='cashier.html'">Kelola Pesanan (Dapur)</button>
       <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Menu Utama</button>
     </div>
   </header>
-
+  
   <div class="container">
-    
     <div class="payment-dashboard-container">
-        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi</h2>
-        <div class="payment-list" id="payment-verification-list">
-            <p style="text-align: center; color: #999;">Memuat data...</p>
-        </div>
+        <h1>Verifikasi Pembayaran Pelanggan</h1>
+        <p>Daftar transaksi yang menunggu konfirmasi kasir.</p>
+
+        <div id="payment-verification-list" class="payment-list">
+            </div>
     </div>
-
   </div>
-
+  
   <footer>
-    © 2025 Pantry — Dibuat dengan ❤️
+    <p>&copy; 2024 Pantry. All rights reserved.</p>
   </footer>
 
   <script>
@@ -121,18 +104,25 @@
 
     function initializeDashboard() {
         loadPayments();
+        // Muat ulang data pembayaran setiap 5 detik
+        setInterval(loadPayments, 5000); 
     }
 
+    // Fungsi utilitas untuk memformat harga
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
     }
     
+    // ======================================
+    // === DASHBOARD PEMBAYARAN LOGIC ===
+    // ======================================
+    
     function loadPayments() {
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        // Hanya tampilkan pembayaran dengan status 'pending'
         const pendingPayments = payments.filter(p => p.status === 'pending');
-        
         const listEl = document.getElementById('payment-verification-list');
-        listEl.innerHTML = ''; 
+        listEl.innerHTML = '';
         
         if (pendingPayments.length === 0) {
             listEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center; grid-column: 1 / -1;">Tidak ada pembayaran yang menunggu verifikasi.</p>';
@@ -143,20 +133,20 @@
             const itemsList = payment.cart.map(item => 
                 `<p style="margin:2px 0; font-size:0.9em; color:#555;">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
             ).join('');
-
-            const customerNameDisplay = payment.customerName ? 
-                `<p style="margin:0; font-weight:700; color:#068b18;">Pelanggan: ${payment.customerName}</p>` : 
-                '';
             
+            // TAMPILKAN NAMA PELANGGAN
+            const customerName = payment.customerName ? `<p style="margin:5px 0; font-weight:700; color:#068b18;">Pelanggan: ${payment.customerName}</p>` : ''; 
+            
+            // TAMPILKAN METODE PEMBAYARAN
             const methodDisplay = payment.method ? `<p style="font-weight: 600; color: #d14838;">Metode: ${payment.method}</p>` : '';
-
+            
             const div = document.createElement('div');
             div.className = 'payment-card';
             div.innerHTML = `
-                ${customerNameDisplay}
-                <p style="margin:0; font-weight:700; margin-top: 5px;">Kode Pembayaran:</p>
+                <p style="margin:0; font-weight:700;">Kode Pembayaran:</p>
                 <p style="margin:0; color:#d14838; font-size:1.1em; word-break: break-all;"><b>${payment.id}</b></p>
-                ${methodDisplay} <hr style="border:0; border-top:1px dotted #ccc;">
+                ${customerName} ${methodDisplay}
+                <hr style="border:0; border-top:1px dotted #ccc;">
                 <p style="font-weight: 600;">Detail Pesanan:</p>
                 ${itemsList}
                 <hr style="border:0; border-top:1px dotted #ccc;">
@@ -180,12 +170,9 @@
             payments[paymentIndex].status = "paid";
             localStorage.setItem('pantryPayments', JSON.stringify(payments));
             alert(`Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa checkout.`);
-            loadPayments(); 
+            loadPayments(); // Muat ulang daftar pembayaran
         }
     }
-    
-    setInterval(loadPayments, 5000);
   </script>
-
 </body>
 </html>
