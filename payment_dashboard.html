@@ -171,7 +171,7 @@
     }
 
     // Parse dan format tanggal/waktu
-    function function getPaymentDateInfo(timeString) {
+    function getPaymentDateInfo(timeString) {
         const dateObj = new Date(timeString);
         
         if (isNaN(dateObj.getTime())) {
@@ -241,7 +241,7 @@
         
         const normalizedSearchTerm = searchTerm.toLowerCase().trim();
         
-        // === LOGIKA PENCARIAN KOMPREHENSIF ===
+        // === LOGIKA PENCARIAN BARU DAN KOMPREHENSIF ===
         if (normalizedSearchTerm) {
             completedPayments = completedPayments.filter(p => {
                 // Kumpulkan semua nama menu menjadi satu string untuk pencarian
@@ -253,7 +253,7 @@
                        itemNames.includes(normalizedSearchTerm); // Mencari berdasarkan Nama Menu
             });
         }
-        // =====================================
+        // ===============================================
 
         completedPayments.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
 
@@ -310,7 +310,6 @@
         }
     }
     
-    // === FUNGSI UTAMA VERIFIKASI PEMBAYARAN (DENGAN LOGIKA KURANG BAYAR/KEMBALIAN) ===
     function verifyPayment(paymentId, total, method) {
         
         // 1. Logika NON-CASH (Transfer/E-Wallet)
@@ -346,7 +345,6 @@
             _markAsPaid(paymentId);
         }
     }
-    // ===========================================
 
     // FUNGSI HAPUS RIWAYAT PEMBAYARAN
     function deletePayment(paymentId) {
