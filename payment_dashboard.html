@@ -30,141 +30,125 @@
         border-radius: 8px;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        transition: transform 0.3s, box-shadow 0.3s;
+        gap: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     }
-    .payment-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    .payment-card.status-paid {
+        border-left: 5px solid #068b18; /* Hijau */
+        opacity: 0.8;
     }
-    .payment-card p { margin: 5px 0; }
-    .payment-card .pay-total { font-size: 1.3em; color: #068b18; font-weight: 700; }
+    .payment-card.status-pending {
+        border-left: 5px solid #d14838; /* Merah */
+    }
+    .pay-total {
+        font-size: 1.5em;
+        font-weight: 700;
+        color: #d14838;
+        margin: 5px 0;
+    }
     .payment-card button {
-        background-color: #d14838; /* Warna primer baru */
-        color: white; 
-        padding: 8px 15px; 
-        border: none; 
-        border-radius: 5px; 
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
         cursor: pointer;
         font-weight: 600;
+        color: white;
         margin-top: 10px;
-        transition: background-color 0.3s, transform 0.2s;
     }
-    .payment-card button:hover {
-        background-color: #b03a2c; /* Warna lebih gelap saat hover */
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(209, 72, 56, 0.3);
+    .payment-card .btn-hapus {
+        background-color: #999;
     }
-    .payment-status-title {
-        border-bottom: 2px solid #d14838; /* Warna primer baru */
-        padding-bottom: 8px; 
-        color: #068b18; 
-        margin-top: 0;
+    .order-items-list {
+        list-style: disc;
+        padding-left: 20px;
+        margin: 5px 0;
+        font-size: 0.9em;
     }
   </style>
 </head>
 <body>
-
   <header class="navbar">
     <div class="nav-left">
-      <span class="brand-name">Pantry</span>
-      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Dashboard Pembayaran</span>
+      <span class="brand-name" style="color:#d14838;">Dashboard Pembayaran</span>
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-primary" onclick="window.location.href='cashier.html'">Dashboard Dapur</button>
-      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Menu Utama</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='cashier.html'">Dashboard Dapur</button>
+      <button class="nav-btn btn-primary" style="background-color:#d14838;" onclick="logout()">Logout</button>
     </div>
   </header>
-
+  
   <div class="container">
-    
     <div class="payment-dashboard-container">
-        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi</h2>
-        <div class="payment-list" id="payment-verification-list">
-            <p style="text-align: center; color: #999;">Memuat data...</p>
-        </div>
+        <h1>Manajemen Pembayaran</h1>
+        <p style="color:#999;">Verifikasi pembayaran yang masuk dari pelanggan.</p>
+        
+        <div id="payment-list" class="payment-list">
+            </div>
     </div>
-
   </div>
 
-  <footer>
-    © 2025 Pantry — Dibuat dengan ❤️
-  </footer>
-
   <script>
-    // === MEKANISME PROTEKSI AKSES KASIR ===
-    (function checkAccess() {
-        const KASIR_PASS = "kasir123";
-        let isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
-
-        if (!isAuthorized) {
-            const password = prompt("Masukkan password kasir untuk mengakses Dashboard:");
-
-            if (password === KASIR_PASS) {
-                sessionStorage.setItem('cashierAuth', 'true');
-            } else {
-                alert("Password salah. Akses ditolak. Anda akan diarahkan kembali ke Menu Utama.");
-                window.location.href = 'index.html';
-            }
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!sessionStorage.getItem("cashierAuth")) {
+            alert("Akses ditolak. Silakan login kasir terlebih dahulu.");
+            window.location.href = "index.html";
+            return;
         }
-    })();
-    // ======================================
-    
-    document.addEventListener('DOMContentLoaded', initializeDashboard);
-
-    function initializeDashboard() {
         loadPayments();
+        setInterval(loadPayments, 3000); // Muat ulang data setiap 3 detik
+    });
+
+    function formatRupiah(number) {
+        return new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            minimumFractionDigits: 0
+        }).format(number);
     }
 
-    // Fungsi utilitas untuk memformat harga
-    function formatRupiah(number) {
-        return `Rp${number.toLocaleString('id-ID')}`;
-    }
-    
-    // ======================================
-    // === DASHBOARD PEMBAYARAN LOGIC ===
-    // ======================================
-    
     function loadPayments() {
-        let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        // Hanya tampilkan pembayaran dengan status 'pending'
-        const pendingPayments = payments.filter(p => p.status === 'pending');
-        
-        const listEl = document.getElementById('payment-verification-list');
-        listEl.innerHTML = ''; 
-        
-        if (pendingPayments.length === 0) {
-            listEl.innerHTML = '<p style="color:#999;font-size:0.9em; text-align:center; grid-column: 1 / -1;">Tidak ada pembayaran yang menunggu verifikasi.</p>';
+        const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        const listEl = document.getElementById('payment-list');
+        listEl.innerHTML = '';
+
+        if (payments.length === 0) {
+            listEl.innerHTML = '<p style="text-align:center; color:#999; grid-column: 1 / -1;">Belum ada data pembayaran.</p>';
             return;
         }
 
-        pendingPayments.forEach(payment => {
-            const itemsList = payment.cart.map(item => 
-                `<p style="margin:2px 0; font-size:0.9em; color:#555;">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
-            ).join('');
+        // FIX: Tampilkan yang 'pending' terlebih dahulu
+        const sortedPayments = payments.sort((a, b) => {
+            if (a.status === 'pending' && b.status !== 'pending') return -1;
+            if (a.status !== 'pending' && b.status === 'pending') return 1;
+            return new Date(b.time) - new Date(a.time); // Urutkan terbaru
+        });
 
-            const methodDisplay = payment.method ? `<p style="font-weight: 600; color: #d14838;">Metode: ${payment.method}</p>` : '';
-            // === BARU: Tampilkan Nama Pelanggan dari inputan di index.html ===
-            const customerNameDisplay = payment.customerName ? `<p style="font-weight: 700; font-size: 1.2em; margin-bottom: 10px; color: #068b18;">${payment.customerName}</p>` : '';
-
+        sortedPayments.forEach(payment => {
+            const itemsList = payment.cart.map(item => `
+                <li>${item.name} (${item.qty}x) - ${formatRupiah(item.price * item.qty)}</li>
+            `).join('');
 
             const div = document.createElement('div');
-            div.className = 'payment-card';
+            div.className = `payment-card status-${payment.status}`;
             div.innerHTML = `
-                ${customerNameDisplay}
-                <p style="margin:0; font-weight:700;">Kode Pembayaran:</p>
-                <p style="margin:0; color:#d14838; font-size:1.1em; word-break: break-all;"><b>${payment.id}</b></p>
-                ${methodDisplay} <hr style="border:0; border-top:1px dotted #ccc;">
+                <h4 style="margin-top:0;">
+                    ${payment.status === 'paid' ? 'BAYAR LUNAS' : 'MENUNGGU BAYAR'}
+                </h4>
+                <p style="font-size:1.1em; color:#555;">Pelanggan: <b>${payment.customerName || 'N/A'}</b></p>
+                
+                <p class="pay-id" style="font-size:0.9em; word-break: break-all;">Kode: <b>${payment.id}</b></p>
+                <hr style="border:0; border-top:1px dotted #ccc;">
+                <p style="font-weight: 600;">Metode: ${payment.method}</p>
                 <p style="font-weight: 600;">Detail Pesanan:</p>
-                ${itemsList}
+                <ul class="order-items-list">${itemsList}</ul>
                 <hr style="border:0; border-top:1px dotted #ccc;">
                 <p class="pay-total">Total: ${formatRupiah(payment.total)}</p>
                 <span style="font-size:0.8em; color:#999;">Waktu: ${payment.time}</span>
-                <button onclick="verifyPayment('${payment.id}')">
-                    ✅ Verifikasi Bayar
-                </button>
+                ${payment.status !== 'paid' ? `
+                    <button onclick="verifyPayment('${payment.id}')" style="background-color:#068b18;">
+                        ✅ Verifikasi Bayar
+                    </button>` : `<p style="color:#068b18; font-weight:bold; margin-top:10px;">SUDAH DIVERIFIKASI</p>`}
+                <button class="btn-hapus" onclick="deletePayment('${payment.id}')">Hapus Data</button>
             `;
             listEl.appendChild(div);
         });
@@ -179,14 +163,25 @@
         if (paymentIndex !== -1) {
             payments[paymentIndex].status = "paid";
             localStorage.setItem('pantryPayments', JSON.stringify(payments));
-            alert(`Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa checkout.`);
-            loadPayments(); // Muat ulang daftar pembayaran
+            alert(`Pembayaran kode ${paymentId} berhasil diverifikasi!`);
+            loadPayments(); 
         }
     }
-    
-    // Auto-refresh untuk pembayaran setiap 5 detik
-    setInterval(loadPayments, 5000);
-  </script>
 
+    function deletePayment(paymentId) {
+        if (!confirm(`Yakin ingin menghapus data pembayaran dengan kode ${paymentId}?`)) return;
+
+        let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        payments = payments.filter(p => p.id !== paymentId);
+        localStorage.setItem('pantryPayments', JSON.stringify(payments));
+        alert(`Data pembayaran kode ${paymentId} berhasil dihapus.`);
+        loadPayments(); 
+    }
+
+    function logout() {
+        sessionStorage.removeItem("cashierAuth");
+        window.location.href = "index.html";
+    }
+  </script>
 </body>
 </html>
