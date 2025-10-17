@@ -21,35 +21,38 @@
   </header>
   
   <div class="container">
-    <h2>Menu Makanan</h2>
-    <div class="menu-list" id="menu-makanan"></div>
-
-    <h2 style="margin-top: 30px;">Menu Minuman</h2>
-    <div class="menu-list" id="menu-minuman"></div>
-    
-  </div>
-
-  <footer>© 2025 Pantry — Dibuat dengan ❤️</footer>
-
-  <div id="bottom-cart-bar">
-    
-    <div class="customer-info">
-        <h3>Masukkan Nama Anda</h3>
-        <input type="text" id="customer-name" placeholder="Contoh: Budi" required>
-        <p id="payment-status" style="color:#555; margin-top:5px; font-size: 0.8em; display: none;">Belum dibayar ❌</p>
-    </div>
-
-    <div id="cart">
-        <h2>🛒 Keranjang Pesanan</h2>
-        <ul id="cart-items"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul>
+    <div class="content-grid">
         
-        <button id="checkout-btn" onclick="checkout()" disabled>Pesan</button>
+        <div id="menu-section">
+            <h2>Menu Makanan</h2>
+            <div class="menu-list" id="menu-makanan"></div>
 
-        <div id="payment-section" style="margin-top:10px; text-align:center;">
-            <button id="pay-btn" onclick="openPaymentModal()" class="btn-primary">💳 Bayar Sekarang</button>
+            <h2 style="margin-top: 30px;">Menu Minuman</h2>
+            <div class="menu-list" id="menu-minuman"></div>
+        </div>
+        
+        <div id="sticky-sidebar">
+            
+            <div class="customer-info">
+                <h3>Masukkan Nama Anda</h3>
+                <input type="text" id="customer-name" placeholder="Contoh: Budi" required>
+            </div>
+
+            <div id="cart">
+                <h2>🛒 Keranjang Pesanan</h2>
+                <ul id="cart-items"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul>
+                <button id="checkout-btn" onclick="checkout()" disabled>Pesan</button>
+
+                <div id="payment-section" style="margin-top:20px; text-align:center;">
+                    <button id="pay-btn" onclick="openPaymentModal()" class="btn-primary">💳 Bayar Sekarang</button>
+                    <p id="payment-status" style="color:#555; margin-top:10px;">Belum dibayar ❌</p>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
-  </div>
+
+  <footer>© 2025 Pantry — Dibuat dengan ❤️</footer>
 
   <div id="info-modal" class="modal">
     <div class="modal-content">
@@ -179,14 +182,6 @@
       // Disable tombol Pesan jika keranjang kosong ATAU belum dibayar
       const isPaid = document.getElementById('payment-status').textContent.includes('✅');
       checkoutBtn.disabled = (total === 0 || !isPaid);
-      
-      // Tampilkan tombol Bayar jika keranjang tidak kosong
-      const payBtn = document.getElementById('pay-btn');
-      payBtn.style.display = (total > 0 && !isPaid) ? 'block' : 'none';
-      
-      // Sembunyikan/Tampilkan bottom bar
-      const bottomBar = document.getElementById('bottom-cart-bar');
-      bottomBar.style.display = (total > 0 || document.getElementById('customer-name').value.trim() !== '') ? 'flex' : 'none';
     }
 
     function openPaymentModal() {
@@ -225,7 +220,6 @@
         paymentStatusEl.textContent = "Belum dibayar ❌";
         checkoutBtn.disabled = true;
       }
-      updateCart(); // Panggil updateCart untuk menyesuaikan tampilan tombol Bayar
     }
 
     function checkout() {
@@ -254,22 +248,14 @@
       alert(`✅ Pesanan ${name} berhasil dibuat!`);
       cart = [];
       currentPayment = null;
-      document.getElementById('customer-name').value = '';
-      document.getElementById('payment-status').textContent = "Belum dibayar ❌";
       updateCart();
       renderMenu();
+      document.getElementById('payment-status').textContent = "Belum dibayar ❌";
     }
 
     function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; }
     function closeModal(t) { document.getElementById(t + "-modal").style.display = "none"; }
     window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; };
-    
-    // Tambahkan listener untuk input nama agar bar muncul saat diketik
-    document.getElementById('customer-name').addEventListener('input', updateCart);
-    
-    // Sembunyikan bottom bar di awal jika keranjang kosong dan nama kosong
-    document.getElementById('bottom-cart-bar').style.display = 'none';
-
   </script>
 </body>
 </html>
