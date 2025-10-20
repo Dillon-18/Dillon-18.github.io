@@ -159,10 +159,10 @@
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
     }
-    
+
     function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; } 
     function closeModal(t) { document.getElementById(t + "-modal").style.display = "none"; } 
-    window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }; 
+    window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; };
     
     // ======================================
     // === DASHBOARD PEMBAYARAN LOGIC ===
@@ -170,7 +170,6 @@
     
     function loadPayments() {
         const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        // HANYA tampilkan pembayaran yang statusnya 'pending' (menunggu verifikasi)
         const pendingPayments = payments.filter(p => p.status === 'pending');
         
         const listEl = document.getElementById('payment-verification-list');
@@ -187,8 +186,8 @@
             ).join('');
             
             const customerName = payment.customerName || "Nama Tidak Diketahui";
-            
-            // Logika Tombol QRIS: Hanya tampilkan jika metode adalah QR All-Wallet
+
+            // Tampilkan tombol lihat QR hanya jika metode QR All-Wallet
             const qrButton = payment.method === 'QR All-Wallet' ? 
                 `<button onclick="openModal('qr')" style="background-color: #068b18; margin-bottom: 5px; transform: translateY(0); box-shadow: none;">
                     Lihat QR
