@@ -38,10 +38,7 @@
                 <input type="text" id="customer-name" placeholder="Contoh: Budi" required>
             </div>
             <div id="cart">
-                <h2 class="desktop-only">🛒 Keranjang Pesanan</h2>
-                <ul id="cart-items" class="desktop-only"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul>
-                
-                <div id="mobile-summary">
+                <h2>🛒 Keranjang Pesanan</h2> <ul id="cart-items"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul> <div id="mobile-summary">
                     <div class="cart-summary">
                         <p id="mobile-cart-total" style="margin: 0; font-weight: 700; color: #333;">Total: Rp0</p>
                         <p id="mobile-payment-status" style="margin: 0; font-size: 0.8em; color: #ff6347;">Belum dibayar</p>
@@ -257,7 +254,7 @@
       listEl.innerHTML = '';
       let total = 0;
 
-      // --- LOGIC PERHITUNGAN DAN LIST DESKTOP ---
+      // --- LOGIC PERHITUNGAN DAN LIST DESKTOP (Juga dipakai untuk mobile swipe) ---
       if (cart.length === 0) {
         listEl.innerHTML = '<li style="color:#999;text-align:center;">Keranjang kosong.</li>';
         payBtn.disabled = true;
@@ -266,27 +263,24 @@
         cart.forEach((item) => {
           const subtotal = item.price * item.qty;
           total += subtotal;
-          listEl.innerHTML += `<li class="desktop-only">${item.name} - Rp${formatRupiah(subtotal)} (${item.qty}x)</li>`;
+          listEl.innerHTML += `<li>${item.name} - Rp${formatRupiah(subtotal)} (${item.qty}x)</li>`;
         });
       }
 
       const totalRupiah = formatRupiah(total);
       if (total > 0) {
-        listEl.innerHTML += `<li class="cart-total desktop-only" style="font-weight: 700; border-top: 1px solid #ddd; margin-top: 10px;"><span>TOTAL:</span> <b>Rp${totalRupiah}</b></li>`;
+        listEl.innerHTML += `<li class="cart-total" style="font-weight: 700; border-top: 1px solid #ddd; margin-top: 10px;"><span>TOTAL:</span> <b>Rp${totalRupiah}</b></li>`;
       }
 
       const isPaid = currentPayment && currentPayment.status === "paid";
       const isPending = currentPayment && currentPayment.status === "pending";
       
       // --- LOGIC RESPONSIVE & MOBILE BAR ---
-      const isMobile = window.matchMedia('(max-width: 768px)').matches;
-      const stickySidebar = document.getElementById('sticky-sidebar');
+      const nameInput = document.getElementById('customer-name');
       const mobileCartTotal = document.getElementById('mobile-cart-total');
       const mobilePaymentStatus = document.getElementById('mobile-payment-status');
-      const nameInput = document.getElementById('customer-name');
 
-      // FIX: Tampilkan mobile bar (stickySidebar) terlepas dari status keranjang
-      stickySidebar.classList.add('show-mobile'); 
+      // Tampilkan mobile bar (sudah dihandle CSS fixed position)
       
       if (total > 0) {
           mobileCartTotal.textContent = `Total: Rp${totalRupiah}`;
@@ -327,12 +321,7 @@
       } else if (isPending) {
           mobilePaymentStatus.textContent = "Menunggu verifikasi ⏳";
           paymentStatusEl.textContent = "Menunggu verifikasi kasir ⏳";
-      } else if (total > 0) { 
-          // Status belum dibayar hanya jika ada item
-          mobilePaymentStatus.textContent = "Belum dibayar ❌";
-          paymentStatusEl.textContent = "Belum dibayar ❌";
       } else {
-          // Tidak ada item dan belum bayar
           mobilePaymentStatus.textContent = "Belum dibayar ❌";
           paymentStatusEl.textContent = "Belum dibayar ❌";
       }
