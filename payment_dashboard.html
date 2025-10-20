@@ -148,7 +148,7 @@
     });
 
     function formatRupiah(number) {
-        return `Rp${number.toLocaleString('id-ID')}`;
+        return number.toLocaleString('id-ID');
     }
     
     // ======================================
@@ -173,8 +173,8 @@
                 `<p class="payment-item-detail">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
             ).join('');
             
-            // Ambil nama dari data pembayaran (disimpan saat pelanggan klik Bayar)
-            const customerName = payment.customerName || "Nama Tidak Diketahui";
+            // Ambil nama dari data pembayaran (diperbaiki di index.html)
+            const customerName = payment.customerName || "Nama Tidak Diketahui"; 
 
             const div = document.createElement('div');
             div.className = 'payment-card';
@@ -213,9 +213,8 @@
             
             alert(`✅ Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa menekan tombol "Pesan".`);
             
-            // === BUG FIX: REFRESH TAMPILAN ===
+            // BUG FIX: Memuat ulang list agar item yang sudah terverifikasi hilang
             loadPayments(); 
-            // =================================
         }
     }
   </script>
