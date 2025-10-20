@@ -396,5 +396,14 @@ footer {
 .contact-link:hover {
   text-decoration: underline;
 }
+/* === STYLE KHUSUS QRIS DI MODAL PEMBAYARAN === */
+.btn-qris {
+  background-color: #B71C1C !important; /* Merah Tua */
+  box-shadow: 0 4px 6px rgba(183, 28, 28, 0.3); /* Tambahkan bayangan untuk menonjol */
+}
+.btn-qris:hover {
+  background-color: #8D0F0F !important; /* Merah lebih gelap saat hover */
+}
+
 
 
