@@ -170,8 +170,7 @@
     
     function loadPayments() {
         const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        // Hanya tampilkan pembayaran yang statusnya 'pending' (menunggu verifikasi)
-        // Pembayaran tunai tidak akan muncul di sini karena statusnya langsung 'paid'
+        // HANYA tampilkan pembayaran yang statusnya 'pending' (menunggu verifikasi)
         const pendingPayments = payments.filter(p => p.status === 'pending');
         
         const listEl = document.getElementById('payment-verification-list');
@@ -229,7 +228,7 @@
             localStorage.setItem('pantryPayments', JSON.stringify(payments));
             
             alert(`✅ Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa menekan tombol "Pesan".`);
-            loadPayments(); // Muat ulang daftar pembayaran
+            loadPayments(); 
         }
     }
   </script>
