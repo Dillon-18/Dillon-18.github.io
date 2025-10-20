@@ -88,7 +88,6 @@ html, body {
     grid-template-columns: 2fr 1fr; 
     gap: 30px;
     margin-top: 10px; 
-    min-height: 100vh; /* Memastikan kolom cukup tinggi agar sticky berfungsi */
 }
 
 /* === JUDUL === */
@@ -187,17 +186,18 @@ h2 {
   font-weight: 600;
 }
 
-/* === SIDEBAR STICKY WRAPPER === */
+/* === SIDEBAR STICKY WRAPPER (BARU) === */
 #sticky-sidebar {
-  /* PROPERTI KUNCI STICKY */
+  /* Membungkus keranjang dan info pelanggan agar ikut sticky */
   position: sticky; 
   top: 80px; /* Jarak dari atas layar (di bawah navbar) */
   height: fit-content; /* Penting agar sticky berfungsi */
   align-self: flex-start;
 }
 
-/* === CUSTOMER INFO === */
+/* === CUSTOMER INFO (DIUBAH) === */
 .customer-info {
+  /* Hapus margin-top lama, sekarang margin diatur oleh #cart di bawahnya */
   padding: 15px;
   background: #ffffff;
   border-radius: 10px;
@@ -220,7 +220,7 @@ h2 {
   box-sizing: border-box;
 }
 
-/* === KERANJANG === */
+/* === KERANJANG (DIUBAH) === */
 #cart {
   background: #fff;
   padding: 20px;
@@ -304,6 +304,8 @@ h2 {
   background-color: #cccccc;
   cursor: not-allowed;
 }
+
+/* ... (Kode CSS untuk Modal dan Footer) ... */
 
 /* === FOOTER === */
 footer {
@@ -395,15 +397,95 @@ footer {
   text-decoration: underline;
 }
 
+/* Pastikan elemen mobile-only tersembunyi di desktop */
+#mobile-summary {
+    display: none; 
+}
+
+
+/* === START MOBILE RESPONSIVE STYLES === */
+
+/* Tambahkan class pembantu untuk menyembunyikan elemen tertentu di mobile */
+.desktop-only {
+    /* Hanya tampil di Desktop, default-nya sudah on */
+}
+
 /* MEDIA QUERY untuk Responsif */
 @media (max-width: 768px) {
     .content-grid {
         grid-template-columns: 1fr;
         min-height: auto; 
     }
+    
+    /* === ATUR ULANG SIDEBAR UNTUK MOBILE (FIXED BOTTOM BAR) === */
     #sticky-sidebar {
-        /* Menonaktifkan sticky di layar kecil */
-        position: static; 
-        top: auto;
+        position: fixed; 
+        bottom: 0; /* Tempel di bawah layar */
+        top: auto; /* Override top: 80px */
+        left: 0;
+        width: 100%; 
+        z-index: 999;
+        
+        /* Default: Sembunyikan, akan dimunculkan oleh JS */
+        display: none; 
+        
+        /* Hapus style desktop */
+        padding: 0;
+        margin: 0;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.1); 
+        background: #f7f7f7; 
+        
+        /* Padding untuk notch/nav bar HP modern */
+        padding-bottom: env(safe-area-inset-bottom, 0); 
+    }
+    
+    /* Class yang ditambahkan oleh JS untuk menampilkan sidebar */
+    #sticky-sidebar.show-mobile {
+        display: block;
+    }
+    
+    /* Sembunyikan semua elemen keranjang di desktop */
+    .desktop-only {
+        display: none !important;
+    }
+    
+    /* Sembunyikan Input Nama Pelanggan dari bar bawah, biar user scroll ke atas */
+    .customer-info {
+        display: none; 
+    }
+
+    /* Atur Keranjang menjadi satu baris di mobile */
+    #cart {
+        padding: 10px 15px;
+        margin: 0;
+        border-radius: 0; 
+        display: flex; 
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+        box-shadow: none; 
+    }
+    
+    /* Tampilkan ringkasan dan tombol berdampingan */
+    #mobile-summary {
+        display: block;
+        flex-grow: 1;
+        margin-right: 15px;
+    }
+    
+    /* Tombol checkout (akan menjadi tombol utama) */
+    #checkout-btn {
+        margin: 0;
+        padding: 10px 15px;
+        width: auto;
+        font-size: 1em;
+        flex-shrink: 0;
+        height: 100%; /* Agar sejajar dengan summary */
+    }
+    
+    /* Beri ruang di bawah menu agar tidak tertutup sticky bar */
+    .container {
+        padding-bottom: 75px; 
     }
 }
+/* === END MOBILE RESPONSIVE STYLES === */
