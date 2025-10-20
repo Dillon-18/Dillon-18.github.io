@@ -117,13 +117,17 @@
     let currentPayment = null; 
 
     document.addEventListener('DOMContentLoaded', () => {
-      // LOGIC BARU: Memuat status pembayaran terakhir dari LocalStorage
+      // 1. Ambil status pembayaran terakhir
       const lastPaymentId = localStorage.getItem('lastPaymentId');
       if (lastPaymentId) {
           const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
           const lastPayment = payments.find(p => p.id === lastPaymentId);
           if (lastPayment) {
               currentPayment = lastPayment;
+              // Jika statusnya sudah paid, pastikan cart diisi kembali dengan snapshot dari pembayaran
+              if (currentPayment.status === 'paid' || currentPayment.status === 'pending') {
+                  cart = currentPayment.cart;
+              }
           } else {
               localStorage.removeItem('lastPaymentId');
           }
@@ -131,7 +135,7 @@
       
       renderMenu();
       updateCart();
-      // Selalu cek status pembayaran agar real-time
+      // 2. Selalu cek status pembayaran agar real-time
       setInterval(checkPaymentStatus, 2000); 
     });
 
@@ -153,12 +157,12 @@
       makananEl.innerHTML = '';
       minumanEl.innerHTML = '';
       
-      // LOGIC BARU: Cek apakah pembayaran sedang pending
+      // LOGIC KONTROL UTAMA: Cek apakah pembayaran sedang pending
       const isPaymentPending = currentPayment && currentPayment.status === "pending";
-      // Jika pending, tombol harus disabled
       const isDisabledAttr = isPaymentPending ? 'disabled' : '';
 
       menuData.forEach(item => {
+        // Gunakan item dari cart jika ada, jika tidak, cari di snapshot pembayaran
         const exist = cart.find(i => i.name === item.name);
         const qty = exist ? exist.qty : 0;
 
@@ -181,9 +185,9 @@
     }
 
     function changeMenuQty(name, price, delta) {
-      // PENGAMAN TAMBAHAN: Mencegah manipulasi jika status pending
+      // PENGAMAN: Mencegah manipulasi jika status pending
       if (currentPayment && currentPayment.status === "pending") {
-          alert("Anda tidak dapat mengubah keranjang selama pembayaran sedang diverifikasi oleh kasir.");
+          alert("❌ Keranjang dikunci. Anda tidak dapat mengubah keranjang selama pembayaran sedang diverifikasi oleh kasir.");
           return;
       }
       
@@ -199,7 +203,7 @@
     function updateCart() {
       const listEl = document.getElementById('cart-items');
       const checkoutBtn = document.getElementById('checkout-btn');
-      const payBtn = document.getElementById('pay-btn'); // Ambil payBtn
+      const payBtn = document.getElementById('pay-btn'); 
       listEl.innerHTML = '';
       let total = 0;
 
@@ -221,7 +225,7 @@
       const isPaid = currentPayment && currentPayment.status === "paid";
       const isPending = currentPayment && currentPayment.status === "pending";
 
-      // Tombol Pesan hanya aktif jika keranjang tidak kosong DAN sudah paid
+      // KONTROL CHECKOUT: Tombol Pesan hanya aktif jika total > 0 DAN sudah PAID
       checkoutBtn.disabled = (total === 0 || !isPaid);
       
       // Update status tombol BAYAR
@@ -239,7 +243,6 @@
 
     function openPaymentModal() {
       if (cart.length === 0) return alert("Keranjang kosong!");
-      // LOGIC BARU: Mencegah pembuatan pembayaran duplikat yang pending
       if (currentPayment && currentPayment.status !== "paid") return alert("Anda sudah memiliki pembayaran tertunda. Harap tunggu verifikasi kasir.");
       
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
@@ -271,16 +274,15 @@
           id: code, 
           status: "pending", 
           total, 
-          cart: JSON.parse(JSON.stringify(cart)), // Simpan snapshot keranjang saat pembayaran diajukan
+          cart: JSON.parse(JSON.stringify(cart)), // SNAPSHOT keranjang
           time: new Date().toLocaleString('id-ID'),
           method: methodName 
       };
 
       currentPayment = newPayment;
-      localStorage.setItem('lastPaymentId', code); // Simpan ID pembayaran aktif
+      localStorage.setItem('lastPaymentId', code); 
       
       let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-      // Hapus jika ada pembayaran pending lama dengan ID yang sama (walaupun jarang)
       payments = payments.filter(p => p.id !== code); 
       payments.push(newPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
@@ -305,7 +307,7 @@
         const statusChanged = currentPayment.status !== "paid";
         currentPayment.status = "paid"; 
         paymentStatusEl.textContent = `Sudah diverifikasi (${found.method}) ✅`;
-        if (statusChanged) renderMenu(); // PENTING: Muat ulang menu untuk ENBALE kembali tombol jumlah item (jika perlu)
+        if (statusChanged) renderMenu(); // Muat ulang menu untuk mengaktifkan kembali tombol jumlah (meskipun checkout akan menghapus cart)
       } else {
         currentPayment.status = "pending";
         paymentStatusEl.textContent = "Menunggu verifikasi kasir ⏳";
@@ -315,15 +317,16 @@
     }
 
     function checkout() {
+      // PENGAMAN UTAMA: Memastikan status harus PAID
       if (!currentPayment || currentPayment.status !== "paid") {
-          return alert("Pembayaran belum diverifikasi oleh kasir!");
+          return alert("❌ Pembayaran belum diverifikasi oleh kasir! Mohon tunggu verifikasi.");
       }
 
       const nameInput = document.getElementById('customer-name');
       const name = nameInput.value.trim();
       if (!name) return alert("Masukkan nama Anda!");
 
-      // Ambil data dari SNAPSHOT pembayaran, bukan dari array 'cart' saat ini
+      // Gunakan data dari SNAPSHOT pembayaran, karena keranjang utama sudah dikunci
       const finalCart = currentPayment.cart; 
       
       // 1. BUAT PESANAN BARU
@@ -331,7 +334,7 @@
         id: Date.now(),
         customerName: name,
         items: finalCart, 
-        total: currentPayment.total, // Gunakan total dari pembayaran
+        total: currentPayment.total, 
         status: 'Baru', 
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         paymentId: currentPayment.id 
@@ -346,11 +349,11 @@
       // 2. RESET STATE PELANGGAN
       cart = [];
       currentPayment = null;
-      localStorage.removeItem('lastPaymentId'); // Hapus ID pembayaran aktif
+      localStorage.removeItem('lastPaymentId'); 
       nameInput.value = ''; 
       
       updateCart();
-      renderMenu(); // Muat ulang menu untuk mengaktifkan kembali tombol jumlah
+      renderMenu(); // Muat ulang menu untuk mengaktifkan kembali semua tombol
       document.getElementById('payment-status').textContent = "Belum dibayar ❌";
     }
 
