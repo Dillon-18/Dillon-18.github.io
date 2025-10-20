@@ -4,7 +4,6 @@ html, body {
   color: #333;
   margin: 0;
   padding: 0;
-  scroll-behavior: smooth;
 }
 
 /* === NAVBAR === */
@@ -30,7 +29,7 @@ html, body {
 .brand-name {
   font-size: 24px;
   font-weight: 700;
-  color: #068b18; /* Warna utama Pantry (Hijau) */
+  color: #068b18;
 }
 
 .brand-logo {
@@ -50,16 +49,18 @@ html, body {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s;
 }
 
 .btn-primary {
-  background-color: #d14838; /* Merah untuk aksi utama */
+  /* Tombol Utama (Pesan Sekarang / Dashboard Dapur) - Merah */
+  background-color: #ff6347;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #b03a2c;
+  background-color: #e5533d;
+  box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
 }
 
 .btn-secondary {
@@ -71,195 +72,125 @@ html, body {
   background-color: #e0e0e0;
 }
 
-/* === UTAMA CONTENT === */
+/* === KONTEN UTAMA DUA KOLOM === */
 .container {
+  width: 95%;
   max-width: 1200px;
-  margin: 20px auto;
-  padding: 0 20px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .content-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 2fr 1fr; 
     gap: 30px;
+    margin-top: 10px; 
 }
 
-/* -------------------------------------- */
-/* === GAYA TAMPILAN MENU (index.html) === */
-/* -------------------------------------- */
-
-#menu-section h2 {
-    color: #004A99; /* Biru untuk judul menu */
-    border-bottom: 2px solid #004A99;
-    padding-bottom: 5px;
+/* === JUDUL === */
+h2 {
+  border-bottom: 2px solid #067c0c;
+  padding-bottom: 8px;
+  color: #ff6347;
+  margin-top: 40px;
 }
 
+/* === MENU === */
 .menu-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
 }
 
 .menu-item {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fffaf7;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   transition: transform 0.2s;
 }
 
 .menu-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.menu-item img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-}
-
-.menu-info {
-  padding: 10px 15px;
-}
-
-.menu-name {
-  font-weight: 600;
-  font-size: 1.1em;
-  margin-bottom: 5px;
-}
-
-.menu-price {
-  color: #d14838;
-  font-weight: 700;
-}
-
-.menu-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 15px;
-  border-top: 1px solid #eee;
-  background-color: #f9f9f9;
-}
-
-.btn-qty {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  cursor: pointer;
-  font-size: 1.1em;
-  font-weight: 700;
-  transition: background-color 0.2s;
-}
-
-.btn-qty:hover:not(:disabled) {
-    background-color: #eee;
-}
-
-.btn-qty:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.btn-plus {
-  background-color: #068b18;
-  color: white;
-  border: none;
-}
-.btn-plus:hover:not(:disabled) {
-    background-color: #056a15;
-}
-
-.qty-display {
-  font-weight: 700;
-  min-width: 25px;
-  text-align: center;
-}
-
-/* -------------------------------------- */
-/* === SIDEBAR / CART (index.html) === */
-/* -------------------------------------- */
-
-#sticky-sidebar {
-    position: sticky;
-    top: 80px; /* Di bawah navbar */
-}
-
-.customer-info {
+/* === KERANJANG - VERSI RINGKAS DENGAN +- === */
+.cart-box {
     background: #fff;
-    padding: 15px;
-    border-radius: 8px;
+    padding: 20px;
+    border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
 }
 
-.customer-info h3 {
-    margin: 0 0 10px 0;
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dotted #eee;
+    font-size: 0.95em;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.item-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-cart-qty {
+    background-color: #f0f0f0;
     color: #333;
-    font-size: 1.1em;
-}
-
-#customer-name {
-    width: 95%;
-    padding: 10px;
     border: 1px solid #ccc;
+    width: 25px; 
+    height: 25px; 
     border-radius: 4px;
-    font-size: 1em;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 600;
 }
 
-#cart {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+.btn-cart-qty:hover {
+    background-color: #ddd;
 }
 
-#cart h2 {
-    margin-top: 0;
-    color: #d14838;
-    border-bottom: 2px solid #d14838;
-    padding-bottom: 5px;
-    font-size: 1.5em;
+.item-controls .qty-display {
+    width: 20px;
+    text-align: center;
+    font-weight: 600;
 }
 
-#cart-items {
-  list-style-type: none;
-  padding: 0;
-  margin: 15px 0;
-}
 
-#cart-items li {
-  padding: 8px 0;
-  border-bottom: 1px dotted #eee;
-  font-size: 0.95em;
-  display: flex;
-  justify-content: space-between;
-}
+/* === SISA CSS LAINNYA === */
 
-#checkout-btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #068b18; /* Hijau untuk Pesan */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.1em;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color 0.2s;
+/* --- Cart Summary --- */
+.cart-summary {
+    padding: 10px 0;
 }
-#checkout-btn:hover:not(:disabled) {
-    background-color: #056a15;
+.cart-summary p {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
 }
-#checkout-btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+.cart-summary .total-price {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #ff6347;
+    margin-top: 10px;
 }
 
 /* === FOOTER === */
@@ -272,7 +203,7 @@ footer {
   font-size: 0.9em;
 }
 
-/* === MODAL POPUP (Bersama) === */
+/* === MODAL POPUP === */
 .modal {
   display: none; 
   position: fixed; 
@@ -289,20 +220,13 @@ footer {
 .modal-content {
   background-color: #fefefe;
   margin: 5% auto; 
-  padding: 20px;
+  padding: 30px;
   border: 1px solid #888;
   width: 80%; 
-  max-width: 500px; 
+  max-width: 500px;
   border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   position: relative;
-}
-
-.modal-content h2 {
-    color: #d14838;
-    border-bottom: 2px solid #d14838;
-    padding-bottom: 10px;
-    margin-top: 0;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 .close {
@@ -310,33 +234,19 @@ footer {
   float: right;
   font-size: 28px;
   font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 20px;
 }
 
-.close:hover,
 .close:focus {
   color: #333;
   text-decoration: none;
   cursor: pointer;
 }
 
-.contact-link {
-    display: block;
-    margin: 10px 0;
-    color: #004A99;
-    text-decoration: none;
-    font-weight: 500;
-}
-.contact-link:hover {
-    text-decoration: underline;
-}
-
-/* MEDIA QUERY untuk Responsif */
-@media (max-width: 768px) {
-    .content-grid {
-        grid-template-columns: 1fr;
-    }
-    #sticky-sidebar {
-        position: static;
-        top: auto;
-    }
+.modal-content h2 {
+  color: #ff6347;
+  border-bottom: 2px solid #068b18;
+  padding-bottom: 10px;
 }
