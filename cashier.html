@@ -32,31 +32,117 @@
         color: #333;
     }
     .order-card {
-        background: #fff;
-        border: 1px solid #068b18; 
-        padding: 15px;
+        background-color: #ffffff;
+        border: 1px solid #ddd;
         border-radius: 8px;
-        margin-bottom: 15px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        transition: all 0.3s; /* Transisi */
+        position: relative;
+        margin-bottom: 15px; /* Tambahkan margin agar tidak terlalu rapat */
     }
-    .order-card h4 { margin-top: 0; color: #333; }
-    .order-card ul { list-style: none; padding: 0; margin: 5px 0 10px 0; font-size: 0.9em; }
-    .order-card li { margin-bottom: 3px; color: #555; }
-    .order-card .order-time { font-size: 0.75em; color: #999; }
-    .order-actions { display: flex; gap: 10px; margin-top: 10px; }
-    .order-actions button {
-        padding: 8px 12px;
+    .order-card:hover {
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start; /* Ubah agar konten tidak terpotong */
+      margin-bottom: 10px;
+      border-bottom: 1px dashed #ccc;
+      padding-bottom: 5px;
+    }
+    .order-info {
+        display: flex;
+        flex-direction: column;
+    }
+    .order-customer {
+        font-weight: 700;
+        font-size: 1.2em; /* Lebih besar */
+        color: #333;
+        line-height: 1.2;
+    }
+    /* Style untuk Metode Pembayaran */
+    .order-payment-method {
+        font-weight: 700;
+        color: #d14838; 
+        font-size: 0.9em; 
+        margin-top: 4px;
+        text-transform: uppercase;
+    }
+    .order-time {
+      font-weight: bold;
+      color: #777;
+      font-size: 0.9em;
+      margin-top: 2px;
+    }
+    .order-status {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 0.9em;
+      align-self: flex-start; /* Agar badge status di atas */
+    }
+    .status-baru { background-color: #fee2e2; color: #ef4444; }
+    .status-proses { background-color: #fef3c7; color: #f59e0b; }
+    .status-selesai { background-color: #d1fae5; color: #10b981; }
+    .item-list {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0;
+        font-size: 0.95em;
+    }
+    .item-list li {
+        border-bottom: 1px dotted #eee;
+        padding: 6px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+    .order-total {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #068b18;
+      display: block;
+      margin-top: 10px;
+    }
+    .action-btn-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 15px;
+    }
+    .action-btn-group button {
+        flex: 1;
+        padding: 10px;
         border: none;
-        border-radius: 5px;
+        border-radius: 6px;
         cursor: pointer;
+        color: white;
         font-weight: 600;
-        transition: background-color 0.3s;
+        transition: background-color 0.3s, transform 0.2s; /* Transisi */
     }
-    .btn-proses { background-color: #FFC107; color: #333; }
-    .btn-selesai { background-color: #068b18; color: white; }
-    .btn-hapus { background-color: #d14838; color: white; }
-    .empty-column-msg { text-align: center; color: #999; margin-top: 50px; }
-    .order-total { font-size: 1.1em; font-weight: 700; color: #d14838; margin-top: 10px; border-top: 1px dashed #eee; padding-top: 5px; }
+    .action-btn-group button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    /* WARNA TOMBOL AKSI LEBIH GELAP */
+    .btn-proses { background-color: #e68a00; } 
+    .btn-proses:hover:not(:disabled) { background-color: #cc7800; }
+    .btn-selesai { background-color: #056b12; }
+    .btn-selesai:hover:not(:disabled) { background-color: #04520e; }
+    .btn-hapus { background-color: #c44336; }
+    .btn-hapus:hover:not(:disabled) { background-color: #a3322b; }
+    .order-list { 
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .empty-column-msg {
+        text-align: center;
+        color: #999;
+        margin-top: 50px;
+    }
   </style>
 </head>
 <body>
@@ -65,32 +151,33 @@
     <div class="nav-left">
       <span class="brand-name">Pantry</span>
       <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #068b18;">Dashboard Dapur</span>
+      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Dashboard Dapur</span>
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-secondary" onclick="window.location.href='payment_dashboard.html'">Dashboard Pembayaran</button>
-      <button class="nav-btn btn-primary" onclick="window.location.href='index.html'">Menu Utama</button>
+      <button class="nav-btn btn-primary" onclick="window.location.href='payment_dashboard.html'">💳 Dashboard Pembayaran</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Kembali ke Menu Utama</button>
     </div>
   </header>
 
   <div class="container">
     
-    <div class="kanban-container">
-        
-        <div id="new-orders" class="kanban-column">
-            <h3>Pesanan Baru (Baru)</h3>
+    <div class="order-dashboard-container">
+        <h2>👨‍🍳 Daftar Pesanan </h2>
+        <div class="kanban-container">
+            <div class="kanban-column">
+                <h3>Baru</h3>
+                <div class="order-list" id="order-list-baru"></div>
             </div>
-
-        <div id="in-progress-orders" class="kanban-column">
-            <h3>Sedang Diproses (Proses)</h3>
+            <div class="kanban-column">
+                <h3>Diproses</h3>
+                <div class="order-list" id="order-list-proses"></div>
             </div>
-
-        <div id="completed-orders" class="kanban-column">
-            <h3>Siap Diambil (Selesai)</h3>
+            <div class="kanban-column">
+                <h3>Selesai</h3>
+                <div class="order-list" id="order-list-selesai"></div>
             </div>
-
+        </div>
     </div>
-
   </div>
 
   <footer>
@@ -101,10 +188,10 @@
     // === MEKANISME PROTEKSI AKSES KASIR ===
     (function checkAccess() {
         const KASIR_PASS = "kasir123";
-        const isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
+        let isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
 
         if (!isAuthorized) {
-            const password = prompt("Masukkan password kasir untuk mengakses Dashboard Dapur:");
+            const password = prompt("Masukkan password kasir untuk mengakses Dashboard:");
 
             if (password === KASIR_PASS) {
                 sessionStorage.setItem('cashierAuth', 'true');
@@ -116,54 +203,68 @@
     })();
     // ======================================
     
-    document.addEventListener('DOMContentLoaded', () => {
-        loadOrders();
-        setInterval(loadOrders, 5000); // Perbarui setiap 5 detik
-    });
+    document.addEventListener('DOMContentLoaded', loadOrders);
 
+    // Fungsi utilitas untuk memformat harga
     function formatRupiah(number) {
-        return number.toLocaleString('id-ID');
+        return `Rp${number.toLocaleString('id-ID')}`;
     }
+    
+    // ======================================
+    // === FUNGSI MANAJEMEN PESANAN (ORDER) ===
+    // ======================================
 
     function loadOrders() {
-      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-      
-      const orderListBaru = document.getElementById('new-orders');
-      const orderListProses = document.getElementById('in-progress-orders');
-      const orderListSelesai = document.getElementById('completed-orders');
+      const orderListBaru = document.getElementById('order-list-baru');
+      const orderListProses = document.getElementById('order-list-proses');
+      const orderListSelesai = document.getElementById('order-list-selesai');
+      let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       
       orderListBaru.innerHTML = '';
       orderListProses.innerHTML = '';
       orderListSelesai.innerHTML = '';
-
+      
       orders.forEach(order => {
-        const itemsList = order.items.map(item => 
-            `<li>${item.name} (${item.qty}x)</li>`
-        ).join('');
-
         const card = document.createElement('div');
         card.className = 'order-card';
+        card.id = 'order-' + order.id;
+        
+        const itemList = order.items.map(item => 
+          `<li><span>${item.name} x${item.qty}</span> <span>${formatRupiah(item.price * item.qty)}</span></li>`
+        ).join('');
+
+        let statusClass = 'status-baru';
+        let targetList = orderListBaru;
+        
+        if (order.status === 'Proses') {
+            statusClass = 'status-proses';
+            targetList = orderListProses;
+        } else if (order.status === 'Selesai') {
+            statusClass = 'status-selesai';
+            targetList = orderListSelesai;
+        }
+        
+        const isDisabled = order.status === 'Selesai' ? 'disabled' : '';
+
         card.innerHTML = `
-            <h4>${order.customerName} (ID: ${order.id})</h4>
-            <p class="order-time">Waktu: ${order.time}</p>
-            <ul>${itemsList}</ul>
-            <div class="order-total">Total: Rp${formatRupiah(order.total)}</div>
-            <div class="order-actions">
-              ${order.status === 'Baru' 
-                ? `<button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')">Mulai Proses</button>` 
-                : ''}
-              ${order.status === 'Proses' 
-                ? `<button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')">Selesai</button>` 
-                : ''}
-              <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
+          <div class="order-header">
+            <div class="order-info">
+                <span class="order-customer">${order.customerName || 'Nama Tidak Diketahui'}</span>
+                <span class="order-payment-method">Bayar: ${order.paymentMethod || 'N/A'}</span>
+                <span style="font-size:0.8em; color:#999;">Kode: ${order.paymentId || 'N/A'} - #${order.time}</span>
             </div>
+            <span class="order-status ${statusClass}">${order.status}</span>
+          </div>
+          <ul class="item-list">${itemList}</ul>
+          <div style="text-align: right; margin-top: 10px;">
+            <span class="order-total">${formatRupiah(order.total)}</span>
+          </div>
+          <div class="action-btn-group">
+            <button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')" ${isDisabled}>Proses</button>
+            <button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')" ${isDisabled}>Selesai</button>
+            <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
+          </div>
         `;
-        
-        let targetList;
-        if (order.status === 'Baru') targetList = orderListBaru;
-        else if (order.status === 'Proses') targetList = orderListProses;
-        else if (order.status === 'Selesai') targetList = orderListSelesai;
-        
         targetList.appendChild(card);
       });
       
@@ -197,6 +298,9 @@
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
       loadOrders();
     }
+    
+    // Auto-refresh untuk pesanan setiap 5 detik
+    setInterval(loadOrders, 5000);
   </script>
 
 </body>
