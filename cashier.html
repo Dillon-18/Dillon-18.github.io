@@ -94,10 +94,9 @@
         border-radius: 4px;
         color: white;
         display: inline-block;
-        margin-top: 5px;
     }
 
-    /* === STYLE BARU UNTUK STATUS PEMBAYARAN === */
+    /* STYLE BARU UNTUK STATUS PEMBAYARAN */
     .payment-status-tag {
         font-size: 0.8em;
         font-weight: 700;
@@ -107,7 +106,6 @@
         background-color: #068b18; /* Hijau untuk LUNAS */
         display: inline-block;
     }
-    /* =========================================== */
   </style>
 </head>
 <body>
@@ -180,11 +178,11 @@
     // Fungsi pembantu untuk mengambil warna tag metode pembayaran
     function getMethodColor(methodName) {
         switch (methodName) {
-            case 'Tunai (Cash)': return '#d14838'; 
-            case 'GoPay': return '#00A389'; 
-            case 'ShopeePay': return '#FF5733'; 
-            case 'Dana': return '#1B72E5'; 
-            case 'QR All-Wallet': return '#004A99'; 
+            case 'Tunai (Cash)': return '#d14838'; // Merah
+            case 'GoPay': return '#00A389'; // Hijau GoPay
+            case 'ShopeePay': return '#FF5733'; // Oranye ShopeePay
+            case 'Dana': return '#1B72E5'; // Biru Dana
+            case 'QR All-Wallet': return '#004A99'; // Biru Tua 
             case 'Bank Transfer (BCA)': return '#004A99'; 
             default: return '#555';
         }
@@ -200,20 +198,20 @@
       orderListProses.innerHTML = '';
       orderListSelesai.innerHTML = '';
 
+      // Tampilkan pesanan terbaru di bagian atas
       orders.forEach(order => {
         const itemsHtml = order.items.map(item => 
             `<p>${item.name} (x${item.qty})</p>`
         ).join('');
 
-        // Ambil metode pembayaran (asumsi sudah ditambahkan ke objek order di index.html)
-        const paymentMethod = order.method || 'Tidak Diketahui'; 
+        // Ambil metode pembayaran dari objek order
+        const paymentMethod = order.method || 'Tunai (Cash)'; 
         const methodColor = getMethodColor(paymentMethod);
         const paymentTag = `<span class="payment-method-tag" style="background-color: ${methodColor};">${paymentMethod}</span>`;
         
-        // --- TAG STATUS PEMBAYARAN BARU ---
+        // TAG STATUS PEMBAYARAN: Semua yang masuk ke sini sudah dianggap LUNAS
         const paymentStatusTag = `<span class="payment-status-tag">LUNAS</span>`;
-        // ----------------------------------
-
+        
         const card = document.createElement('div');
         card.className = 'order-card';
         card.innerHTML = `
@@ -231,6 +229,7 @@
                   ${paymentStatusTag}
               </div>
           </div>
+          
           <div class="item-list">
             ${itemsHtml}
           </div>
