@@ -25,7 +25,7 @@
     }
     .payment-card {
         background: #ffffff;
-        border: 1px solid #d14838; /* Border warna primer baru */
+        border: 1px solid #d14838; 
         padding: 15px;
         border-radius: 8px;
         display: flex;
@@ -34,7 +34,177 @@
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         transition: transform 0.3s, box-shadow 0.3s;
     }
-    /* Style khusus untuk kartu yang sudah selesai/dibayar */
+    .payment-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+    .payment-card p { margin: 5px 0; }
+    .payment-card .pay-total { font-size: 1.3em; color: #068b18; font-weight: 700; }
+    .payment-card button {
+        background-color: #d14838; 
+        color: white; 
+        padding: 8px 15px; 
+        border: none; 
+        border-radius: 5px; 
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 10px;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+    .payment-card button:hover {
+        background-color: #b03a2c; 
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(209, 72, 56, 0.3);
+    }
+    .payment-status-title {
+        border-bottom: 2px solid #d14838; 
+        padding-bottom: 8px; 
+        color: #d14838;
+        margin-top: 0;
+        text-align: center;
+    }
+    .payment-code { 
+        color:#d14838; 
+        font-size:1.1em; 
+        word-break: break-all;
+    }
+    .payment-time { 
+        font-size:0.8em; 
+        color:#999;
+    }
+    .payment-item-detail { 
+        margin:2px 0; 
+        font-size:0.9em; 
+        color:#555;
+    }
+    .payment-section-divider { 
+        border:0; 
+        border-top:1px dotted #ccc; 
+        margin: 10px 0;
+    }
+    .empty-message {
+        text-align: center;
+        color: #999;
+        grid-column: 1 / -1; 
+        margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="nav-left">
+      <span class="brand-name">Pantry</span>
+      <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
+      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Dashboard Pembayaran</span>
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn btn-primary" onclick="window.location.href='cashier.html'">Dashboard Dapur</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Menu Utama</button>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <div class="payment-dashboard-container">
+        <h2 class="payment-status-title">💳 Pembayaran Menunggu Verifikasi</h2>
+        <div class="payment-list" id="payment-verification-list">
+            </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2025 Pantry — Dibuat dengan ❤️
+  </footer>
+
+  <script>
+    // === MEKANISME PROTEKSI AKSES KASIR ===
+    (function checkAccess() {
+        const KASIR_PASS = "kasir123";
+        const isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
+
+        if (!isAuthorized) {
+            const password = prompt("Masukkan password kasir untuk mengakses Dashboard:");
+
+            if (password === KASIR_PASS) {
+                sessionStorage.setItem('cashierAuth', 'true');
+            } else {
+                alert("Password salah. Akses ditolak. Anda akan diarahkan kembali ke Menu Utama.");
+                window.location.href = 'index.html';
+            }
+        }
+    })();
+    // ======================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPayments();
+        setInterval(loadPayments, 5000); 
+    });
+
+    function formatRupiah(number) {
+        return `Rp${number.toLocaleString('id-ID')}`;
+    }
+    
+    // ======================================
+    // === DASHBOARD PEMBAYARAN LOGIC ===
+    // ======================================
+    
+    function loadPayments() {
+        const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        const pendingPayments = payments.filter(p => p.status === 'pending');
+        
+        const listEl = document.getElementById('payment-verification-list');
+        listEl.innerHTML = ''; 
+        
+        if (pendingPayments.length === 0) {
+            listEl.innerHTML = '<p class="empty-message">Tidak ada pembayaran yang menunggu verifikasi.</p>';
+            return;
+        }
+
+        pendingPayments.forEach(payment => {
+            const itemsList = payment.cart.map(item => 
+                `<p class="payment-item-detail">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
+            ).join('');
+
+            const div = document.createElement('div');
+            div.className = 'payment-card';
+            div.innerHTML = `
+                <p style="margin:0; font-weight:700;">Kode Pembayaran:</p>
+                <p class="payment-code"><b>${payment.id}</b></p>
+                <p style="margin:0; font-weight:700;">Metode:</p>
+                <p style="margin:0; color:#004A99; font-weight:600;">${payment.method}</p>
+                <hr class="payment-section-divider">
+                <p style="font-weight: 600;">Detail Pesanan:</p>
+                ${itemsList}
+                <hr class="payment-section-divider">
+                <p class="pay-total">Total: ${formatRupiah(payment.total)}</p>
+                <span class="payment-time">Waktu: ${payment.time}</span>
+                <button onclick="verifyPayment('${payment.id}')">
+                    ✅ Verifikasi Bayar
+                </button>
+            `;
+            listEl.appendChild(div);
+        });
+    }
+
+    function verifyPayment(paymentId) {
+        if (!confirm(`Yakin ingin memverifikasi pembayaran dengan kode ${paymentId}? Pelanggan akan bisa melanjutkan pesanan ke dapur.`)) return;
+
+        let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        const paymentIndex = payments.findIndex(p => p.id === paymentId);
+        
+        if (paymentIndex !== -1) {
+            payments[paymentIndex].status = "paid"; // UBAH STATUS JADI PAID
+            localStorage.setItem('pantryPayments', JSON.stringify(payments));
+            alert(`Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa checkout. Harap cek Dashboard Dapur untuk pesanan baru.`);
+            loadPayments(); 
+        }
+    }
+  </script>
+
+</body>
+</html>    /* Style khusus untuk kartu yang sudah selesai/dibayar */
     .payment-card.completed {
         border: 1px solid #068b18; /* Border warna hijau */
         background-color: #f0fff0;
@@ -213,3 +383,4 @@
 
 </body>
 </html>
+
