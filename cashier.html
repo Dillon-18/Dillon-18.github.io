@@ -31,62 +31,34 @@
         border-bottom: 2px solid #068b18;
         color: #333;
     }
-    
     .order-card {
-        background: #ffffff;
+        background: #fff;
+        border: 1px solid #068b18; 
         padding: 15px;
+        border-radius: 8px;
         margin-bottom: 15px;
-        border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        border-left: 5px solid #068b18; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
-    .order-card h4 {
-        margin: 0 0 5px 0;
-        color: #004A99;
-        font-size: 1.1em;
-    }
-    .order-card .order-meta {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.85em;
-        color: #777;
-        margin-bottom: 10px;
-    }
-    .order-card .total {
-        font-size: 1.2em;
-        font-weight: 700;
-        color: #d14838;
-        margin: 10px 0;
-    }
-    .order-card .item-list {
-        border-top: 1px dotted #ccc;
-        border-bottom: 1px dotted #ccc;
-        padding: 8px 0;
-        margin-bottom: 10px;
-    }
-    .order-card .item-list p {
-        margin: 2px 0;
-        font-size: 0.9em;
-    }
+    .order-card h4 { margin-top: 0; color: #333; }
+    .order-card ul { list-style: none; padding: 0; margin: 5px 0 10px 0; font-size: 0.9em; }
+    .order-card li { margin-bottom: 3px; color: #555; }
+    .order-card .order-time { font-size: 0.75em; color: #999; }
+    .order-actions { display: flex; gap: 10px; margin-top: 10px; }
     .order-actions button {
         padding: 8px 12px;
         border: none;
-        border-radius: 4px;
+        border-radius: 5px;
         cursor: pointer;
         font-weight: 600;
-        margin-right: 5px;
+        transition: background-color 0.3s;
     }
     .btn-proses { background-color: #FFC107; color: #333; }
     .btn-selesai { background-color: #068b18; color: white; }
     .btn-hapus { background-color: #d14838; color: white; }
-
-    .empty-column-msg {
-        text-align: center;
-        color: #999;
-        margin-top: 30px;
-        font-style: italic;
-    }
+    .empty-column-msg { text-align: center; color: #999; margin-top: 50px; }
+    .order-total { font-size: 1.1em; font-weight: 700; color: #d14838; margin-top: 10px; border-top: 1px dashed #eee; padding-top: 5px; }
     
+    /* Style untuk metode pembayaran */
     .payment-method-tag {
         font-size: 0.8em;
         font-weight: 700;
@@ -94,7 +66,6 @@
         border-radius: 4px;
         color: white;
         display: inline-block;
-        margin-top: 5px;
     }
   </style>
 </head>
@@ -113,24 +84,23 @@
   </header>
 
   <div class="container">
+    
     <div class="kanban-container">
         
-        <div class="kanban-column">
-            <h3>Baru (New)</h3>
-            <div id="order-list-baru"></div>
-        </div>
-        
-        <div class="kanban-column">
-            <h3>Sedang Diproses (In Progress)</h3>
-            <div id="order-list-proses"></div>
-        </div>
-        
-        <div class="kanban-column">
-            <h3>Selesai (Done)</h3>
-            <div id="order-list-selesai"></div>
-        </div>
-        
+        <div id="new-orders" class="kanban-column">
+            <h3>Pesanan Baru (Baru)</h3>
+            </div>
+
+        <div id="in-progress-orders" class="kanban-column">
+            <h3>Sedang Diproses (Proses)</h3>
+            </div>
+
+        <div id="completed-orders" class="kanban-column">
+            <h3>Siap Diambil (Selesai)</h3>
+            </div>
+
     </div>
+
   </div>
 
   <footer>
@@ -144,7 +114,7 @@
         const isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
 
         if (!isAuthorized) {
-            const password = prompt("Masukkan password kasir untuk mengakses Dashboard:");
+            const password = prompt("Masukkan password kasir untuk mengakses Dashboard Dapur:");
 
             if (password === KASIR_PASS) {
                 sessionStorage.setItem('cashierAuth', 'true');
@@ -155,111 +125,68 @@
         }
     })();
     // ======================================
-
+    
     document.addEventListener('DOMContentLoaded', () => {
         loadOrders();
-        setInterval(loadOrders, 5000); 
+        setInterval(loadOrders, 5000); // Perbarui setiap 5 detik
     });
 
     function formatRupiah(number) {
-        return `Rp${number.toLocaleString('id-ID')}`;
+        return number.toLocaleString('id-ID');
     }
 
-    // Fungsi baru untuk mendapatkan data pembayaran berdasarkan ID
-    function getPaymentInfo(paymentId) {
-        const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        const payment = payments.find(p => p.id === paymentId);
-        
-        // Cek data pembayaran, jika tidak ada (sudah dihapus saat checkout)
-        // Kita harus mengambil dari data order itu sendiri
-        if (!payment) {
-             // Secara default, order yang sudah checkout statusnya paid.
-             // Kita harus rely pada paymentId yang tersimpan di order.
-             // Namun, karena 'Tunai (Cash)' disetel 'paid' dan tidak masuk payment_dashboard,
-             // kita asumsikan semua order yang sudah masuk sini sudah dibayar.
-             // Karena metode Tunai tidak masuk 'pantryPayments' setelah checkout, kita hardcode
-             // cek terakhir: jika tidak ditemukan di payment, kita cek apakah ada di order.
-             // Jika order itu dari Tunai (cash), maka tidak akan pernah ditemukan di 'pantryPayments'.
-             // Solusi: Kita tidak bisa mencari di 'pantryPayments' lagi. 
-             // Kita harus pastikan informasi method disimpan di objek order saat checkout (index.html).
-             // Karena order.paymentId saja yang ada, kita anggap semua order yang masuk sudah dibayar
-             // dan informasi method harus sudah ada di objek order.
-
-             // Untuk contoh ini, kita akan membuat array dummy mapping payment ID ke metode
-             // yang seharusnya sudah dilakukan di index.html
-             
-             // --- FIX DENGAN ASUMSI ---
-             // Asumsi: Semua order yang masuk ke sini adalah order yang sudah dibayar.
-             // Kita tidak bisa menentukan method tanpa data tambahan di order object.
-             
-             return { method: 'Tidak Diketahui' };
-        }
-
-        return payment;
-    }
-
-    // Fungsi pembantu untuk mengambil warna tag
+    // Fungsi pembantu untuk mengambil warna tag metode pembayaran
     function getMethodColor(methodName) {
         switch (methodName) {
             case 'Tunai (Cash)': return '#d14838'; // Merah
             case 'GoPay': return '#00A389'; // Hijau GoPay
             case 'ShopeePay': return '#FF5733'; // Oranye ShopeePay
             case 'Dana': return '#1B72E5'; // Biru Dana
-            case 'QR All-Wallet': return '#004A99'; // Biru Tua (BCA)
-            case 'Bank Transfer (BCA)': return '#004A99'; // Biru Tua BCA
+            case 'QR All-Wallet': return '#004A99'; // Biru Tua 
+            case 'Bank Transfer (BCA)': return '#004A99'; 
             default: return '#555';
         }
     }
-    
+
     function loadOrders() {
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-      const orderListBaru = document.getElementById('order-list-baru');
-      const orderListProses = document.getElementById('order-list-proses');
-      const orderListSelesai = document.getElementById('order-list-selesai');
+      
+      const orderListBaru = document.getElementById('new-orders');
+      const orderListProses = document.getElementById('in-progress-orders');
+      const orderListSelesai = document.getElementById('completed-orders');
       
       orderListBaru.innerHTML = '';
       orderListProses.innerHTML = '';
       orderListSelesai.innerHTML = '';
 
       orders.forEach(order => {
-        const itemsHtml = order.items.map(item => 
-            `<p>${item.name} (x${item.qty})</p>`
+        const itemsList = order.items.map(item => 
+            `<li>${item.name} (${item.qty}x)</li>`
         ).join('');
 
-        // --- MENDAPATKAN METODE PEMBAYARAN ---
-        // Kita tidak bisa lagi mengambil dari 'pantryPayments' karena entry akan dihapus saat checkout.
-        // Solusi: Kita harus mengasumsikan properti 'method' sudah ditambahkan ke objek order di index.html.
-        // Jika belum ditambahkan di index.html, mohon tambahkan properti `method: currentPayment.method` ke objek `order` di fungsi `checkout()`.
-        
-        // *** ASUMSI: order.method SUDAH ADA ***
-        const paymentMethod = order.method || 'Tunai (Cash)'; // Defaultkan ke Tunai jika tidak ada
+        const paymentMethod = order.method || 'Tunai (Cash)'; 
         const methodColor = getMethodColor(paymentMethod);
         const paymentTag = `<span class="payment-method-tag" style="background-color: ${methodColor};">${paymentMethod}</span>`;
-        // ----------------------------------------
 
         const card = document.createElement('div');
         card.className = 'order-card';
         card.innerHTML = `
-          <h4>${order.customerName}</h4>
-          <div class="order-meta">
-            <span>ID: ${order.id}</span>
-            <span>Waktu: ${order.time}</span>
-          </div>
-          ${paymentTag}
-          <div class="item-list">
-            ${itemsHtml}
-          </div>
-          <p class="total">Total: ${formatRupiah(order.total)}</p>
-          <div class="order-actions">
-            ${order.status === 'Baru' ? 
-              `<button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')">▶ Proses</button>` : ''}
-            ${order.status === 'Proses' ? 
-              `<button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')">✅ Selesai</button>` : ''}
-            ${order.status === 'Selesai' ? 
-              `<button class="btn-hapus" onclick="deleteOrder(${order.id})">❌ Hapus</button>` : ''}
-          </div>
+            <h4>${order.customerName} (ID: ${order.id})</h4>
+            <p class="order-time">Waktu: ${order.time}</p>
+            <div style="margin-bottom: 10px;">${paymentTag}</div>
+            <ul>${itemsList}</ul>
+            <div class="order-total">Total: Rp${formatRupiah(order.total)}</div>
+            <div class="order-actions">
+              ${order.status === 'Baru' 
+                ? `<button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')">Mulai Proses</button>` 
+                : ''}
+              ${order.status === 'Proses' 
+                ? `<button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')">Selesai</button>` 
+                : ''}
+              <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
+            </div>
         `;
-
+        
         let targetList;
         if (order.status === 'Baru') targetList = orderListBaru;
         else if (order.status === 'Proses') targetList = orderListProses;
@@ -281,7 +208,7 @@
     
     function updateOrderStatus(id, newStatus) {
       let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-      const orderIndex = orders.findIndex(order => order.id.toString() === id.toString());
+      const orderIndex = orders.findIndex(order => order.id === id);
       
       if (orderIndex !== -1) {
         orders[orderIndex].status = newStatus;
@@ -292,11 +219,11 @@
 
     function deleteOrder(id) {
       if (!confirm(`Yakin ingin menghapus pesanan ID: ${id}?`)) return;
-
+      
       let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-      orders = orders.filter(order => order.id.toString() !== id.toString());
+      orders = orders.filter(order => order.id !== id);
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
-      loadOrders(); 
+      loadOrders();
     }
   </script>
 
