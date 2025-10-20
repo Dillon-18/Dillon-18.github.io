@@ -88,6 +88,11 @@
         grid-column: 1 / -1; 
         margin-top: 30px;
     }
+    .customer-name-display {
+        font-size: 1.2em;
+        font-weight: 700;
+        color: #004A99;
+    }
   </style>
 </head>
 <body>
@@ -166,14 +171,16 @@
             const itemsList = payment.cart.map(item => 
                 `<p class="payment-item-detail">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
             ).join('');
+            
+            const customerName = payment.customerName || "Nama Tidak Diketahui";
 
             const div = document.createElement('div');
             div.className = 'payment-card';
             div.innerHTML = `
+                <p class="customer-name-display">${customerName}</p>
                 <p style="margin:0; font-weight:700;">Kode Pembayaran:</p>
                 <p class="payment-code"><b>${payment.id}</b></p>
-                <p style="margin:0; font-weight:700;">Metode:</p>
-                <p style="margin:0; color:#004A99; font-weight:600;">${payment.method}</p>
+                <p style="margin:0; font-weight:700;">Metode: ${payment.method}</p>
                 <hr class="payment-section-divider">
                 <p style="font-weight: 600;">Detail Pesanan:</p>
                 ${itemsList}
@@ -181,23 +188,56 @@
                 <p class="pay-total">Total: ${formatRupiah(payment.total)}</p>
                 <span class="payment-time">Waktu: ${payment.time}</span>
                 <button onclick="verifyPayment('${payment.id}')">
-                    ✅ Verifikasi Bayar
+                    ✅ Verifikasi & Buat Pesanan
                 </button>
             `;
             listEl.appendChild(div);
         });
     }
 
+    function createOrderFromPayment(payment) {
+        // Ambil nama dari data pembayaran
+        const name = payment.customerName || "Pelanggan " + payment.id.slice(-4); 
+
+        const order = {
+            id: Date.now(),
+            customerName: name,
+            items: payment.cart,
+            total: payment.total,
+            status: 'Baru', 
+            time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+            paymentId: payment.id 
+        };
+
+        const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+        orders.unshift(order);
+        localStorage.setItem('pantryOrders', JSON.stringify(orders)); // Pesanan dikirim ke Dapur
+
+        return order.id;
+    }
+
+
     function verifyPayment(paymentId) {
-        if (!confirm(`Yakin ingin memverifikasi pembayaran dengan kode ${paymentId}? Pelanggan akan bisa melanjutkan pesanan ke dapur.`)) return;
+        if (!confirm(`Yakin ingin memverifikasi pembayaran kode ${paymentId}? Pesanan akan langsung dibuat dan diteruskan ke Dapur.`)) return;
 
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
         const paymentIndex = payments.findIndex(p => p.id === paymentId);
-        
+        const payment = payments[paymentIndex]; // Ambil objek pembayaran
+
         if (paymentIndex !== -1) {
-            payments[paymentIndex].status = "paid"; // UBAH STATUS JADI PAID
+            // 1. (Opsional) Ubah status payment menjadi paid, hanya untuk memastikan pelanggan yang sedang menunggu melihat status ini
+            payments[paymentIndex].status = "paid";
             localStorage.setItem('pantryPayments', JSON.stringify(payments));
-            alert(`Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa checkout. Harap cek Dashboard Dapur untuk pesanan baru.`);
+
+            // 2. BUAT PESANAN OTOMATIS
+            const orderId = createOrderFromPayment(payment);
+            
+            // 3. HAPUS DATA PEMBAYARAN dari list pending (Ini akan memicu reset state di sisi pelanggan)
+            payments = payments.filter(p => p.id !== paymentId);
+            localStorage.setItem('pantryPayments', JSON.stringify(payments));
+            
+            // 4. Beri notifikasi ke Kasir dan muat ulang daftar
+            alert(`✅ Pembayaran kode ${paymentId} berhasil diverifikasi! Pesanan #ID${orderId} telah dibuat dan diteruskan ke Dapur.`);
             loadPayments(); 
         }
     }
