@@ -75,10 +75,14 @@
         cursor: pointer;
         font-weight: 600;
         margin-right: 5px;
+        transition: background-color 0.2s, transform 0.2s;
     }
     .btn-proses { background-color: #FFC107; color: #333; }
+    .btn-proses:hover { background-color: #e0ac00; }
     .btn-selesai { background-color: #068b18; color: white; }
+    .btn-selesai:hover { background-color: #056a15; }
     .btn-hapus { background-color: #d14838; color: white; }
+    .btn-hapus:hover { background-color: #b03a2c; }
 
     .empty-column-msg {
         text-align: center;
@@ -204,12 +208,10 @@
             `<p>${item.name} (x${item.qty})</p>`
         ).join('');
 
-        // Ambil metode pembayaran dari objek order
         const paymentMethod = order.method || 'Tunai (Cash)'; 
         const methodColor = getMethodColor(paymentMethod);
         const paymentTag = `<span class="payment-method-tag" style="background-color: ${methodColor};">${paymentMethod}</span>`;
         
-        // TAG STATUS PEMBAYARAN: Semua yang masuk ke sini sudah dianggap LUNAS
         const paymentStatusTag = `<span class="payment-status-tag">LUNAS</span>`;
         
         const card = document.createElement('div');
@@ -265,6 +267,7 @@
     
     function updateOrderStatus(id, newStatus) {
       let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      // Menggunakan toString() untuk perbandingan ID yang aman
       const orderIndex = orders.findIndex(order => order.id.toString() === id.toString());
       
       if (orderIndex !== -1) {
