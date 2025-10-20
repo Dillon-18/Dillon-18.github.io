@@ -4,7 +4,6 @@ html, body {
   color: #333;
   margin: 0;
   padding: 0;
-  scroll-behavior: smooth;
 }
 
 /* === NAVBAR === */
@@ -30,7 +29,7 @@ html, body {
 .brand-name {
   font-size: 24px;
   font-weight: 700;
-  color: #068b18; /* Warna utama Pantry (Hijau) */
+  color: #068b18;
 }
 
 .brand-logo {
@@ -50,16 +49,17 @@ html, body {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s;
 }
 
 .btn-primary {
-  background-color: #d14838; /* Merah untuk aksi utama */
+  background-color: #ff6347;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #b03a2c;
+  background-color: #e5533d;
+  box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
 }
 
 .btn-secondary {
@@ -71,190 +71,238 @@ html, body {
   background-color: #e0e0e0;
 }
 
-/* === UTAMA CONTENT === */
+/* === KONTEN UTAMA DUA KOLOM === */
 .container {
+  width: 95%;
   max-width: 1200px;
-  margin: 20px auto;
-  padding: 0 20px;
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .content-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    /* Kolom kiri (Menu) 2 bagian, Kolom kanan (Sticky Sidebar) 1 bagian */
+    grid-template-columns: 2fr 1fr; 
     gap: 30px;
+    margin-top: 10px; 
+    min-height: 100vh; /* Memastikan kolom cukup tinggi agar sticky berfungsi */
 }
 
-/* === MENU SECTION (index.html) === */
-#menu-section h2 {
-    color: #004A99; /* Biru untuk judul menu */
-    border-bottom: 2px solid #004A99;
-    padding-bottom: 5px;
+/* === JUDUL === */
+h2 {
+  border-bottom: 2px solid #067c0c;
+  padding-bottom: 8px;
+  color: #ff6347;
+  margin-top: 40px;
 }
 
+/* === MENU === */
 .menu-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
 }
 
 .menu-item {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  overflow: hidden;
   display: flex;
-  flex-direction: column;
-  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #fffaf7;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
   transition: transform 0.2s;
 }
 
 .menu-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .menu-item img {
-  width: 100%;
-  height: 150px;
+  width: 80px;
+  height: 80px;
   object-fit: cover;
+  border-radius: 10px;
+  margin-right: 15px;
+  flex-shrink: 0;
 }
 
 .menu-info {
-  padding: 10px 15px;
+  flex-grow: 1;
 }
 
 .menu-name {
   font-weight: 600;
-  font-size: 1.1em;
-  margin-bottom: 5px;
+  color: #333;
 }
 
 .menu-price {
-  color: #d14838;
+  color: #ff6347;
   font-weight: 700;
+  font-size: 1.1em;
 }
 
+/* === TOMBOL DI MENU === */
 .menu-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 15px;
-  border-top: 1px solid #eee;
-  background-color: #f9f9f9;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .btn-qty {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
+  background-color: #f0f0f0;
+  color: #333;
   border: 1px solid #ccc;
-  background-color: #fff;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 16px;
   cursor: pointer;
-  font-size: 1.1em;
-  font-weight: 700;
-  transition: background-color 0.2s;
+  transition: 0.2s;
 }
 
-.btn-qty:hover:not(:disabled) {
-    background-color: #eee;
-}
-
-.btn-qty:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
+.btn-qty:hover {
+  background-color: #ddd;
 }
 
 .btn-plus {
   background-color: #068b18;
   color: white;
-  border: none;
+  border-color: #068b18;
 }
-.btn-plus:hover:not(:disabled) {
-    background-color: #056a15;
+
+.btn-plus:hover {
+  background-color: #046b13;
 }
 
 .qty-display {
-  font-weight: 700;
-  min-width: 25px;
+  width: 28px;
   text-align: center;
+  font-weight: 600;
 }
 
-/* === SIDEBAR / CART (index.html) === */
+/* === SIDEBAR STICKY WRAPPER === */
 #sticky-sidebar {
-    /* PROPERTI KUNCI STICKY */
-    position: sticky;
-    top: 80px; /* Di bawah navbar */
+  /* PROPERTI KUNCI STICKY */
+  position: sticky; 
+  top: 80px; /* Jarak dari atas layar (di bawah navbar) */
+  height: fit-content; /* Penting agar sticky berfungsi */
+  align-self: flex-start;
 }
 
+/* === CUSTOMER INFO === */
 .customer-info {
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
-}
-
-.customer-info h3 {
-    margin: 0 0 10px 0;
-    color: #333;
-    font-size: 1.1em;
-}
-
-#customer-name {
-    width: 95%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
-}
-
-#cart {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 15px;
+  background: #ffffff;
+  border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+.customer-info h3 {
+  margin-top: 0;
+  color: #068b18;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.customer-info input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* === KERANJANG === */
+#cart {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-top: 30px; /* Jarak antara Customer Info dan Keranjang */
+}
+
 #cart h2 {
-    margin-top: 0;
-    color: #d14838;
-    border-bottom: 2px solid #d14838;
-    padding-bottom: 5px;
-    font-size: 1.5em;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  margin-top: 0;
+  padding-bottom: 10px;
 }
 
 #cart-items {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
-  margin: 15px 0;
 }
 
 #cart-items li {
-  padding: 8px 0;
+  padding: 10px 0;
   border-bottom: 1px dotted #eee;
-  font-size: 0.95em;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  font-size: 0.95em;
 }
 
-#checkout-btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #068b18; /* Hijau untuk Pesan */
+#cart-items li:last-child {
+  border-bottom: none;
+}
+
+/* Tombol di keranjang */
+.cart-actions .btn-qty {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+  width: 25px;
+  height: 25px;
+  border-radius: 4px;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+
+.cart-actions .btn-plus {
+  background-color: #068b18;
   color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.1em;
+  border-color: #068b18;
+}
+
+.btn-remove {
+  background-color: #ff4d4d;
+  color: white;
+  border-color: #ff4d4d;
+}
+
+/* === CHECKOUT BUTTON === */
+#checkout-btn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  background-color: #ff6347;
+  color: white;
+  font-size: 1.2em;
   font-weight: 700;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
+  margin-top: 20px;
   transition: background-color 0.2s;
+  text-align: center; 
 }
+
 #checkout-btn:hover:not(:disabled) {
-    background-color: #056a15;
+  background-color: #e5533d;
 }
+
 #checkout-btn:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
 /* === FOOTER === */
@@ -265,6 +313,28 @@ footer {
   border-top: 1px solid #eee;
   color: #999;
   font-size: 0.9em;
+}
+
+/* === NOTIFIKASI === */
+.notification {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.notification.show {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* === MODAL POPUP === */
@@ -284,20 +354,13 @@ footer {
 .modal-content {
   background-color: #fefefe;
   margin: 5% auto; 
-  padding: 20px;
+  padding: 30px;
   border: 1px solid #888;
   width: 80%; 
-  max-width: 500px; 
+  max-width: 500px;
   border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   position: relative;
-}
-
-.modal-content h2 {
-    color: #d14838;
-    border-bottom: 2px solid #d14838;
-    padding-bottom: 10px;
-    margin-top: 0;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 .close {
@@ -305,30 +368,38 @@ footer {
   float: right;
   font-size: 28px;
   font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 20px;
 }
 
-.close:hover,
 .close:focus {
   color: #333;
   text-decoration: none;
   cursor: pointer;
 }
 
-.contact-link {
-    display: block;
-    margin: 10px 0;
-    color: #004A99;
-    text-decoration: none;
-    font-weight: 500;
+.modal-content h2 {
+  color: #ff6347;
+  border-bottom: 2px solid #068b18;
+  padding-bottom: 10px;
 }
+
+.contact-link {
+  color: #068b18;
+  text-decoration: none;
+  font-weight: 600;
+}
+
 .contact-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* MEDIA QUERY untuk Responsif */
 @media (max-width: 768px) {
     .content-grid {
         grid-template-columns: 1fr;
+        min-height: auto; 
     }
     #sticky-sidebar {
         /* Menonaktifkan sticky di layar kecil */
