@@ -82,11 +82,6 @@ html, body {
   gap: 30px;
 }
 
-/* FIX: Elemen ini dihilangkan di HTML terakhir */
-#customer-info-top {
-    display: none;
-}
-
 #menu-section h2 {
   color: #ff6347;
   border-bottom: 2px solid #ff6347;
@@ -169,6 +164,7 @@ html, body {
 
 /* === SIDEBAR / CART (DESKTOP) === */
 #sticky-sidebar {
+  /* Properti Desktop */
   position: sticky;
   top: 70px; 
   height: calc(100vh - 90px);
@@ -177,6 +173,8 @@ html, body {
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   box-sizing: border-box;
+  align-self: flex-start;
+  overflow-y: visible; /* Penting untuk desktop */
 }
 
 .customer-info {
@@ -199,6 +197,12 @@ html, body {
     box-sizing: border-box;
 }
 
+#cart {
+    /* Gaya untuk membungkus di desktop */
+    margin-top: 0;
+    padding: 0;
+    box-shadow: none;
+}
 
 #cart-items {
   list-style: none;
@@ -234,6 +238,7 @@ html, body {
   font-size: 1.1em;
   font-weight: 700;
   cursor: pointer;
+  margin-top: 20px;
   transition: background-color 0.2s;
 }
 #checkout-btn:hover {
@@ -244,7 +249,18 @@ html, body {
   cursor: not-allowed;
 }
 
-/* === FOOTER === */
+/* === DESKTOP ONLY & MOBILE SUMMARY === */
+.desktop-only {
+    /* Sembunyikan Payment Section di Mobile */
+    display: block;
+}
+
+#mobile-summary {
+    /* Sembunyikan mobile summary di Desktop */
+    display: none; 
+}
+
+/* === FOOTER & MODAL STYLES (Dipotong untuk kerapian, diasumsikan sama) === */
 footer {
   text-align: center;
   padding: 20px;
@@ -253,30 +269,6 @@ footer {
   color: #999;
   font-size: 0.9em;
 }
-
-/* === NOTIFIKASI === */
-.notification {
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  z-index: 2001; 
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.notification.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* === MODAL POPUP === */
 .modal {
   display: none; 
   position: fixed; 
@@ -289,7 +281,6 @@ footer {
   background-color: rgba(0,0,0,0.6); 
   padding-top: 60px;
 }
-
 .modal-content {
   background-color: #fefefe;
   margin: 5% auto; 
@@ -299,60 +290,51 @@ footer {
   max-width: 500px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.3);
 }
-
 .modal-content h2 {
     color: #ff6347;
     border-bottom: 2px solid #ff6347;
     padding-bottom: 10px;
     margin-top: 0;
 }
-
 .close {
   color: #aaa;
   float: right;
   font-size: 28px;
   font-weight: bold;
 }
+/* === AKHIR FOOTER & MODAL STYLES === */
 
-.close:hover,
-.close:focus {
-  color: #333;
-  text-decoration: none;
-  cursor: pointer;
-}
 
-.contact-link {
-    color: #004A99;
-    text-decoration: none;
-    font-weight: 600;
-}
-.contact-link:hover {
-    text-decoration: underline;
-}
-
-/* === RESPONSIVE / MOBILE (SWIPE UP PANEL) === */
-.desktop-only {
-    /* Sembunyikan Payment Section di Mobile */
-    display: none !important;
-}
-
-#mobile-summary {
-    display: none; /* Defaultnya disembunyikan di desktop */
-}
+/* ======================================= */
+/* === RESPONSIVE / MOBILE (MAX-WIDTH 768px) === */
+/* ======================================= */
 
 @media (max-width: 768px) {
-    .navbar {
-        padding: 10px 15px;
-    }
     
-    /* FIX: Tambahkan padding di bawah agar tidak tertutup sticky sidebar */
     .container {
+        /* Tambahkan padding di bawah agar tidak tertutup sticky sidebar */
         padding-bottom: 110px; 
+        margin-top: 10px;
+        padding: 0 10px 110px 10px;
+        background: none; /* Hapus background container utama */
+        box-shadow: none; /* Hapus box-shadow container utama */
     }
 
     .content-grid {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+    
+    #menu-section {
+        padding: 15px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Sembunyikan elemen desktop */
+    .desktop-only {
+        display: none !important;
     }
 
     /* Tampilkan mobile summary */
@@ -361,27 +343,20 @@ footer {
         align-items: center;
         width: 100%;
         justify-content: space-between;
-        padding-bottom: 0; 
-        border-bottom: none;
-        order: 1; /* Pindah ke atas tombol checkout */
+        padding: 10px 0;
+        margin-bottom: 15px; 
+        order: 1; /* Pindah ke atas tombol checkout di flex */
     }
 
-    /* Hapus default styling desktop dari elemen di dalam cart */
-    #cart-items {
-        max-height: none; 
-        overflow-y: visible;
-        margin: 15px 0;
-    }
-    
     /* FIX: SWIPE UP PANEL */
     #sticky-sidebar {
-        display: flex;
+        /* Ganti properti Desktop ke Mobile */
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
         
-        /* FIX: Tinggi awal (hanya total & tombol yang terlihat) */
+        /* Tinggi awal minimal (hanya cukup untuk summary dan tombol) */
         height: auto; 
         max-height: 70vh; /* Tinggi maksimum saat di-swipe ke atas */
 
@@ -389,44 +364,58 @@ footer {
         border-radius: 10px 10px 0 0; 
         box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
         z-index: 990;
-        flex-direction: column;
+        background-color: #ffffff;
         box-sizing: border-box;
-        overflow-y: auto; /* Aktifkan swipe/scroll */
+        
+        /* Aktifkan Swipe/Scroll */
+        overflow-y: auto; 
+        
+        /* Atur layout konten di dalamnya */
+        display: flex;
+        flex-direction: column; 
     }
 
-    /* FIX: Layout di dalam sidebar */
+    /* Pastikan #cart tidak memiliki margin/padding yang aneh */
     #cart {
+        margin-top: 0; 
+        padding: 0;
         display: flex;
         flex-direction: column;
-        width: 100%;
-    }
-
-    /* FIX: Sembunyikan detail yang harus digulir secara default */
-    .customer-info, #cart h2 {
-        display: none !important;
-    }
-    /* FIX: Tampilkan detail saat di-scroll */
-    #cart-items {
-        display: none !important;
-    }
-
-    /* Tombol checkout harus selalu di bagian paling bawah */
-    #checkout-btn {
-        width: 100%;
-        margin-top: 15px;
-        order: 2; /* Pindah ke paling bawah */
-    }
-
-    /* FIX: Buat lapisan baru untuk elemen yang disembunyikan, dan atur scroll */
-    #sticky-sidebar > .customer-info, 
-    #sticky-sidebar > #cart > h2, 
-    #sticky-sidebar > #cart > #cart-items {
-        /* Ini adalah trik untuk membuat konten di awal terdorong ke bawah
-           tetapi muncul saat di-swipe/scroll karena overflow-y: auto di #sticky-sidebar */
-        display: block !important; 
-        transition: transform 0.3s ease-out;
     }
     
+    /* Tombol checkout selalu di bawah summary */
+    #checkout-btn {
+        width: 100%;
+        margin-top: 0; /* Jarak sudah diatur oleh mobile-summary */
+        order: 2; 
+        flex-shrink: 0; /* Jangan biarkan tombol ikut scroll saat digeser */
+    }
+    
+    /* Atur tampilan Customer Info dan Keranjang agar tergulir */
+    .customer-info {
+        /* customer info dan detail keranjang adalah konten yang akan digulir */
+        margin-top: 0;
+        padding: 0 0 15px 0;
+        border-bottom: 1px solid #eee;
+        flex-shrink: 0;
+    }
+    
+    #cart h2 {
+        /* Judul Keranjang */
+        margin-top: 0;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+        flex-shrink: 0;
+    }
+
+    #cart-items {
+        /* Daftar Item */
+        max-height: none;
+        overflow-y: visible;
+        margin: 15px 0;
+    }
+
+
     /* Handle Bar (memberi tahu user bisa di-swipe) */
     #sticky-sidebar::before {
         content: '';
@@ -436,16 +425,6 @@ footer {
         background: #ccc;
         border-radius: 5px;
         margin: -5px auto 10px auto; 
-    }
-    
-    /* Gaya untuk detail modal pembayaran */
-    #payment-detail-modal .modal-content {
-        width: 90%;
-        margin: 10% auto;
-    }
-    
-    #payment-method-img {
-        width: 150px !important;
-        height: 150px !important;
+        flex-shrink: 0; 
     }
 }
