@@ -82,6 +82,11 @@ html, body {
   gap: 30px;
 }
 
+/* FIX: Elemen ini dihilangkan di HTML terakhir */
+#customer-info-top {
+    display: none;
+}
+
 #menu-section h2 {
   color: #ff6347;
   border-bottom: 2px solid #ff6347;
@@ -327,17 +332,12 @@ footer {
 
 /* === RESPONSIVE / MOBILE (SWIPE UP PANEL) === */
 .desktop-only {
+    /* Sembunyikan Payment Section di Mobile */
     display: none !important;
 }
 
 #mobile-summary {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    justify-content: space-between;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
+    display: none; /* Defaultnya disembunyikan di desktop */
 }
 
 @media (max-width: 768px) {
@@ -345,8 +345,8 @@ footer {
         padding: 10px 15px;
     }
     
+    /* FIX: Tambahkan padding di bawah agar tidak tertutup sticky sidebar */
     .container {
-        /* FIX: Tambahkan padding di bawah agar tidak tertutup sticky sidebar */
         padding-bottom: 110px; 
     }
 
@@ -355,65 +355,79 @@ footer {
         gap: 20px;
     }
 
-    /* Input Nama disembunyikan di sini, hanya tampil saat swipe up */
-    .customer-info {
-        display: block; 
+    /* Tampilkan mobile summary */
+    #mobile-summary {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+        padding-bottom: 0; 
+        border-bottom: none;
+        order: 1; /* Pindah ke atas tombol checkout */
     }
 
-    /* FIX: SWIPE UP PANEL (STILL STICKY AT BOTTOM) */
+    /* Hapus default styling desktop dari elemen di dalam cart */
+    #cart-items {
+        max-height: none; 
+        overflow-y: visible;
+        margin: 15px 0;
+    }
+    
+    /* FIX: SWIPE UP PANEL */
     #sticky-sidebar {
         display: flex;
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        max-height: 50vh; /* Batasi tinggi maksimum 50% layar */
-        /* FIX: Atur tinggi awal (yang terlihat) sekitar 100px */
+        
+        /* FIX: Tinggi awal (hanya total & tombol yang terlihat) */
         height: auto; 
+        max-height: 70vh; /* Tinggi maksimum saat di-swipe ke atas */
+
         padding: 15px;
-        border-top: 1px solid #ddd;
         border-radius: 10px 10px 0 0; 
         box-shadow: 0 -4px 12px rgba(0,0,0,0.2);
         z-index: 990;
         flex-direction: column;
         box-sizing: border-box;
-        overflow-y: hidden; /* Sembunyikan scrollbar bawaan pada awalnya */
+        overflow-y: auto; /* Aktifkan swipe/scroll */
     }
-    
-    /* FIX: Tampilkan item keranjang dan beri scroll saat isinya banyak */
+
+    /* FIX: Layout di dalam sidebar */
     #cart {
         display: flex;
         flex-direction: column;
         width: 100%;
     }
-    
-    /* FIX: Konten yang harus di-scroll saat swipe up */
+
+    /* FIX: Sembunyikan detail yang harus digulir secara default */
+    .customer-info, #cart h2 {
+        display: none !important;
+    }
+    /* FIX: Tampilkan detail saat di-scroll */
     #cart-items {
-        display: block !important;
-        max-height: 200px; /* Batasi tinggi daftar item */
-        overflow-y: auto; /* Aktifkan scroll/swipe di sini */
-        padding: 0 0 10px 0;
-        margin: 10px 0;
-        border-bottom: 1px solid #eee;
+        display: none !important;
     }
 
-    /* Styling untuk tombol/summary di bagian bawah */
+    /* Tombol checkout harus selalu di bagian paling bawah */
     #checkout-btn {
         width: 100%;
         margin-top: 15px;
+        order: 2; /* Pindah ke paling bawah */
     }
 
-    #payment-detail-modal .modal-content {
-        width: 90%;
-        margin: 10% auto;
+    /* FIX: Buat lapisan baru untuk elemen yang disembunyikan, dan atur scroll */
+    #sticky-sidebar > .customer-info, 
+    #sticky-sidebar > #cart > h2, 
+    #sticky-sidebar > #cart > #cart-items {
+        /* Ini adalah trik untuk membuat konten di awal terdorong ke bawah
+           tetapi muncul saat di-swipe/scroll karena overflow-y: auto di #sticky-sidebar */
+        display: block !important; 
+        transition: transform 0.3s ease-out;
     }
     
-    #payment-method-img {
-        width: 150px !important;
-        height: 150px !important;
-    }
-    
-    /* Tambahkan Handle Bar (optional, untuk memberi tahu user bisa di-swipe) */
+    /* Handle Bar (memberi tahu user bisa di-swipe) */
     #sticky-sidebar::before {
         content: '';
         display: block;
@@ -422,5 +436,16 @@ footer {
         background: #ccc;
         border-radius: 5px;
         margin: -5px auto 10px auto; 
+    }
+    
+    /* Gaya untuk detail modal pembayaran */
+    #payment-detail-modal .modal-content {
+        width: 90%;
+        margin: 10% auto;
+    }
+    
+    #payment-method-img {
+        width: 150px !important;
+        height: 150px !important;
     }
 }
