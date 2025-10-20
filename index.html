@@ -164,7 +164,7 @@
             if (lastPayment) {
                 
                 if (lastPayment.status === 'pending') {
-                    // === LOGIKA BARU: HAPUS JIKA STATUS MASIH PENDING SETELAH REFRESH ===
+                    // LOGIKA HAPUS JIKA STATUS MASIH PENDING SETELAH REFRESH
                     
                     // Hapus item pending dari daftar pembayaran global
                     const updatedPayments = payments.filter(p => p.id !== lastPaymentId);
@@ -402,7 +402,7 @@
       closeModal('payment');
       
       const code = "PAY" + Date.now().toString().slice(-6); 
-      const customerName = document.getElementById('customer-name').value.trim();
+      const customerName = document.getElementById('customer-name').value.trim(); // Diambil di sini
       
       const selectedMethod = paymentMethods.find(m => m.name === methodName);
       const instruction = selectedMethod.info; 
@@ -416,7 +416,7 @@
           cart: JSON.parse(JSON.stringify(cart)), 
           time: new Date().toLocaleString('id-ID'),
           method: methodName,
-          customerName: customerName 
+          customerName: customerName // Disimpan di sini
       };
 
       currentPayment = newPayment;
