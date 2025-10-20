@@ -86,7 +86,6 @@
   </div>
   
   <script>
-    // Data Menu dan Logika JavaScript tetap sama
     const menuData = [
       { name: 'Nasi Goreng Spesial', price: 25000, category: 'makanan', img: 'nasgor.jpg' },
       { name: 'Mie Ayam Bakso', price: 20000, category: 'makanan', img: 'yamyam.jpg' },
@@ -223,6 +222,7 @@
       const isPaid = currentPayment && currentPayment.status === "paid";
       const isPending = currentPayment && currentPayment.status === "pending";
 
+      // Tombol Pesan hanya aktif jika sudah LUNAS (Paid)
       checkoutBtn.disabled = (total === 0 || !isPaid);
       
       if (isPending) {
@@ -371,7 +371,7 @@
         status: 'Baru', 
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         paymentId: currentPayment.id,
-        method: currentPayment.method 
+        method: currentPayment.method // Tambahkan metode pembayaran ke order
       };
 
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
@@ -379,6 +379,7 @@
       localStorage.setItem('pantryOrders', JSON.stringify(orders)); 
 
       let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+      // Hapus dari daftar pembayaran tertunda
       payments = payments.filter(p => p.id !== currentPayment.id);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
