@@ -160,9 +160,9 @@
         return `Rp${number.toLocaleString('id-ID')}`;
     }
     
-    function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; } // FUNGSI BARU
-    function closeModal(t) { document.getElementById(t + "-modal").style.display = "none"; } // FUNGSI BARU
-    window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }; // FUNGSI BARU
+    function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; } 
+    function closeModal(t) { document.getElementById(t + "-modal").style.display = "none"; } 
+    window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; }; 
     
     // ======================================
     // === DASHBOARD PEMBAYARAN LOGIC ===
@@ -170,6 +170,8 @@
     
     function loadPayments() {
         const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        // Hanya tampilkan pembayaran yang statusnya 'pending' (menunggu verifikasi)
+        // Pembayaran tunai tidak akan muncul di sini karena statusnya langsung 'paid'
         const pendingPayments = payments.filter(p => p.status === 'pending');
         
         const listEl = document.getElementById('payment-verification-list');
@@ -185,10 +187,9 @@
                 `<p class="payment-item-detail">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
             ).join('');
             
-            // Ambil nama dari data pembayaran (disimpan saat pelanggan klik Bayar)
             const customerName = payment.customerName || "Nama Tidak Diketahui";
             
-            // Tambahkan tombol QR hanya jika metode adalah QR All-Wallet
+            // Logika Tombol QRIS: Hanya tampilkan jika metode adalah QR All-Wallet
             const qrButton = payment.method === 'QR All-Wallet' ? 
                 `<button onclick="openModal('qr')" style="background-color: #068b18; margin-bottom: 5px; transform: translateY(0); box-shadow: none;">
                     Lihat QR
@@ -224,10 +225,7 @@
         const paymentIndex = payments.findIndex(p => p.id === paymentId);
         
         if (paymentIndex !== -1) {
-            // HANYA GANTI STATUS JADI "paid"
             payments[paymentIndex].status = "paid"; 
-            
-            // SIMPAN PERUBAHAN
             localStorage.setItem('pantryPayments', JSON.stringify(payments));
             
             alert(`✅ Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa menekan tombol "Pesan".`);
