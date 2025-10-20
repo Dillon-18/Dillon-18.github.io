@@ -95,8 +95,8 @@
   <div class="container">
     
     <div class="status-header">
-        <h2>ID Pesanan: <span id="display-order-id">#...</span></h2>
-        <p id="status-message">Terima kasih telah memesan. Status pesanan ini diperbarui secara real-time oleh Dapur.</p>
+        <h2>Pesanan untuk: <span id="display-customer-name">...</span></h2>
+        <p id="status-message">ID Pesanan Anda: <span id="display-order-id">#...</span>. Status pesanan ini diperbarui secara real-time oleh Dapur.</p>
     </div>
 
     <div class="kanban-container">
@@ -131,13 +131,13 @@
         const orderIdParam = urlParams.get('orderId');
         
         if (!orderIdParam) {
-            document.getElementById('status-message').textContent = '⚠️ Order ID tidak ditemukan. Silakan pesan ulang.';
+            document.getElementById('status-message').innerHTML = '⚠️ Order ID tidak ditemukan. Silakan pesan ulang.';
             document.getElementById('display-order-id').textContent = '#ERROR';
+            document.getElementById('display-customer-name').textContent = 'ERROR';
             return;
         }
 
         currentOrderId = parseInt(orderIdParam);
-        document.getElementById('display-order-id').textContent = '#' + currentOrderId;
         
         // Muat dan perbarui status setiap 5 detik
         loadOrderStatus(currentOrderId);
@@ -156,18 +156,25 @@
         const orderListProses = document.getElementById('in-progress-orders');
         const orderListSelesai = document.getElementById('completed-orders');
         
-        // 1. Reset semua kolom dan beri pesan kosong
+        // 1. Set ID di informasi pendukung
+        document.getElementById('display-order-id').textContent = '#' + id;
+
+        // 2. Reset semua kolom dan beri pesan kosong
         const emptyMsg = '<p class="empty-column-msg">Pesanan Anda tidak berada di status ini.</p>';
         orderListBaru.innerHTML = emptyMsg;
         orderListProses.innerHTML = emptyMsg;
         orderListSelesai.innerHTML = emptyMsg;
 
         if (!order) {
-            document.getElementById('status-message').textContent = '❌ Pesanan tidak ditemukan. Mungkin sudah dihapus Kasir, atau pesanan telah selesai.';
+            document.getElementById('status-message').innerHTML = '❌ Pesanan tidak ditemukan. Mungkin sudah dihapus Kasir, atau pesanan telah selesai. ID Pesanan Anda: <span style="font-weight: 600;">#' + id + '</span>';
+            document.getElementById('display-customer-name').textContent = 'Tidak Ditemukan';
             return;
         }
 
-        // 2. Buat card pesanan
+        // 3. Set Customer Name di header utama
+        document.getElementById('display-customer-name').textContent = order.customerName;
+
+        // 4. Buat card pesanan
         let statusClass = 'order-card-' + order.status;
 
         const itemsList = order.items.map(item => 
@@ -187,7 +194,7 @@
             <div class="order-total">Total Bayar: Rp${formatRupiah(order.total)}</div>
         `;
 
-        // 3. Masukkan card ke kolom yang sesuai
+        // 5. Masukkan card ke kolom yang sesuai
         let targetList;
         if (order.status === 'Baru') {
             targetList = orderListBaru;
@@ -195,7 +202,7 @@
             targetList = orderListProses;
         } else if (order.status === 'Selesai') {
             targetList = orderListSelesai;
-            document.getElementById('status-message').textContent = '✅ Pesanan Anda sudah selesai dan siap diambil!';
+            document.getElementById('status-message').innerHTML = '✅ Pesanan Anda sudah selesai dan siap diambil! ID Pesanan Anda: <span style="font-weight: 600;">#' + id + '</span>';
         }
         
         targetList.innerHTML = '';
