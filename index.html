@@ -150,6 +150,10 @@
       const minumanEl = document.getElementById('menu-minuman');
       makananEl.innerHTML = '';
       minumanEl.innerHTML = '';
+      
+      // *** LOGIC BARU: Cek apakah pembayaran sedang pending ***
+      const isPaymentPending = currentPayment && currentPayment.status === "pending";
+      const isDisabledAttr = isPaymentPending ? 'disabled' : '';
 
       menuData.forEach(item => {
         const exist = cart.find(i => i.name === item.name);
@@ -157,6 +161,10 @@
 
         const div = document.createElement('div');
         div.className = 'menu-item';
+        
+        // Atur class pada tombol +/- untuk visualisasi disabled di CSS (jika ada)
+        const btnClass = isPaymentPending ? 'disabled-qty-btn' : '';
+
         div.innerHTML = `
           <img src="${item.img}" alt="${item.name}">
           <div class="menu-info">
@@ -164,9 +172,9 @@
             <div class="menu-price">Rp${formatRupiah(item.price)}</div>
           </div>
           <div class="menu-actions">
-            <button class="btn-qty" onclick="changeMenuQty('${item.name}', ${item.price}, -1)">-</button>
+            <button class="btn-qty ${btnClass}" onclick="changeMenuQty('${item.name}', ${item.price}, -1)" ${isDisabledAttr}>-</button>
             <div class="qty-display">${qty}</div>
-            <button class="btn-qty btn-plus" onclick="changeMenuQty('${item.name}', ${item.price}, 1)">+</button>
+            <button class="btn-qty btn-plus ${btnClass}" onclick="changeMenuQty('${item.name}', ${item.price}, 1)" ${isDisabledAttr}>+</button>
           </div>`;
         if (item.category === 'makanan') makananEl.appendChild(div);
         else minumanEl.appendChild(div);
@@ -174,6 +182,12 @@
     }
 
     function changeMenuQty(name, price, delta) {
+      // *** PENGAMAN TAMBAHAN: Mencegah manipulasi dari console/browser jika status pending ***
+      if (currentPayment && currentPayment.status === "pending") {
+          alert("Anda tidak dapat mengubah keranjang selama pembayaran sedang diverifikasi oleh kasir.");
+          return;
+      }
+      
       const exist = cart.find(i => i.name === name);
       if (exist) {
         exist.qty += delta;
@@ -206,16 +220,20 @@
       checkoutBtn.textContent = (total === 0) ? `Pesan` : `Pesan - Rp${totalRupiah}`;
       
       const isPaid = currentPayment && currentPayment.status === "paid";
+      const isPending = currentPayment && currentPayment.status === "pending";
       checkoutBtn.disabled = (total === 0 || !isPaid);
       
-      // Jika sudah membayar, tombol Bayar sekarang di-disable agar tidak membuat pembayaran duplikat.
-      if (currentPayment && currentPayment.status !== "paid") {
+      // Update status tombol BAYAR
+      if (isPending) {
+          payBtn.textContent = "⏳ Pembayaran Tertunda";
           payBtn.disabled = true;
-      } else if (currentPayment && currentPayment.status === "paid") {
+      } else if (isPaid) {
           payBtn.textContent = "✅ Pembayaran Diterima";
           payBtn.disabled = true;
       } else {
+          // Hanya aktif jika keranjang tidak kosong
           payBtn.textContent = "💳 Bayar Sekarang";
+          payBtn.disabled = (total === 0);
       }
     }
 
@@ -252,7 +270,7 @@
           id: code, 
           status: "pending", 
           total, 
-          cart: JSON.parse(JSON.stringify(cart)), 
+          cart: JSON.parse(JSON.stringify(cart)), // Simpan snapshot keranjang saat pembayaran diajukan
           time: new Date().toLocaleString('id-ID'),
           method: methodName 
       };
@@ -265,9 +283,9 @@
       payments.push(newPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      alert(`Anda memilih ${methodName}. Kode Bayar Anda: ${code}. Harap selesaikan pembayaran dan tunggu verifikasi kasir di Dashboard Pembayaran.`);
+      alert(`Anda memilih ${methodName}. Kode Bayar Anda: ${code}. Harap selesaikan pembayaran dan tunggu verifikasi kasir.`);
       checkPaymentStatus(); 
-      updateCart(); 
+      renderMenu(); // MUAT ULANG MENU UNTUK DISABLE TOMBOL JUMLAH
     }
 
     function checkPaymentStatus() {
@@ -282,7 +300,10 @@
       const found = payments.find(p => p.id === currentPayment.id);
       
       if (found && found.status === "paid") {
-        currentPayment.status = "paid"; 
+        if (currentPayment.status !== "paid") {
+            currentPayment.status = "paid"; // Update status lokal
+            renderMenu(); // MUAT ULANG MENU UNTUK ENABLE KEMBALI TOMBOL JUMLAH (jika ada kebutuhan) atau membiarkannya (saat ini disabled karena payBtn disabled)
+        }
         paymentStatusEl.textContent = `Sudah diverifikasi (${found.method}) ✅`;
       } else {
         currentPayment.status = "pending";
@@ -300,13 +321,16 @@
       const nameInput = document.getElementById('customer-name');
       const name = nameInput.value.trim();
       if (!name) return alert("Masukkan nama Anda!");
-
+      
+      // Saat checkout, kita menggunakan snapshot keranjang dari currentPayment, BUKAN array 'cart' saat ini
+      const finalCart = currentPayment.cart; 
+      
       // 1. BUAT PESANAN BARU
       const order = {
         id: Date.now(),
         customerName: name,
-        items: JSON.parse(JSON.stringify(cart)),
-        total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+        items: finalCart, // GUNAKAN CART YANG SUDAH TERIKAT DENGAN PEMBAYARAN
+        total: currentPayment.total, // GUNAKAN TOTAL DARI PEMBAYARAN
         status: 'Baru', 
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         paymentId: currentPayment.id 
