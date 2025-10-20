@@ -303,7 +303,7 @@
       if (isInstant) {
           alert(`✅ Pembayaran Tunai berhasil diajukan! Total: Rp${formatRupiah(total)}. Silakan tekan tombol "Pesan" untuk mengirim order ke dapur.`);
       } else {
-          alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, **JANGAN UBAH JUMLAH ITEM**, tunggu kasir memverifikasi pembayaran Anda.`);
+          alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, tunggu kasir memverifikasi pembayaran Anda.`);
       }
       
       checkPaymentStatus(); 
@@ -394,4 +394,5 @@
   </script>
 </body>
 </html>
+
 
