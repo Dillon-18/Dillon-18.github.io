@@ -290,7 +290,7 @@
       payments.push(newPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, **JANGAN UBAH JUMLAH ITEM**, tunggu kasir memverifikasi pembayaran Anda.`);
+      alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, tunggu kasir memverifikasi pembayaran Anda.`);
       
       checkPaymentStatus(); 
       renderMenu(); 
@@ -378,3 +378,4 @@
   </script>
 </body>
 </html>
+
