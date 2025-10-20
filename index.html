@@ -44,7 +44,7 @@
                 <button id="checkout-btn" onclick="checkout()" disabled>Pesan</button>
 
                 <div id="payment-section" style="margin-top:20px; text-align:center;">
-                    <button id="pay-btn" onclick="openPaymentModal()" class="btn-primary">💳 Bayar Sekarang</button>
+                    <button id="pay-btn" onclick="openPaymentModal()" class="btn-primary" style="width: 90%; margin: 0 auto; display: block;">💳 Bayar Sekarang</button>
                     <p id="payment-status" style="color:#555; margin-top:10px;">Belum dibayar ❌</p>
                 </div>
             </div>
@@ -155,7 +155,6 @@
       makananEl.innerHTML = '';
       minumanEl.innerHTML = '';
       
-      // LOGIC KONTROL UTAMA: Cek apakah pembayaran sudah diajukan (pending/paid)
       const isPaymentSubmitted = currentPayment && (currentPayment.status === "pending" || currentPayment.status === "paid");
       const isDisabledAttr = isPaymentSubmitted ? 'disabled' : '';
 
@@ -291,7 +290,7 @@
       payments.push(newPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, tunggu kasir memverifikasi pembayaran Anda.`);
+      alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, **JANGAN UBAH JUMLAH ITEM**, tunggu kasir memverifikasi pembayaran Anda.`);
       
       checkPaymentStatus(); 
       renderMenu(); 
@@ -310,7 +309,6 @@
       
       if (!found) {
         if (currentPayment.status === "paid") {
-             // Status di-reset, tidak perlu alert lagi, user sudah dialihkan setelah checkout
             cart = [];
             currentPayment = null;
             localStorage.removeItem('lastPaymentId'); 
@@ -350,8 +348,7 @@
 
       const finalCart = currentPayment.cart; 
       
-      // 1. BUAT PESANAN BARU
-      const newOrderId = Date.now(); // Gunakan Date.now() sebagai ID
+      const newOrderId = Date.now(); 
       const order = {
         id: newOrderId,
         customerName: name, 
@@ -364,20 +361,14 @@
 
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       orders.unshift(order);
-      localStorage.setItem('pantryOrders', JSON.stringify(orders)); // Dikirim ke cashier.html
+      localStorage.setItem('pantryOrders', JSON.stringify(orders)); 
 
-      // 2. HAPUS DATA PEMBAYARAN dari LocalStorage
       let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
       payments = payments.filter(p => p.id !== currentPayment.id);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      // 3. JANGAN RESET STATE DULU, LANGSUNG ALIHKAN
-      // State akan di-reset saat checkPaymentStatus() dijalankan di halaman baru, 
-      // karena 'lastPaymentId' tidak akan ditemukan di 'pantryPayments' lagi.
-      
       alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
       
-      // 4. ALIHKAN KE HALAMAN STATUS PESANAN
       window.location.href = `order_status.html?orderId=${newOrderId}`;
     }
 
@@ -387,4 +378,3 @@
   </script>
 </body>
 </html>
-
