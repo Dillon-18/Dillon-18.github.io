@@ -170,7 +170,7 @@
     
     function loadPayments() {
         const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        // HANYA tampilkan pembayaran yang statusnya 'pending' (menunggu verifikasi) dan bukan Tunai
+        // HANYA tampilkan pembayaran yang statusnya 'pending' (menunggu verifikasi)
         const pendingPayments = payments.filter(p => p.status === 'pending');
         
         const listEl = document.getElementById('payment-verification-list');
@@ -207,7 +207,7 @@
                 <hr class="payment-section-divider">
                 <p class="pay-total">Total: ${formatRupiah(payment.total)}</p>
                 <span class="payment-time">Waktu: ${payment.time}</span>
-                ${qrButton} 
+                ${qrButton}
                 <button onclick="verifyPayment('${payment.id}')">
                     ✅ Verifikasi Bayar
                 </button>
