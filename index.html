@@ -92,7 +92,7 @@
       <p id="payment-note" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
     </div>
   </div>
-    
+
   <div id="payment-detail-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('payment-detail')">&times;</span>
@@ -426,12 +426,8 @@
       const found = payments.find(p => p.id === currentPayment.id);
       
       if (!found) {
-        if (currentPayment.status === "paid" && cart.length > 0) { 
-            // Setelah checkout, cart dikosongkan, currentPayment direset di checkout().
-            // Jika ini terjadi, berarti ada error atau halaman dimuat ulang setelah pembayaran tapi sebelum checkout.
-            // Biarkan saja, logika reset terjadi di bawah.
-        } else if (currentPayment.status === "paid" && cart.length === 0) {
-             // Reset setelah checkout berhasil
+        if (currentPayment.status === "paid" && cart.length === 0) { 
+            // Reset setelah checkout berhasil
             currentPayment = null;
             localStorage.removeItem('lastPaymentId'); 
             document.getElementById('customer-name').value = ''; 
@@ -446,9 +442,11 @@
         const statusChanged = currentPayment.status !== "paid";
         currentPayment.status = "paid"; 
         
-        if(statusChanged && found.method !== 'Tunai (Cash)') {
-            alert(`✅ Pembayaran Diverifikasi oleh Kasir! Anda sekarang bisa menekan tombol "Pesan" untuk mengirim order ke dapur.`);
+        if(statusChanged) {
+             // === PERBAIKAN: AKTIFKAN NOTIFIKASI POP-UP ===
+            showNotification(`✅ Pembayaran Diterima! Tekan tombol "Pesan" untuk mengirim order.`, 'success');
             closeModal('payment-detail'); // Tutup modal detail jika verifikasi berhasil
+            // ===========================================
         }
         
         paymentStatusEl.textContent = `Sudah diverifikasi (${found.method}) ✅`;
@@ -460,6 +458,36 @@
       
       updateCart(); 
     }
+
+    // === FUNGSI BARU: MENAMPILKAN NOTIFIKASI POP-UP ===
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = 'notification'; 
+        notification.textContent = message;
+        
+        // Atur warna notifikasi (sesuai index.css)
+        if (type === 'success') {
+            notification.style.backgroundColor = '#068b18'; // Warna hijau
+        } else if (type === 'error') {
+            notification.style.backgroundColor = '#d14838'; // Warna merah
+        } else {
+             notification.style.backgroundColor = '#333';
+        }
+
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10); 
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300); 
+        }, 5000); // Notifikasi hilang setelah 5 detik
+    }
+    // =================================================
 
     function checkout() {
       if (!currentPayment || currentPayment.status !== "paid") {
