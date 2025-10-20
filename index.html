@@ -45,7 +45,7 @@
 
                 <div id="payment-section" style="margin-top:20px; text-align:center;">
                     
-<button id="pay-btn" onclick="openPaymentModal()" class="btn-primary" style="background-color: #4CAF50; width: 90%; margin: 0 auto; display: block;">💳 Bayar Sekarang</button>
+                    <button id="pay-btn" onclick="openPaymentModal()" class="btn-primary" style="width: 90%; margin: 0 auto; display: block;">💳 Bayar Sekarang</button>
                     <p id="payment-status" style="color:#555; margin-top:10px;">Belum dibayar ❌</p>
                 </div>
             </div>
@@ -82,7 +82,7 @@
       <div id="payment-options" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
           </div>
       
-      <p id="payment-instruction-footer" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
+      <p id="payment-instruction-footer" style="margin-top: 30px;">Untuk pembayaran QR/Transfer, tunggu kasir memverifikasi. Untuk Tunai, Anda langsung dapat menekan "Pesan".</p>
     </div>
   </div>
 
@@ -108,7 +108,7 @@
     ];
 
     const paymentMethods = [
-      { name: 'Tunai', img: 'cash.png', color: '#068b18', info: 'Bayar langsung di kasir saat mengambil pesanan.', isInstant: true }, // Tambah Tunai, status langsung PAID
+      { name: 'Tunai', img: 'cash.png', color: '#068b18', info: 'Bayar langsung di kasir saat mengambil pesanan.', isInstant: true }, 
       { name: 'GoPay', img: 'gopay.png', color: '#00A389', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.', isInstant: false },
       { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.', isInstant: false },
       { name: 'Dana', img: 'dana.png', color: '#1B72E5', info: 'Transfer ke Virtual Account Dana: 8528XXXXXXXXX (nomor HP Anda).', isInstant: false },
@@ -372,7 +372,7 @@
         status: 'Baru', 
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         paymentId: currentPayment.id,
-        paymentMethod: currentPayment.method // Tambahkan metode pembayaran ke pesanan
+        paymentMethod: currentPayment.method 
       };
 
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
