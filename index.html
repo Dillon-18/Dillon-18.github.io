@@ -38,7 +38,10 @@
                 <input type="text" id="customer-name" placeholder="Contoh: Budi" required>
             </div>
             <div id="cart">
-                <h2>🛒 Keranjang Pesanan</h2> <ul id="cart-items"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul> <div id="mobile-summary">
+                <h2>🛒 Keranjang Pesanan</h2>
+                <ul id="cart-items"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul>
+
+                <div id="mobile-summary">
                     <div class="cart-summary">
                         <p id="mobile-cart-total" style="margin: 0; font-weight: 700; color: #333;">Total: Rp0</p>
                         <p id="mobile-payment-status" style="margin: 0; font-size: 0.8em; color: #ff6347;">Belum dibayar</p>
@@ -88,16 +91,16 @@
       <p id="payment-note" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
     </div>
   </div>
-
+    
   <div id="payment-detail-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('payment-detail')">&times;</span>
       <h2>Detail Pembayaran</h2>
       
       <p style="font-size: 1.1em; color: #ff6347; font-weight: 600;">Metode Pembayaran:</p>
-      <div style="margin-bottom: 20px;">
-          <img id="payment-method-img" src="" alt="Metode Pembayaran" style="width: 200px; height: 200px; border-radius: 5px; object-fit: contain; margin: 0 auto; display: block;">
-          <p id="payment-method-name" style="font-size: 1.5em; font-weight: 700; color: #333; margin: 10px 0 0 0;"></p>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px;">
+          <img id="payment-method-img" src="" alt="Metode Pembayaran" style="width: 50px; height: 50px; border-radius: 5px;">
+          <p id="payment-method-name" style="font-size: 1.5em; font-weight: 700; color: #333; margin: 0;"></p>
       </div>
 
       <p style="font-size: 1.1em; color: #555;">Total yang Harus Dibayar:</p>
@@ -149,42 +152,24 @@
     let currentPayment = null; 
 
     document.addEventListener('DOMContentLoaded', () => {
-        const lastPaymentId = localStorage.getItem('lastPaymentId');
-        
-        const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        
-        if (lastPaymentId) {
-            const lastPayment = payments.find(p => p.id === lastPaymentId);
-
-            if (lastPayment) {
-                
-                if (lastPayment.status === 'pending') {
-                    const updatedPayments = payments.filter(p => p.id !== lastPaymentId);
-                    localStorage.setItem('pantryPayments', JSON.stringify(updatedPayments));
-                    
-                    localStorage.removeItem('lastPaymentId');
-                    
-                    currentPayment = null;
-                    cart = [];
-                    document.getElementById('customer-name').value = '';
-
-                    showNotification(`⚠️ Transaksi sebelumnya (Kode: ${lastPaymentId}) dibatalkan. Silakan pesan ulang!`, 'error');
-                    
-                } else if (lastPayment.status === 'paid') {
-                    currentPayment = lastPayment;
-                    if (currentPayment.cart) {
-                        cart = currentPayment.cart;
-                        document.getElementById('customer-name').value = currentPayment.customerName || '';
-                    }
-                }
-            } else {
-                localStorage.removeItem('lastPaymentId');
-            }
-        }
-        
-        renderMenu();
-        updateCart();
-        setInterval(checkPaymentStatus, 2000); 
+      const lastPaymentId = localStorage.getItem('lastPaymentId');
+      if (lastPaymentId) {
+          const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+          const lastPayment = payments.find(p => p.id === lastPaymentId);
+          if (lastPayment) {
+              currentPayment = lastPayment;
+              if (currentPayment.cart) {
+                  cart = currentPayment.cart;
+                  document.getElementById('customer-name').value = currentPayment.customerName || '';
+              }
+          } else {
+              localStorage.removeItem('lastPaymentId');
+          }
+      }
+      
+      renderMenu();
+      updateCart();
+      setInterval(checkPaymentStatus, 2000); 
     });
 
     function redirectToCashier() {
@@ -279,8 +264,6 @@
       const nameInput = document.getElementById('customer-name');
       const mobileCartTotal = document.getElementById('mobile-cart-total');
       const mobilePaymentStatus = document.getElementById('mobile-payment-status');
-
-      // Tampilkan mobile bar (sudah dihandle CSS fixed position)
       
       if (total > 0) {
           mobileCartTotal.textContent = `Total: Rp${totalRupiah}`;
@@ -291,7 +274,7 @@
               checkoutBtn.disabled = false;
           } else if (isPending) {
                checkoutBtn.textContent = `Menunggu Verifikasi...`;
-               checkoutBtn.onclick = () => showNotification("Pembayaran Anda masih menunggu verifikasi kasir.", 'info');
+               checkoutBtn.onclick = () => alert("Pembayaran Anda masih menunggu verifikasi kasir.");
                checkoutBtn.disabled = true;
           } else {
                checkoutBtn.textContent = `Lanjut Bayar (${totalRupiah})`;
@@ -310,7 +293,6 @@
           checkoutBtn.onclick = checkout;
           checkoutBtn.disabled = true;
           
-          // Pastikan tombol bayar desktop dinonaktifkan
           payBtn.disabled = true;
       }
       
@@ -375,7 +357,7 @@
       closeModal('payment');
       
       const code = "PAY" + Date.now().toString().slice(-6); 
-      const customerName = document.getElementById('customer-name').value.trim(); 
+      const customerName = document.getElementById('customer-name').value.trim();
       
       const selectedMethod = paymentMethods.find(m => m.name === methodName);
       const instruction = selectedMethod.info; 
@@ -400,6 +382,7 @@
       payments.push(newPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
+      // Tampilkan Modal Detail Pembayaran
       document.getElementById('payment-method-img').src = selectedMethod.img || '';
       document.getElementById('payment-method-name').textContent = selectedMethod.name;
       document.getElementById('payment-detail-total').textContent = 'Rp' + formatRupiah(total);
@@ -425,7 +408,7 @@
       const found = payments.find(p => p.id === currentPayment.id);
       
       if (!found) {
-        if (currentPayment.status === "paid" && cart.length === 0) { 
+        if (currentPayment.status === "paid" && cart.length === 0) {
             currentPayment = null;
             localStorage.removeItem('lastPaymentId'); 
             document.getElementById('customer-name').value = ''; 
@@ -440,8 +423,8 @@
         const statusChanged = currentPayment.status !== "paid";
         currentPayment.status = "paid"; 
         
-        if(statusChanged) {
-             showNotification(`✅ Pembayaran Diterima! Tekan tombol "Pesan" untuk mengirim order.`, 'success');
+        if(statusChanged && found.method !== 'Tunai (Cash)') {
+            alert(`✅ Pembayaran Diverifikasi oleh Kasir! Anda sekarang bisa menekan tombol "Pesan" untuk mengirim order ke dapur.`);
             closeModal('payment-detail'); 
         }
         
@@ -452,33 +435,6 @@
       }
       
       updateCart(); 
-    }
-
-    function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = 'notification'; 
-        notification.textContent = message;
-        
-        if (type === 'success') {
-            notification.style.backgroundColor = '#068b18'; 
-        } else if (type === 'error') {
-            notification.style.backgroundColor = '#d14838'; 
-        } else {
-             notification.style.backgroundColor = '#333';
-        }
-
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 10); 
-
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 300); 
-        }, 5000); 
     }
 
     function checkout() {
