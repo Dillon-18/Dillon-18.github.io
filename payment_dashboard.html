@@ -172,6 +172,7 @@
                 `<p class="payment-item-detail">${item.name} (x${item.qty}) - ${formatRupiah(item.price * item.qty)}</p>`
             ).join('');
             
+            // Ambil nama dari data pembayaran (disimpan saat pelanggan klik Bayar)
             const customerName = payment.customerName || "Nama Tidak Diketahui";
 
             const div = document.createElement('div');
@@ -188,57 +189,29 @@
                 <p class="pay-total">Total: ${formatRupiah(payment.total)}</p>
                 <span class="payment-time">Waktu: ${payment.time}</span>
                 <button onclick="verifyPayment('${payment.id}')">
-                    ✅ Verifikasi & Buat Pesanan
+                    ✅ Verifikasi Bayar
                 </button>
             `;
             listEl.appendChild(div);
         });
     }
 
-    function createOrderFromPayment(payment) {
-        // Ambil nama dari data pembayaran
-        const name = payment.customerName || "Pelanggan " + payment.id.slice(-4); 
-
-        const order = {
-            id: Date.now(),
-            customerName: name,
-            items: payment.cart,
-            total: payment.total,
-            status: 'Baru', 
-            time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-            paymentId: payment.id 
-        };
-
-        const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-        orders.unshift(order);
-        localStorage.setItem('pantryOrders', JSON.stringify(orders)); // Pesanan dikirim ke Dapur
-
-        return order.id;
-    }
-
 
     function verifyPayment(paymentId) {
-        if (!confirm(`Yakin ingin memverifikasi pembayaran kode ${paymentId}? Pesanan akan langsung dibuat dan diteruskan ke Dapur.`)) return;
+        if (!confirm(`Yakin ingin memverifikasi pembayaran kode ${paymentId}? Pelanggan akan bisa menekan tombol "Pesan".`)) return;
 
         let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
         const paymentIndex = payments.findIndex(p => p.id === paymentId);
-        const payment = payments[paymentIndex]; // Ambil objek pembayaran
-
+        
         if (paymentIndex !== -1) {
-            // 1. (Opsional) Ubah status payment menjadi paid, hanya untuk memastikan pelanggan yang sedang menunggu melihat status ini
-            payments[paymentIndex].status = "paid";
-            localStorage.setItem('pantryPayments', JSON.stringify(payments));
-
-            // 2. BUAT PESANAN OTOMATIS
-            const orderId = createOrderFromPayment(payment);
+            // HANYA GANTI STATUS JADI "paid"
+            payments[paymentIndex].status = "paid"; 
             
-            // 3. HAPUS DATA PEMBAYARAN dari list pending (Ini akan memicu reset state di sisi pelanggan)
-            payments = payments.filter(p => p.id !== paymentId);
+            // SIMPAN PERUBAHAN
             localStorage.setItem('pantryPayments', JSON.stringify(payments));
             
-            // 4. Beri notifikasi ke Kasir dan muat ulang daftar
-            alert(`✅ Pembayaran kode ${paymentId} berhasil diverifikasi! Pesanan #ID${orderId} telah dibuat dan diteruskan ke Dapur.`);
-            loadPayments(); 
+            alert(`✅ Pembayaran kode ${paymentId} berhasil diverifikasi! Pelanggan kini bisa menekan tombol "Pesan".`);
+            loadPayments(); // Muat ulang daftar pembayaran
         }
     }
   </script>
