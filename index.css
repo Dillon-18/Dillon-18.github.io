@@ -331,7 +331,8 @@ footer {
         grid-template-columns: 1fr;
     }
     #sticky-sidebar {
-        position: static;
+        /* Menonaktifkan sticky di layar kecil */
+        position: static; 
         top: auto;
     }
 }
