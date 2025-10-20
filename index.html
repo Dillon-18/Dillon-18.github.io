@@ -45,7 +45,7 @@
 
                 <div id="payment-section" style="margin-top:20px; text-align:center;">
                     
-<button id="pay-btn" onclick="openPaymentModal()" class="btn-primary" style="background-color: #4CAF50; width: 90%; margin: 0 auto; display: block;">💳 Bayar Sekarang</button>
+                    <button id="pay-btn" onclick="openPaymentModal()" class="btn-primary" style="width: 90%; margin: 0 auto; display: block;">💳 Bayar Sekarang</button>
                     <p id="payment-status" style="color:#555; margin-top:10px;">Belum dibayar ❌</p>
                 </div>
             </div>
@@ -82,7 +82,7 @@
       <div id="payment-options" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
           </div>
       
-      <p id="payment-instruction-footer" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
+      <p id="payment-instruction-footer" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaran Anda sebelum menekan tombol "Pesan".</p>
     </div>
   </div>
 
@@ -107,13 +107,16 @@
       { name: 'Jus Mangga Segar', price: 16000, category: 'minuman', img: 'jusmangga.jpg' },
     ];
 
+    // INSTRUKSI QRIS YANG BARU
+    const qrisInstruction = 'SCAN BARCODE QRIS di depan kasir. Tunggu kasir memverifikasi pembayaran Anda.';
+
+    // Perubahan: Tambahkan properti `isQRIS` dan hapus properti `color` (akan diambil dari CSS)
     const paymentMethods = [
-      { name: 'Tunai', img: 'cash.png', color: '#068b18', info: 'Bayar langsung di kasir saat mengambil pesanan.', isInstant: true }, // Tambah Tunai, status langsung ke paid
-      { name: 'GoPay', img: 'gopay.png', color: '#00A389', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.', isInstant: false },
-      { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.', isInstant: false },
-      { name: 'Dana', img: 'dana.png', color: '#1B72E5', info: 'Transfer ke Virtual Account Dana: 8528XXXXXXXXX (nomor HP Anda).', isInstant: false },
-      { name: 'Bank Transfer (BCA)', img: 'bca.png', color: '#004A99', info: 'Transfer ke Rekening BCA: 1234567890 a.n. Pantry.', isInstant: false },
-      { name: 'Qris', img: 'qris.png', color: '#004A99', info: 'Silahkan Scan Barcode nya Info ke Kasir dan tunggu Verifikasi.', isInstant: false },
+      { name: 'Tunai', isQRIS: false, info: 'Bayar di kasir saat mengambil pesanan. Kasir akan memverifikasi pembayaran Anda.' }, 
+      { name: 'GoPay (QRIS)', isQRIS: true, info: qrisInstruction },
+      { name: 'ShopeePay (QRIS)', isQRIS: true, info: qrisInstruction },
+      { name: 'Dana (QRIS)', isQRIS: true, info: qrisInstruction },
+      { name: 'Bank Transfer (BCA)', isQRIS: false, info: 'Transfer ke Rekening BCA: 1234567890 a.n. Pantry. Kasir akan memverifikasi pembayaran Anda.' },
     ];
 
     let cart = [];
@@ -252,26 +255,39 @@
       optionsEl.innerHTML = '';
       
       const paymentFooter = document.getElementById('payment-instruction-footer');
-
+      
+      // LOGIKA TOMBOL: MENGGUNAKAN CLASS BARU
       paymentMethods.forEach(method => {
           const btn = document.createElement('button');
           btn.textContent = `Bayar dengan ${method.name}`;
-          btn.style.cssText = `
-              background-color: ${method.color}; color: white; padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: opacity 0.2s, transform 0.2s;
-          `;
+          
+          let btnClass = '';
+          if (method.name.includes('(QRIS)')) {
+            btnClass = 'btn-qris';
+          } else if (method.name === 'Tunai') {
+            btnClass = 'btn-primary';
+          } else {
+            // Untuk Transfer BCA
+            btnClass = 'btn-secondary';
+          }
+
+          btn.className = btnClass;
+
+          // Hapus style inline dan ganti dengan class
+          btn.style.cssText = `padding: 12px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: opacity 0.2s, transform 0.2s;`;
+          
           btn.onmouseover = () => { btn.style.opacity = '0.9'; btn.style.transform = 'translateY(-1px)'; };
           btn.onmouseout = () => { btn.style.opacity = '1'; btn.style.transform = 'translateY(0)'; };
-          btn.onclick = () => selectPaymentMethod(method.name, total, method.isInstant);
+          btn.onclick = () => selectPaymentMethod(method.name, total); 
           optionsEl.appendChild(btn);
       });
       
-      // Mengubah footer instruksi berdasarkan opsi yang ada
-      paymentFooter.textContent = 'Untuk pembayaran QR/Transfer, tunggu kasir memverifikasi. Untuk Tunai, Anda langsung dapat menekan "Pesan".';
+      paymentFooter.textContent = 'Tunggu kasir memverifikasi pembayaran Anda sebelum menekan tombol "Pesan".';
 
       document.getElementById('payment-modal').style.display = 'block';
     }
 
-    function selectPaymentMethod(methodName, total, isInstant) {
+    function selectPaymentMethod(methodName, total) { 
       closeModal('payment');
       
       const code = "PAY" + Date.now().toString().slice(-6); 
@@ -280,8 +296,7 @@
       const selectedMethod = paymentMethods.find(m => m.name === methodName);
       const instruction = selectedMethod.info; 
       
-      // LOGIC UTAMA: Tentukan status pembayaran (paid jika Tunai)
-      const paymentStatus = isInstant ? "paid" : "pending"; 
+      const paymentStatus = "pending"; 
       
       const newPayment = { 
           id: code, 
@@ -301,11 +316,8 @@
       payments.push(newPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      if (isInstant) {
-          alert(`✅ Pembayaran Tunai berhasil diajukan! Total: Rp${formatRupiah(total)}. Silakan tekan tombol "Pesan" untuk mengirim order ke dapur.`);
-      } else {
-          alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, tunggu kasir memverifikasi pembayaran Anda.`);
-      }
+      // Notifikasi alert yang diperbarui
+      alert(`PENTING: Pembayaran ${methodName} berhasil diajukan.\n\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah melakukan pembayaran, tunggu kasir memverifikasi sebelum menekan "Pesan".`);
       
       checkPaymentStatus(); 
       renderMenu(); 
@@ -340,7 +352,7 @@
         const statusChanged = currentPayment.status !== "paid";
         currentPayment.status = "paid"; 
         
-        if(statusChanged && found.method !== "Tunai") { // Hanya beri notifikasi pop-up jika status berubah dari pending ke paid (non-tunai)
+        if(statusChanged) { 
             alert(`✅ Pembayaran Diverifikasi! Anda sekarang bisa menekan tombol "Pesan" untuk mengirim order ke dapur.`);
         }
         
@@ -373,7 +385,7 @@
         status: 'Baru', 
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         paymentId: currentPayment.id,
-        paymentMethod: currentPayment.method // Tambahkan metode pembayaran ke pesanan
+        paymentMethod: currentPayment.method 
       };
 
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
@@ -395,6 +407,3 @@
   </script>
 </body>
 </html>
-
-
-
