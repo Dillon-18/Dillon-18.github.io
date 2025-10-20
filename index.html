@@ -117,28 +117,23 @@
     let currentPayment = null; 
 
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Ambil status pembayaran terakhir
       const lastPaymentId = localStorage.getItem('lastPaymentId');
       if (lastPaymentId) {
           const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
           const lastPayment = payments.find(p => p.id === lastPaymentId);
           if (lastPayment) {
               currentPayment = lastPayment;
-              // Isi kembali cart dari snapshot pembayaran
               if (currentPayment.cart) {
                   cart = currentPayment.cart;
-                  // Isi nama pelanggan dari snapshot
                   document.getElementById('customer-name').value = currentPayment.customerName || '';
               }
           } else {
-              // Kasus jika payment ID ada tapi tidak ditemukan di list payments (berarti sudah di-checkout)
               localStorage.removeItem('lastPaymentId');
           }
       }
       
       renderMenu();
       updateCart();
-      // 2. Selalu cek status pembayaran agar real-time
       setInterval(checkPaymentStatus, 2000); 
     });
 
@@ -161,8 +156,6 @@
       minumanEl.innerHTML = '';
       
       // LOGIC KONTROL UTAMA: Cek apakah pembayaran sudah diajukan (pending/paid)
-      // Jika sudah diajukan, tombol jumlah barang harus DISABLED.
-      // INI ADALAH FUNGSI KEAMANAN UTAMA.
       const isPaymentSubmitted = currentPayment && (currentPayment.status === "pending" || currentPayment.status === "paid");
       const isDisabledAttr = isPaymentSubmitted ? 'disabled' : '';
 
@@ -189,7 +182,6 @@
     }
 
     function changeMenuQty(name, price, delta) {
-      // PENGAMAN: Mencegah manipulasi jika status pending/paid
       if (currentPayment && (currentPayment.status === "pending" || currentPayment.status === "paid")) {
           alert("❌ Keranjang dikunci. Anda tidak dapat mengubah keranjang setelah mengajukan pembayaran.");
           return;
@@ -201,7 +193,7 @@
         if (exist.qty <= 0) cart = cart.filter(i => i.name !== name);
       } else if (delta > 0) cart.push({ name, price, qty: 1 });
       updateCart();
-      renderMenu(); // Panggil renderMenu untuk update tampilan tombol +/-
+      renderMenu(); 
     }
 
     function updateCart() {
@@ -229,10 +221,8 @@
       const isPaid = currentPayment && currentPayment.status === "paid";
       const isPending = currentPayment && currentPayment.status === "pending";
 
-      // KONTROL CHECKOUT: Tombol Pesan hanya aktif jika total > 0 DAN sudah PAID
       checkoutBtn.disabled = (total === 0 || !isPaid);
       
-      // Update status tombol BAYAR
       if (isPending) {
           payBtn.textContent = "⏳ Pembayaran Tertunda";
           payBtn.disabled = true;
@@ -287,10 +277,10 @@
           id: code, 
           status: "pending", 
           total, 
-          cart: JSON.parse(JSON.stringify(cart)), // SNAPSHOT keranjang
+          cart: JSON.parse(JSON.stringify(cart)), 
           time: new Date().toLocaleString('id-ID'),
           method: methodName,
-          customerName: customerName // SIMPAN NAMA PELANGGAN
+          customerName: customerName 
       };
 
       currentPayment = newPayment;
@@ -304,7 +294,7 @@
       alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, **JANGAN UBAH JUMLAH ITEM**, tunggu kasir memverifikasi pembayaran Anda.`);
       
       checkPaymentStatus(); 
-      renderMenu(); // Muat ulang menu untuk DISABLE tombol jumlah item
+      renderMenu(); 
     }
 
     function checkPaymentStatus() {
@@ -319,9 +309,8 @@
       const found = payments.find(p => p.id === currentPayment.id);
       
       if (!found) {
-        // Kasus: Pembayaran sudah diverifikasi dan sudah di-checkout oleh pelanggan, lalu dihapus.
         if (currentPayment.status === "paid") {
-             // Reset state karena proses checkout telah selesai
+             // Status di-reset, tidak perlu alert lagi, user sudah dialihkan setelah checkout
             cart = [];
             currentPayment = null;
             localStorage.removeItem('lastPaymentId'); 
@@ -338,7 +327,6 @@
         currentPayment.status = "paid"; 
         
         if(statusChanged) {
-            // Jika status baru berubah menjadi paid, notifikasi user agar checkout
             alert(`✅ Pembayaran Diverifikasi! Anda sekarang bisa menekan tombol "Pesan" untuk mengirim order ke dapur.`);
         }
         
@@ -352,7 +340,6 @@
     }
 
     function checkout() {
-      // PENGAMAN UTAMA: Memastikan status harus PAID
       if (!currentPayment || currentPayment.status !== "paid") {
           return alert("❌ Pembayaran belum diverifikasi oleh kasir!");
       }
@@ -361,12 +348,12 @@
       const name = nameInput.value.trim();
       if (!name) return alert("Masukkan nama Anda!");
 
-      // Ambil data dari SNAPSHOT pembayaran
       const finalCart = currentPayment.cart; 
       
       // 1. BUAT PESANAN BARU
+      const newOrderId = Date.now(); // Gunakan Date.now() sebagai ID
       const order = {
-        id: Date.now(),
+        id: newOrderId,
         customerName: name, 
         items: finalCart, 
         total: currentPayment.total, 
@@ -379,22 +366,19 @@
       orders.unshift(order);
       localStorage.setItem('pantryOrders', JSON.stringify(orders)); // Dikirim ke cashier.html
 
-      // 2. HAPUS DATA PEMBAYARAN dari LocalStorage (wajib)
+      // 2. HAPUS DATA PEMBAYARAN dari LocalStorage
       let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
       payments = payments.filter(p => p.id !== currentPayment.id);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      alert(`✅ Pesanan ${name} berhasil dibuat! Pesanan Anda sedang diproses.`);
+      // 3. JANGAN RESET STATE DULU, LANGSUNG ALIHKAN
+      // State akan di-reset saat checkPaymentStatus() dijalankan di halaman baru, 
+      // karena 'lastPaymentId' tidak akan ditemukan di 'pantryPayments' lagi.
       
-      // 3. RESET STATE PELANGGAN
-      cart = [];
-      currentPayment = null;
-      localStorage.removeItem('lastPaymentId'); 
-      nameInput.value = ''; 
+      alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
       
-      updateCart();
-      renderMenu(); // Muat ulang menu untuk mengaktifkan kembali tombol jumlah
-      document.getElementById('payment-status').textContent = "Belum dibayar ❌";
+      // 4. ALIHKAN KE HALAMAN STATUS PESANAN
+      window.location.href = `order_status.html?orderId=${newOrderId}`;
     }
 
     function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; }
