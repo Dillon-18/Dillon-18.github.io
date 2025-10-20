@@ -92,7 +92,7 @@
       <p id="payment-note" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
     </div>
   </div>
-    
+
   <div id="payment-detail-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('payment-detail')">&times;</span>
@@ -153,24 +153,51 @@
     let currentPayment = null; 
 
     document.addEventListener('DOMContentLoaded', () => {
-      const lastPaymentId = localStorage.getItem('lastPaymentId');
-      if (lastPaymentId) {
-          const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-          const lastPayment = payments.find(p => p.id === lastPaymentId);
-          if (lastPayment) {
-              currentPayment = lastPayment;
-              if (currentPayment.cart) {
-                  cart = currentPayment.cart;
-                  document.getElementById('customer-name').value = currentPayment.customerName || '';
-              }
-          } else {
-              localStorage.removeItem('lastPaymentId');
-          }
-      }
-      
-      renderMenu();
-      updateCart();
-      setInterval(checkPaymentStatus, 2000); 
+        const lastPaymentId = localStorage.getItem('lastPaymentId');
+        
+        // Ambil semua pembayaran yang tersimpan di localStorage
+        const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        
+        if (lastPaymentId) {
+            const lastPayment = payments.find(p => p.id === lastPaymentId);
+
+            if (lastPayment) {
+                
+                if (lastPayment.status === 'pending') {
+                    // === LOGIKA BARU: HAPUS JIKA STATUS MASIH PENDING SETELAH REFRESH ===
+                    
+                    // Hapus item pending dari daftar pembayaran global
+                    const updatedPayments = payments.filter(p => p.id !== lastPaymentId);
+                    localStorage.setItem('pantryPayments', JSON.stringify(updatedPayments));
+                    
+                    // Hapus penanda pembayaran terakhir
+                    localStorage.removeItem('lastPaymentId');
+                    
+                    // Reset semua data lokal
+                    currentPayment = null;
+                    cart = [];
+                    document.getElementById('customer-name').value = '';
+
+                    // Tampilkan notifikasi bahwa transaksi dibatalkan (reset)
+                    showNotification(`⚠️ Transaksi sebelumnya (Kode: ${lastPaymentId}) dibatalkan. Silakan pesan ulang!`, 'error');
+                    
+                } else if (lastPayment.status === 'paid') {
+                    // Jika statusnya sudah PAID, kita tetap pertahankan keranjang
+                    currentPayment = lastPayment;
+                    if (currentPayment.cart) {
+                        cart = currentPayment.cart;
+                        document.getElementById('customer-name').value = currentPayment.customerName || '';
+                    }
+                }
+            } else {
+                // Jika ID ada tapi pembayaran tidak ditemukan di daftar, hapus ID-nya
+                localStorage.removeItem('lastPaymentId');
+            }
+        }
+        
+        renderMenu();
+        updateCart();
+        setInterval(checkPaymentStatus, 2000); 
     });
 
     function redirectToCashier() {
@@ -426,12 +453,8 @@
       const found = payments.find(p => p.id === currentPayment.id);
       
       if (!found) {
-        if (currentPayment.status === "paid" && cart.length > 0) { 
-            // Setelah checkout, cart dikosongkan, currentPayment direset di checkout().
-            // Jika ini terjadi, berarti ada error atau halaman dimuat ulang setelah pembayaran tapi sebelum checkout.
-            // Biarkan saja, logika reset terjadi di bawah.
-        } else if (currentPayment.status === "paid" && cart.length === 0) {
-             // Reset setelah checkout berhasil
+        if (currentPayment.status === "paid" && cart.length === 0) { 
+            // Reset setelah checkout berhasil
             currentPayment = null;
             localStorage.removeItem('lastPaymentId'); 
             document.getElementById('customer-name').value = ''; 
@@ -446,8 +469,9 @@
         const statusChanged = currentPayment.status !== "paid";
         currentPayment.status = "paid"; 
         
-        if(statusChanged && found.method !== 'Tunai (Cash)') {
-            alert(`✅ Pembayaran Diverifikasi oleh Kasir! Anda sekarang bisa menekan tombol "Pesan" untuk mengirim order ke dapur.`);
+        if(statusChanged) {
+             // AKTIFKAN NOTIFIKASI POP-UP
+            showNotification(`✅ Pembayaran Diterima! Tekan tombol "Pesan" untuk mengirim order.`, 'success');
             closeModal('payment-detail'); // Tutup modal detail jika verifikasi berhasil
         }
         
@@ -459,6 +483,35 @@
       }
       
       updateCart(); 
+    }
+
+    // FUNGSI MENAMPILKAN NOTIFIKASI POP-UP
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = 'notification'; 
+        notification.textContent = message;
+        
+        // Atur warna notifikasi (sesuai index.css)
+        if (type === 'success') {
+            notification.style.backgroundColor = '#068b18'; // Warna hijau
+        } else if (type === 'error') {
+            notification.style.backgroundColor = '#d14838'; // Warna merah
+        } else {
+             notification.style.backgroundColor = '#333';
+        }
+
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10); 
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300); 
+        }, 5000); // Notifikasi hilang setelah 5 detik
     }
 
     function checkout() {
