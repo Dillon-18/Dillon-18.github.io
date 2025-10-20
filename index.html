@@ -86,9 +86,6 @@
   </div>
   
   <script>
-    // ===========================================
-    // === DATA MENU LENGKAP DENGAN FOTO FILE ===
-    // ===========================================
     const menuData = [
       { name: 'Nasi Goreng Spesial', price: 25000, category: 'makanan', img: 'nasgor.jpg' },
       { name: 'Mie Ayam Bakso', price: 20000, category: 'makanan', img: 'yamyam.jpg' },
@@ -108,8 +105,7 @@
       { name: 'Air Mineral Botol', price: 5000, category: 'minuman', img: 'airmineral.jpg' },
       { name: 'Jus Mangga Segar', price: 16000, category: 'minuman', img: 'jusmangga.jpg' },
     ];
-    // ===========================================
-    
+
     const paymentMethods = [
       { name: 'GoPay', img: 'gopay.png', color: '#00A389', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.' },
       { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.' },
@@ -385,9 +381,16 @@
       payments = payments.filter(p => p.id !== currentPayment.id);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
+      alert(`✅ Pesanan ${name} berhasil dibuat! Pesanan Anda telah dikirim ke dapur.`);
       
-      window.location.href = `order_status.html?orderId=${newOrderId}`;
+      // Mengatur ulang tampilan pelanggan
+      cart = [];
+      currentPayment = null;
+      localStorage.removeItem('lastPaymentId'); 
+      document.getElementById('customer-name').value = ''; 
+      updateCart();
+      renderMenu(); 
+      document.getElementById('payment-status').textContent = "Belum dibayar ❌";
     }
 
     function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; }
