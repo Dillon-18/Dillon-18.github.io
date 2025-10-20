@@ -106,12 +106,14 @@
       { name: 'Jus Mangga Segar', price: 16000, category: 'minuman', img: 'jusmangga.jpg' },
     ];
 
+    // --- PEMBARUAN: Tambahkan field 'info' untuk instruksi pembayaran ---
     const paymentMethods = [
-      { name: 'GoPay', img: 'gopay.png', color: '#00A389' },
-      { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733' },
-      { name: 'Dana', img: 'dana.png', color: '#1B72E5' },
-      { name: 'Bank Transfer (BCA)', img: 'bca.png', color: '#004A99' },
+      { name: 'GoPay', img: 'gopay.png', color: '#00A389', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.' },
+      { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.' },
+      { name: 'Dana', img: 'dana.png', color: '#1B72E5', info: 'Transfer ke Virtual Account Dana: 8528XXXXXXXXX (nomor HP Anda).' },
+      { name: 'Bank Transfer (BCA)', img: 'bca.png', color: '#004A99', info: 'Transfer ke Rekening BCA: 1234567890 a.n. Pantry.' },
     ];
+    // -----------------------------------------------------------------
 
     let cart = [];
     let currentPayment = null; 
@@ -278,6 +280,11 @@
       const code = "PAY" + Date.now().toString().slice(-6); 
       const customerName = document.getElementById('customer-name').value.trim();
       
+      // --- PEMBARUAN: Dapatkan instruksi pembayaran ---
+      const selectedMethod = paymentMethods.find(m => m.name === methodName);
+      const instruction = selectedMethod.info; 
+      // ---------------------------------------------
+      
       const newPayment = { 
           id: code, 
           status: "pending", 
@@ -296,7 +303,10 @@
       payments.push(newPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      alert(`Anda memilih ${methodName}. Kode Bayar Anda: ${code}. Harap selesaikan pembayaran dan tunggu verifikasi kasir.`);
+      // --- PEMBARUAN: Tampilkan notifikasi dengan instruksi pembayaran ---
+      alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, tunggu kasir memverifikasi pembayaran Anda.`);
+      // ---------------------------------------------------------------
+      
       checkPaymentStatus(); 
       renderMenu(); // Muat ulang menu untuk DISABLE tombol jumlah item
     }
@@ -336,7 +346,6 @@
       }
       
       updateCart(); 
-      // renderMenu() tidak dipanggil di sini karena tidak perlu update tombol +/- setiap 2 detik.
     }
 
     function checkout() {
