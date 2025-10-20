@@ -53,7 +53,7 @@ html, body {
 }
 
 .btn-primary {
-  /* Tombol Utama (Pesan Sekarang / Dashboard Dapur) - Merah */
+  /* Tombol Utama (Checkout/Dashboard Kasir) - Merah */
   background-color: #ff6347;
   color: white;
 }
@@ -160,7 +160,6 @@ h2 {
     padding: 0;
     line-height: 1;
     cursor: pointer;
-    transition: 0.2s;
     font-weight: 600;
 }
 
@@ -174,8 +173,6 @@ h2 {
     font-weight: 600;
 }
 
-
-/* === SISA CSS LAINNYA === */
 
 /* --- Cart Summary --- */
 .cart-summary {
