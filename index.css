@@ -30,7 +30,7 @@ html, body {
 .brand-name {
   font-size: 24px;
   font-weight: 700;
-  color: #068b18; /* Warna utama Pantry */
+  color: #068b18; /* Warna utama Pantry (Hijau) */
 }
 
 .brand-logo {
@@ -84,7 +84,7 @@ html, body {
     gap: 30px;
 }
 
-/* === MENU SECTION === */
+/* === MENU SECTION (index.html) === */
 #menu-section h2 {
     color: #004A99; /* Biru untuk judul menu */
     border-bottom: 2px solid #004A99;
@@ -179,7 +179,7 @@ html, body {
   text-align: center;
 }
 
-/* === SIDEBAR / CART === */
+/* === SIDEBAR / CART (index.html) === */
 #sticky-sidebar {
     position: sticky;
     top: 80px; /* Di bawah navbar */
@@ -266,7 +266,7 @@ footer {
   font-size: 0.9em;
 }
 
-/* === MODAL POPUP === */
+/* === MODAL POPUP (Bersama) === */
 .modal {
   display: none; 
   position: fixed; 
