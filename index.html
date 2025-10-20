@@ -153,24 +153,51 @@
     let currentPayment = null; 
 
     document.addEventListener('DOMContentLoaded', () => {
-      const lastPaymentId = localStorage.getItem('lastPaymentId');
-      if (lastPaymentId) {
-          const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-          const lastPayment = payments.find(p => p.id === lastPaymentId);
-          if (lastPayment) {
-              currentPayment = lastPayment;
-              if (currentPayment.cart) {
-                  cart = currentPayment.cart;
-                  document.getElementById('customer-name').value = currentPayment.customerName || '';
-              }
-          } else {
-              localStorage.removeItem('lastPaymentId');
-          }
-      }
-      
-      renderMenu();
-      updateCart();
-      setInterval(checkPaymentStatus, 2000); 
+        const lastPaymentId = localStorage.getItem('lastPaymentId');
+        
+        // Ambil semua pembayaran yang tersimpan di localStorage
+        const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        
+        if (lastPaymentId) {
+            const lastPayment = payments.find(p => p.id === lastPaymentId);
+
+            if (lastPayment) {
+                
+                if (lastPayment.status === 'pending') {
+                    // === LOGIKA BARU: HAPUS JIKA STATUS MASIH PENDING SETELAH REFRESH ===
+                    
+                    // Hapus item pending dari daftar pembayaran global
+                    const updatedPayments = payments.filter(p => p.id !== lastPaymentId);
+                    localStorage.setItem('pantryPayments', JSON.stringify(updatedPayments));
+                    
+                    // Hapus penanda pembayaran terakhir
+                    localStorage.removeItem('lastPaymentId');
+                    
+                    // Reset semua data lokal
+                    currentPayment = null;
+                    cart = [];
+                    document.getElementById('customer-name').value = '';
+
+                    // Tampilkan notifikasi bahwa transaksi dibatalkan (reset)
+                    showNotification(`⚠️ Transaksi sebelumnya (Kode: ${lastPaymentId}) dibatalkan. Silakan pesan ulang!`, 'error');
+                    
+                } else if (lastPayment.status === 'paid') {
+                    // Jika statusnya sudah PAID, kita tetap pertahankan keranjang
+                    currentPayment = lastPayment;
+                    if (currentPayment.cart) {
+                        cart = currentPayment.cart;
+                        document.getElementById('customer-name').value = currentPayment.customerName || '';
+                    }
+                }
+            } else {
+                // Jika ID ada tapi pembayaran tidak ditemukan di daftar, hapus ID-nya
+                localStorage.removeItem('lastPaymentId');
+            }
+        }
+        
+        renderMenu();
+        updateCart();
+        setInterval(checkPaymentStatus, 2000); 
     });
 
     function redirectToCashier() {
@@ -443,10 +470,9 @@
         currentPayment.status = "paid"; 
         
         if(statusChanged) {
-             // === PERBAIKAN: AKTIFKAN NOTIFIKASI POP-UP ===
+             // AKTIFKAN NOTIFIKASI POP-UP
             showNotification(`✅ Pembayaran Diterima! Tekan tombol "Pesan" untuk mengirim order.`, 'success');
             closeModal('payment-detail'); // Tutup modal detail jika verifikasi berhasil
-            // ===========================================
         }
         
         paymentStatusEl.textContent = `Sudah diverifikasi (${found.method}) ✅`;
@@ -459,7 +485,7 @@
       updateCart(); 
     }
 
-    // === FUNGSI BARU: MENAMPILKAN NOTIFIKASI POP-UP ===
+    // FUNGSI MENAMPILKAN NOTIFIKASI POP-UP
     function showNotification(message, type = 'info') {
         const notification = document.createElement('div');
         notification.className = 'notification'; 
@@ -487,7 +513,6 @@
             }, 300); 
         }, 5000); // Notifikasi hilang setelah 5 detik
     }
-    // =================================================
 
     function checkout() {
       if (!currentPayment || currentPayment.status !== "paid") {
