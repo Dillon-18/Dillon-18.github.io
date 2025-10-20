@@ -29,7 +29,7 @@ html, body {
 .brand-name {
   font-size: 24px;
   font-weight: 700;
-  color: #068b18;
+  color: #068b18; /* BRAND COLOR: HIJAU */
 }
 
 .brand-logo {
@@ -51,22 +51,24 @@ html, body {
   transition: background-color 0.2s;
 }
 
+/* WARNA UTAMA: HIJAU */
 .btn-primary {
-  background-color: #ff6347; 
+  background-color: #068b18; /* HIJAU */
   color: white; 
   border: none;
 }
 .btn-primary:hover {
-  background-color: #e55a42;
+  background-color: #046e12; /* HIJAU GELAP */
 }
 
+/* WARNA SECONDARY: HIJAU BORDER */
 .btn-secondary {
   background-color: #ffffff; 
-  color: #ff6347; 
-  border: 1px solid #ff6347;
+  color: #068b18; /* HIJAU */
+  border: 1px solid #068b18; /* HIJAU */
 }
 .btn-secondary:hover {
-  background-color: #fff0ee;
+  background-color: #f0fff0; /* HIJAU MUDA */
 }
 
 /* === MAIN LAYOUT === */
@@ -83,8 +85,8 @@ html, body {
 }
 
 #menu-section h2 {
-  color: #ff6347;
-  border-bottom: 2px solid #ff6347;
+  color: #068b18; /* HIJAU */
+  border-bottom: 2px solid #068b18; /* HIJAU */
   padding-bottom: 5px;
   margin-bottom: 15px;
 }
@@ -122,7 +124,7 @@ html, body {
 }
 
 .menu-price {
-  color: #068b18;
+  color: #068b18; /* HIJAU */
   font-weight: 700;
 }
 
@@ -133,11 +135,11 @@ html, body {
   align-items: center;
   padding: 10px 15px;
   border-top: 1px solid #eee;
-  margin-top: auto; /* Push to bottom */
+  margin-top: auto;
 }
 
 .btn-qty {
-  background-color: #ff6347;
+  background-color: #068b18; /* HIJAU */
   color: white;
   border: none;
   padding: 5px 12px;
@@ -148,7 +150,7 @@ html, body {
   transition: background-color 0.2s;
 }
 .btn-qty:hover {
-  background-color: #e55a42;
+  background-color: #046e12; /* HIJAU GELAP */
 }
 
 .btn-qty:disabled {
@@ -164,7 +166,6 @@ html, body {
 
 /* === SIDEBAR / CART (DESKTOP) === */
 #sticky-sidebar {
-  /* Properti Desktop */
   position: sticky;
   top: 70px; 
   height: calc(100vh - 90px);
@@ -174,7 +175,7 @@ html, body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   box-sizing: border-box;
   align-self: flex-start;
-  overflow-y: visible; /* Penting untuk desktop */
+  overflow-y: visible;
 }
 
 .customer-info {
@@ -198,7 +199,6 @@ html, body {
 }
 
 #cart {
-    /* Gaya untuk membungkus di desktop */
     margin-top: 0;
     padding: 0;
     box-shadow: none;
@@ -208,8 +208,8 @@ html, body {
   list-style: none;
   padding: 0;
   margin: 15px 0;
-  max-height: 40vh; /* Batasi tinggi daftar keranjang di desktop */
-  overflow-y: auto; /* Scrollable di desktop jika terlalu banyak item */
+  max-height: 40vh;
+  overflow-y: auto;
 }
 
 #cart-items li {
@@ -225,13 +225,13 @@ html, body {
     padding-top: 10px !important;
     font-size: 1.1em;
 }
-.cart-total b { color: #ff6347; }
+.cart-total b { color: #068b18; } /* HIJAU */
 
 
 #checkout-btn {
   width: 100%;
   padding: 15px;
-  background-color: #068b18; 
+  background-color: #ff6347; /* MERAH/ORANGE UNTUK ACTION BUTTON */
   color: white; 
   border: none;
   border-radius: 8px;
@@ -242,25 +242,27 @@ html, body {
   transition: background-color 0.2s;
 }
 #checkout-btn:hover {
-  background-color: #046e12; 
+  background-color: #e55a42; 
 }
 #checkout-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-/* === DESKTOP ONLY & MOBILE SUMMARY === */
-.desktop-only {
-    /* Sembunyikan Payment Section di Mobile */
-    display: block;
+#payment-status {
+    /* Status pembayaran di desktop */
+    color: #555;
 }
 
+/* === MOBILE SUMMARY & STATUS COLOR === */
 #mobile-summary {
-    /* Sembunyikan mobile summary di Desktop */
-    display: none; 
+    display: none;
+}
+#mobile-summary #mobile-payment-status {
+    color: #068b18; /* HIJAU */
 }
 
-/* === FOOTER & MODAL STYLES (Dipotong untuk kerapian, diasumsikan sama) === */
+/* === FOOTER & MODAL STYLES === */
 footer {
   text-align: center;
   padding: 20px;
@@ -268,6 +270,25 @@ footer {
   border-top: 1px solid #eee;
   color: #999;
   font-size: 0.9em;
+}
+.notification {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 2001; 
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.notification.show {
+  opacity: 1;
+  visibility: visible;
 }
 .modal {
   display: none; 
@@ -291,8 +312,8 @@ footer {
   box-shadow: 0 8px 16px rgba(0,0,0,0.3);
 }
 .modal-content h2 {
-    color: #ff6347;
-    border-bottom: 2px solid #ff6347;
+    color: #068b18; /* HIJAU */
+    border-bottom: 2px solid #068b18; /* HIJAU */
     padding-bottom: 10px;
     margin-top: 0;
 }
@@ -302,22 +323,31 @@ footer {
   font-size: 28px;
   font-weight: bold;
 }
-/* === AKHIR FOOTER & MODAL STYLES === */
+.close:hover,
+.close:focus {
+  color: #333;
+  text-decoration: none;
+  cursor: pointer;
+}
+.contact-link {
+    color: #004A99;
+    text-decoration: none;
+    font-weight: 600;
+}
+.contact-link:hover {
+    text-decoration: underline;
+}
 
-
-/* ======================================= */
-/* === RESPONSIVE / MOBILE (MAX-WIDTH 768px) === */
-/* ======================================= */
+/* --- RESPONSIVE / MOBILE (SWIPE UP PANEL) --- */
 
 @media (max-width: 768px) {
     
     .container {
-        /* Tambahkan padding di bawah agar tidak tertutup sticky sidebar */
         padding-bottom: 110px; 
         margin-top: 10px;
         padding: 0 10px 110px 10px;
-        background: none; /* Hapus background container utama */
-        box-shadow: none; /* Hapus box-shadow container utama */
+        background: none;
+        box-shadow: none;
     }
 
     .content-grid {
@@ -345,20 +375,18 @@ footer {
         justify-content: space-between;
         padding: 10px 0;
         margin-bottom: 15px; 
-        order: 1; /* Pindah ke atas tombol checkout di flex */
+        order: 1;
     }
 
     /* FIX: SWIPE UP PANEL */
     #sticky-sidebar {
-        /* Ganti properti Desktop ke Mobile */
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
         
-        /* Tinggi awal minimal (hanya cukup untuk summary dan tombol) */
         height: auto; 
-        max-height: 70vh; /* Tinggi maksimum saat di-swipe ke atas */
+        max-height: 70vh; 
 
         padding: 15px;
         border-radius: 10px 10px 0 0; 
@@ -367,15 +395,12 @@ footer {
         background-color: #ffffff;
         box-sizing: border-box;
         
-        /* Aktifkan Swipe/Scroll */
-        overflow-y: auto; 
+        overflow-y: auto; /* Memungkinkan geser ke atas */
         
-        /* Atur layout konten di dalamnya */
         display: flex;
         flex-direction: column; 
     }
 
-    /* Pastikan #cart tidak memiliki margin/padding yang aneh */
     #cart {
         margin-top: 0; 
         padding: 0;
@@ -383,17 +408,19 @@ footer {
         flex-direction: column;
     }
     
-    /* Tombol checkout selalu di bawah summary */
     #checkout-btn {
+        /* Kembali menggunakan warna HIJAU untuk tombol utama di mobile */
+        background-color: #068b18; 
         width: 100%;
-        margin-top: 0; /* Jarak sudah diatur oleh mobile-summary */
+        margin-top: 0; 
         order: 2; 
-        flex-shrink: 0; /* Jangan biarkan tombol ikut scroll saat digeser */
+        flex-shrink: 0; 
     }
-    
-    /* Atur tampilan Customer Info dan Keranjang agar tergulir */
+    #checkout-btn:hover {
+        background-color: #046e12; 
+    }
+
     .customer-info {
-        /* customer info dan detail keranjang adalah konten yang akan digulir */
         margin-top: 0;
         padding: 0 0 15px 0;
         border-bottom: 1px solid #eee;
@@ -401,7 +428,6 @@ footer {
     }
     
     #cart h2 {
-        /* Judul Keranjang */
         margin-top: 0;
         border-bottom: 1px solid #ddd;
         padding-bottom: 10px;
@@ -409,14 +435,12 @@ footer {
     }
 
     #cart-items {
-        /* Daftar Item */
         max-height: none;
         overflow-y: visible;
         margin: 15px 0;
     }
 
-
-    /* Handle Bar (memberi tahu user bisa di-swipe) */
+    /* Handle Bar */
     #sticky-sidebar::before {
         content: '';
         display: block;
@@ -426,5 +450,10 @@ footer {
         border-radius: 5px;
         margin: -5px auto 10px auto; 
         flex-shrink: 0; 
+    }
+    
+    /* Override warna total di mobile summary */
+    #mobile-cart-total {
+        color: #068b18 !important; 
     }
 }
