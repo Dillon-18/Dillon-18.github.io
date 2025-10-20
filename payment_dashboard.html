@@ -170,7 +170,7 @@
     
     function loadPayments() {
         const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        // HANYA tampilkan pembayaran yang statusnya 'pending' (menunggu verifikasi)
+        // HANYA tampilkan pembayaran yang statusnya 'pending' (menunggu verifikasi) dan bukan Tunai
         const pendingPayments = payments.filter(p => p.status === 'pending');
         
         const listEl = document.getElementById('payment-verification-list');
