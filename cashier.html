@@ -39,6 +39,7 @@
         box-shadow: 0 4px 10px rgba(0,0,0,0.08);
         transition: all 0.3s; 
         position: relative;
+        margin-bottom: 15px;
     }
     .order-card:hover {
         box-shadow: 0 6px 12px rgba(0,0,0,0.15);
@@ -52,7 +53,7 @@
       border-bottom: 1px dashed #ccc;
       padding-bottom: 5px;
     }
-    .order-info { /* New class for grouping customer name and time */
+    .order-info { 
         display: flex;
         flex-direction: column;
         gap: 3px;
@@ -67,7 +68,7 @@
       color: #d14838; 
       font-size: 1.2em;
     }
-    .order-payment-id { /* New class for payment ID style */
+    .order-payment-id { 
         font-size:0.8em; 
         color:#999;
     }
@@ -93,7 +94,7 @@
         display: flex;
         justify-content: space-between;
     }
-    .order-total-wrapper { /* New class for total alignment */
+    .order-total-wrapper { 
         text-align: right; 
         margin-top: 10px;
     }
@@ -180,70 +181,87 @@
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!sessionStorage.getItem("cashierAuth")) {
-            alert("Akses ditolak. Silakan login kasir terlebih dahulu.");
-            window.location.href = "index.html";
-            return;
+    // === MEKANISME PROTEKSI AKSES KASIR ===
+    (function checkAccess() {
+        const KASIR_PASS = "kasir123";
+        const isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
+
+        if (!isAuthorized) {
+            const password = prompt("Masukkan password kasir untuk mengakses Dashboard:");
+
+            if (password === KASIR_PASS) {
+                sessionStorage.setItem('cashierAuth', 'true');
+            } else {
+                alert("Password salah. Akses ditolak. Anda akan diarahkan kembali ke Menu Utama.");
+                window.location.href = 'index.html';
+            }
         }
+    })();
+    // ======================================
+    
+    document.addEventListener('DOMContentLoaded', () => {
         loadOrders();
-        setInterval(loadOrders, 3000); // Muat ulang data setiap 3 detik
+        // Auto-refresh untuk pesanan setiap 5 detik
+        setInterval(loadOrders, 5000); 
     });
 
     function formatRupiah(number) {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        }).format(number);
+        return `Rp${number.toLocaleString('id-ID')}`;
     }
-
-    function logout() {
-        sessionStorage.removeItem("cashierAuth");
-        window.location.href = "index.html";
-    }
+    
+    // ======================================
+    // === FUNGSI MANAJEMEN PESANAN (ORDER) ===
+    // ======================================
 
     function loadOrders() {
-      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       const orderListBaru = document.getElementById('order-list-baru');
       const orderListProses = document.getElementById('order-list-proses');
       const orderListSelesai = document.getElementById('order-list-selesai');
+      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       
       orderListBaru.innerHTML = '';
       orderListProses.innerHTML = '';
       orderListSelesai.innerHTML = '';
-
+      
       orders.forEach(order => {
-        let targetList;
-        if (order.status === 'Baru') targetList = orderListBaru;
-        else if (order.status === 'Diproses') targetList = orderListProses;
-        else if (order.status === 'Selesai') targetList = orderListSelesai;
-        else return; // Lewati jika status tidak valid
-        
-        const itemsList = order.items.map(item => `
-          <li>${item.name} (${item.qty}x)</li>
-        `).join('');
-
         const card = document.createElement('div');
-        card.className = `order-card status-${order.status.toLowerCase().replace(' ', '')}`;
+        card.className = 'order-card';
+        card.id = 'order-' + order.id;
+        
+        const itemList = order.items.map(item => 
+          `<li><span>${item.name} x${item.qty}</span> <span>${formatRupiah(item.price * item.qty)}</span></li>`
+        ).join('');
+
+        let statusClass = 'status-baru';
+        let targetList = orderListBaru;
+        
+        if (order.status === 'Proses') {
+            statusClass = 'status-proses';
+            targetList = orderListProses;
+        } else if (order.status === 'Selesai') {
+            statusClass = 'status-selesai';
+            targetList = orderListSelesai;
+        }
+        
+        const isDisabled = order.status === 'Selesai' ? 'disabled' : '';
+
         card.innerHTML = `
           <div class="order-header">
-            <h4 style="margin:0; font-size:1.4em;">${order.customerName}</h4> 
-            <span class="order-time">${order.time}</span>
-          </div>
-          <hr style="border:0; border-top:1px solid #eee; margin: 8px 0;">
-          <p style="font-size:0.9em; color:#777; margin-top:5px;">ID Pesanan: ${order.id}</p>
-          <p style="font-weight: 600;">Detail:</p>
-          <ul class="order-items-list">${itemsList}</ul>
-          <div class="order-footer">
-            <span class="order-total">Total: ${formatRupiah(order.total)}</span>
-            <div class="action-buttons">
-              ${order.status === 'Baru' ? `
-                <button onclick="updateOrderStatus(${order.id}, 'Diproses')" class="btn-primary">Proses</button>` : ''}
-              ${order.status === 'Diproses' ? `
-                <button onclick="updateOrderStatus(${order.id}, 'Selesai')" class="btn-success">Selesai</button>` : ''}
-              <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
+            <div class="order-info">
+                <span class="order-customer">${order.customerName || 'Nama Tidak Diketahui'}</span>
+                <span class="order-time">#${order.time}</span>
+                <span class="order-payment-id">Kode Bayar: ${order.paymentId || 'N/A'}</span>
             </div>
+            <span class="order-status ${statusClass}">${order.status}</span>
+          </div>
+          <ul class="item-list">${itemList}</ul>
+          <div class="order-total-wrapper">
+            <span class="order-total">${formatRupiah(order.total)}</span>
+          </div>
+          <div class="action-btn-group">
+            <button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')" ${isDisabled} ${order.status === 'Selesai' ? '' : order.status === 'Proses' ? 'disabled' : ''}>Proses</button>
+            <button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')" ${isDisabled} ${order.status === 'Selesai' ? 'disabled' : ''}>Selesai</button>
+            <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
           </div>
         `;
         targetList.appendChild(card);
@@ -277,9 +295,9 @@
       let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       orders = orders.filter(order => order.id !== id);
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
-      loadOrders(); 
+      loadOrders();
     }
-</script>
+  </script>
 
 </body>
 </html>
