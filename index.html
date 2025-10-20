@@ -82,7 +82,7 @@
       <div id="payment-options" style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto;">
           </div>
       
-      <p id="payment-instruction-footer" style="margin-top: 30px;">Untuk pembayaran QR/Transfer, tunggu kasir memverifikasi. Untuk Tunai, Anda langsung dapat menekan "Pesan".</p>
+      <p id="payment-instruction-footer" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaran Anda sebelum menekan tombol "Pesan".</p>
     </div>
   </div>
 
@@ -108,7 +108,8 @@
     ];
 
     const paymentMethods = [
-      { name: 'Tunai', img: 'cash.png', color: '#068b18', info: 'Bayar langsung di kasir saat mengambil pesanan.', isInstant: true }, 
+      // Perubahan: isInstant diubah menjadi false untuk Tunai
+      { name: 'Tunai', img: 'cash.png', color: '#068b18', info: 'Bayar di kasir saat mengambil pesanan. Kasir akan memverifikasi pembayaran Anda.', isInstant: false }, 
       { name: 'GoPay', img: 'gopay.png', color: '#00A389', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.', isInstant: false },
       { name: 'ShopeePay', img: 'shopeepay.png', color: '#FF5733', info: 'Scan kode QRIS di konter kasir. Pastikan nama Merchant: PANTRY.', isInstant: false },
       { name: 'Dana', img: 'dana.png', color: '#1B72E5', info: 'Transfer ke Virtual Account Dana: 8528XXXXXXXXX (nomor HP Anda).', isInstant: false },
@@ -260,17 +261,18 @@
           `;
           btn.onmouseover = () => { btn.style.opacity = '0.9'; btn.style.transform = 'translateY(-1px)'; };
           btn.onmouseout = () => { btn.style.opacity = '1'; btn.style.transform = 'translateY(0)'; };
-          btn.onclick = () => selectPaymentMethod(method.name, total, method.isInstant);
+          btn.onclick = () => selectPaymentMethod(method.name, total); // Hapus parameter isInstant
           optionsEl.appendChild(btn);
       });
       
-      // Mengubah footer instruksi berdasarkan opsi yang ada
-      paymentFooter.textContent = 'Untuk pembayaran QR/Transfer, tunggu kasir memverifikasi. Untuk Tunai, Anda langsung dapat menekan "Pesan".';
+      // Mengubah footer instruksi: semua metode perlu verifikasi
+      paymentFooter.textContent = 'Tunggu kasir memverifikasi pembayaran Anda sebelum menekan tombol "Pesan".';
 
       document.getElementById('payment-modal').style.display = 'block';
     }
 
-    function selectPaymentMethod(methodName, total, isInstant) {
+    // Hapus parameter isInstant karena semua membutuhkan verifikasi
+    function selectPaymentMethod(methodName, total) { 
       closeModal('payment');
       
       const code = "PAY" + Date.now().toString().slice(-6); 
@@ -279,8 +281,8 @@
       const selectedMethod = paymentMethods.find(m => m.name === methodName);
       const instruction = selectedMethod.info; 
       
-      // LOGIC UTAMA: Tentukan status pembayaran (paid jika Tunai)
-      const paymentStatus = isInstant ? "paid" : "pending"; 
+      // LOGIC UTAMA: Semua metode sekarang berstatus "pending"
+      const paymentStatus = "pending"; 
       
       const newPayment = { 
           id: code, 
@@ -300,11 +302,8 @@
       payments.push(newPayment);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      if (isInstant) {
-          alert(`✅ Pembayaran Tunai berhasil diajukan! Total: Rp${formatRupiah(total)}. Silakan tekan tombol "Pesan" untuk mengirim order ke dapur.`);
-      } else {
-          alert(`PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, **JANGAN UBAH JUMLAH ITEM**, tunggu kasir memverifikasi pembayaran Anda.`);
-      }
+      // Notifikasi baru untuk semua metode
+      alert(`PENTING: Pembayaran ${methodName} berhasil diajukan.\n\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah melakukan pembayaran, tunggu kasir memverifikasi sebelum menekan "Pesan".`);
       
       checkPaymentStatus(); 
       renderMenu(); 
@@ -339,7 +338,7 @@
         const statusChanged = currentPayment.status !== "paid";
         currentPayment.status = "paid"; 
         
-        if(statusChanged && found.method !== "Tunai") { // Hanya beri notifikasi pop-up jika status berubah dari pending ke paid (non-tunai)
+        if(statusChanged) { 
             alert(`✅ Pembayaran Diverifikasi! Anda sekarang bisa menekan tombol "Pesan" untuk mengirim order ke dapur.`);
         }
         
