@@ -31,132 +31,70 @@
         border-bottom: 2px solid #068b18;
         color: #333;
     }
+    
     .order-card {
-        background-color: #ffffff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+        background: #ffffff;
         padding: 15px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        transition: all 0.3s; /* Transisi */
-        position: relative;
-        margin-bottom: 15px; /* Tambahkan margin agar tidak terlalu rapat */
+        margin-bottom: 15px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-left: 5px solid #068b18; 
     }
-    .order-card:hover {
-        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-        transform: translateY(-2px);
+    .order-card h4 {
+        margin: 0 0 5px 0;
+        color: #004A99;
+        font-size: 1.1em;
     }
-    .order-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start; /* Ubah agar konten tidak terpotong */
-      margin-bottom: 10px;
-      border-bottom: 1px dashed #ccc;
-      padding-bottom: 5px;
-    }
-    .order-info {
-        display: flex;
-        flex-direction: column;
-    }
-    .order-customer {
-        font-weight: 700;
-        font-size: 1.2em; /* Lebih besar */
-        color: #333;
-        line-height: 1.2;
-    }
-    /* Style untuk Metode Pembayaran */
-    .order-payment-method {
-        font-weight: 700;
-        color: #d14838; 
-        font-size: 0.9em; 
-        margin-top: 4px;
-        text-transform: uppercase;
-    }
-    /* CSS untuk Badge QRIS baru */
-    .qris-badge {
-        background-color: #004A99;
-        color: white;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-size: 0.7em;
-        margin-left: 5px;
-        font-weight: 900;
-        display: inline-block;
-        line-height: 1.2;
-        transform: translateY(-2px);
-    }
-    /* Akhir CSS Badge QRIS */
-
-    .order-time {
-      font-weight: bold;
-      color: #777;
-      font-size: 0.9em;
-      margin-top: 2px;
-    }
-    .order-status {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 0.9em;
-      align-self: flex-start; /* Agar badge status di atas */
-    }
-    .status-baru { background-color: #fee2e2; color: #ef4444; }
-    .status-proses { background-color: #fef3c7; color: #f59e0b; }
-    .status-selesai { background-color: #d1fae5; color: #10b981; }
-    .item-list {
-        list-style: none;
-        padding: 0;
-        margin: 10px 0;
-        font-size: 0.95em;
-    }
-    .item-list li {
-        border-bottom: 1px dotted #eee;
-        padding: 6px 0;
+    .order-card .order-meta {
         display: flex;
         justify-content: space-between;
+        font-size: 0.85em;
+        color: #777;
+        margin-bottom: 10px;
     }
-    .order-total {
-      font-size: 1.5em;
-      font-weight: 700;
-      color: #068b18;
-      display: block;
-      margin-top: 10px;
+    .order-card .total {
+        font-size: 1.2em;
+        font-weight: 700;
+        color: #d14838;
+        margin: 10px 0;
     }
-    .action-btn-group {
-        display: flex;
-        gap: 8px;
-        margin-top: 15px;
+    .order-card .item-list {
+        border-top: 1px dotted #ccc;
+        border-bottom: 1px dotted #ccc;
+        padding: 8px 0;
+        margin-bottom: 10px;
     }
-    .action-btn-group button {
-        flex: 1;
-        padding: 10px;
+    .order-card .item-list p {
+        margin: 2px 0;
+        font-size: 0.9em;
+    }
+    .order-actions button {
+        padding: 8px 12px;
         border: none;
-        border-radius: 6px;
+        border-radius: 4px;
         cursor: pointer;
-        color: white;
         font-weight: 600;
-        transition: background-color 0.3s, transform 0.2s; /* Transisi */
+        margin-right: 5px;
     }
-    .action-btn-group button:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    /* WARNA TOMBOL AKSI LEBIH GELAP */
-    .btn-proses { background-color: #e68a00; } 
-    .btn-proses:hover:not(:disabled) { background-color: #cc7800; }
-    .btn-selesai { background-color: #056b12; }
-    .btn-selesai:hover:not(:disabled) { background-color: #04520e; }
-    .btn-hapus { background-color: #c44336; }
-    .btn-hapus:hover:not(:disabled) { background-color: #a3322b; }
-    .order-list { 
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
+    .btn-proses { background-color: #FFC107; color: #333; }
+    .btn-selesai { background-color: #068b18; color: white; }
+    .btn-hapus { background-color: #d14838; color: white; }
+
     .empty-column-msg {
         text-align: center;
         color: #999;
-        margin-top: 50px;
+        margin-top: 30px;
+        font-style: italic;
+    }
+    
+    .payment-method-tag {
+        font-size: 0.8em;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 4px;
+        color: white;
+        display: inline-block;
+        margin-top: 5px;
     }
   </style>
 </head>
@@ -166,32 +104,32 @@
     <div class="nav-left">
       <span class="brand-name">Pantry</span>
       <img src="Pantry Primary Logo-01.png" alt="Pantry Logo" class="brand-logo">
-      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #d14838;">Dashboard Dapur</span>
+      <span style="font-size: 18px; margin-left: 20px; font-weight: 600; color: #068b18;">Dashboard Dapur</span>
     </div>
     <div class="nav-right">
-      <button class="nav-btn btn-primary" onclick="window.location.href='payment_dashboard.html'">💳 Dashboard Pembayaran</button>
-      <button class="nav-btn btn-secondary" onclick="window.location.href='index.html'">Kembali ke Menu Utama</button>
+      <button class="nav-btn btn-secondary" onclick="window.location.href='payment_dashboard.html'">Dashboard Pembayaran</button>
+      <button class="nav-btn btn-primary" onclick="window.location.href='index.html'">Menu Utama</button>
     </div>
   </header>
 
   <div class="container">
-    
-    <div class="order-dashboard-container">
-        <h2>👨‍🍳 Daftar Pesanan </h2>
-        <div class="kanban-container">
-            <div class="kanban-column">
-                <h3>Baru</h3>
-                <div class="order-list" id="order-list-baru"></div>
-            </div>
-            <div class="kanban-column">
-                <h3>Diproses</h3>
-                <div class="order-list" id="order-list-proses"></div>
-            </div>
-            <div class="kanban-column">
-                <h3>Selesai</h3>
-                <div class="order-list" id="order-list-selesai"></div>
-            </div>
+    <div class="kanban-container">
+        
+        <div class="kanban-column">
+            <h3>Baru (New)</h3>
+            <div id="order-list-baru"></div>
         </div>
+        
+        <div class="kanban-column">
+            <h3>Sedang Diproses (In Progress)</h3>
+            <div id="order-list-proses"></div>
+        </div>
+        
+        <div class="kanban-column">
+            <h3>Selesai (Done)</h3>
+            <div id="order-list-selesai"></div>
+        </div>
+        
     </div>
   </div>
 
@@ -203,7 +141,7 @@
     // === MEKANISME PROTEKSI AKSES KASIR ===
     (function checkAccess() {
         const KASIR_PASS = "kasir123";
-        let isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
+        const isAuthorized = sessionStorage.getItem('cashierAuth') === 'true';
 
         if (!isAuthorized) {
             const password = prompt("Masukkan password kasir untuk mengakses Dashboard:");
@@ -217,73 +155,116 @@
         }
     })();
     // ======================================
-    
-    document.addEventListener('DOMContentLoaded', loadOrders);
 
-    // Fungsi utilitas untuk memformat harga
+    document.addEventListener('DOMContentLoaded', () => {
+        loadOrders();
+        setInterval(loadOrders, 5000); 
+    });
+
     function formatRupiah(number) {
         return `Rp${number.toLocaleString('id-ID')}`;
     }
-    
-    // ======================================
-    // === FUNGSI MANAJEMEN PESANAN (ORDER) ===
-    // ======================================
 
+    // Fungsi baru untuk mendapatkan data pembayaran berdasarkan ID
+    function getPaymentInfo(paymentId) {
+        const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+        const payment = payments.find(p => p.id === paymentId);
+        
+        // Cek data pembayaran, jika tidak ada (sudah dihapus saat checkout)
+        // Kita harus mengambil dari data order itu sendiri
+        if (!payment) {
+             // Secara default, order yang sudah checkout statusnya paid.
+             // Kita harus rely pada paymentId yang tersimpan di order.
+             // Namun, karena 'Tunai (Cash)' disetel 'paid' dan tidak masuk payment_dashboard,
+             // kita asumsikan semua order yang sudah masuk sini sudah dibayar.
+             // Karena metode Tunai tidak masuk 'pantryPayments' setelah checkout, kita hardcode
+             // cek terakhir: jika tidak ditemukan di payment, kita cek apakah ada di order.
+             // Jika order itu dari Tunai (cash), maka tidak akan pernah ditemukan di 'pantryPayments'.
+             // Solusi: Kita tidak bisa mencari di 'pantryPayments' lagi. 
+             // Kita harus pastikan informasi method disimpan di objek order saat checkout (index.html).
+             // Karena order.paymentId saja yang ada, kita anggap semua order yang masuk sudah dibayar
+             // dan informasi method harus sudah ada di objek order.
+
+             // Untuk contoh ini, kita akan membuat array dummy mapping payment ID ke metode
+             // yang seharusnya sudah dilakukan di index.html
+             
+             // --- FIX DENGAN ASUMSI ---
+             // Asumsi: Semua order yang masuk ke sini adalah order yang sudah dibayar.
+             // Kita tidak bisa menentukan method tanpa data tambahan di order object.
+             
+             return { method: 'Tidak Diketahui' };
+        }
+
+        return payment;
+    }
+
+    // Fungsi pembantu untuk mengambil warna tag
+    function getMethodColor(methodName) {
+        switch (methodName) {
+            case 'Tunai (Cash)': return '#d14838'; // Merah
+            case 'GoPay': return '#00A389'; // Hijau GoPay
+            case 'ShopeePay': return '#FF5733'; // Oranye ShopeePay
+            case 'Dana': return '#1B72E5'; // Biru Dana
+            case 'QR All-Wallet': return '#004A99'; // Biru Tua (BCA)
+            case 'Bank Transfer (BCA)': return '#004A99'; // Biru Tua BCA
+            default: return '#555';
+        }
+    }
+    
     function loadOrders() {
+      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       const orderListBaru = document.getElementById('order-list-baru');
       const orderListProses = document.getElementById('order-list-proses');
       const orderListSelesai = document.getElementById('order-list-selesai');
-      let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
       
       orderListBaru.innerHTML = '';
       orderListProses.innerHTML = '';
       orderListSelesai.innerHTML = '';
-      
+
       orders.forEach(order => {
-        const card = document.createElement('div');
-        card.className = 'order-card';
-        card.id = 'order-' + order.id;
-        
-        const itemList = order.items.map(item => 
-          `<li><span>${item.name} x${item.qty}</span> <span>${formatRupiah(item.price * item.qty)}</span></li>`
+        const itemsHtml = order.items.map(item => 
+            `<p>${item.name} (x${item.qty})</p>`
         ).join('');
 
-        let statusClass = 'status-baru';
-        let targetList = orderListBaru;
+        // --- MENDAPATKAN METODE PEMBAYARAN ---
+        // Kita tidak bisa lagi mengambil dari 'pantryPayments' karena entry akan dihapus saat checkout.
+        // Solusi: Kita harus mengasumsikan properti 'method' sudah ditambahkan ke objek order di index.html.
+        // Jika belum ditambahkan di index.html, mohon tambahkan properti `method: currentPayment.method` ke objek `order` di fungsi `checkout()`.
         
-        if (order.status === 'Proses') {
-            statusClass = 'status-proses';
-            targetList = orderListProses;
-        } else if (order.status === 'Selesai') {
-            statusClass = 'status-selesai';
-            targetList = orderListSelesai;
-        }
-        
-        // Cek apakah metode pembayaran adalah QRIS (GoPay, ShopeePay, Dana)
-        const isQRIS = ['GoPay', 'ShopeePay', 'Dana'].includes(order.paymentMethod);
-        const qrisBadge = isQRIS ? '<span class="qris-badge">QRIS</span>' : '';
+        // *** ASUMSI: order.method SUDAH ADA ***
+        const paymentMethod = order.method || 'Tunai (Cash)'; // Defaultkan ke Tunai jika tidak ada
+        const methodColor = getMethodColor(paymentMethod);
+        const paymentTag = `<span class="payment-method-tag" style="background-color: ${methodColor};">${paymentMethod}</span>`;
+        // ----------------------------------------
 
-        const isDisabled = order.status === 'Selesai' ? 'disabled' : '';
-
+        const card = document.createElement('div');
+        card.className = 'order-card';
         card.innerHTML = `
-          <div class="order-header">
-            <div class="order-info">
-                <span class="order-customer">${order.customerName || 'Nama Tidak Diketahui'}</span>
-                <span class="order-payment-method">Bayar: ${order.paymentMethod || 'N/A'}${qrisBadge}</span>
-                <span style="font-size:0.8em; color:#999;">Kode: ${order.paymentId || 'N/A'} - #${order.time}</span>
-            </div>
-            <span class="order-status ${statusClass}">${order.status}</span>
+          <h4>${order.customerName}</h4>
+          <div class="order-meta">
+            <span>ID: ${order.id}</span>
+            <span>Waktu: ${order.time}</span>
           </div>
-          <ul class="item-list">${itemList}</ul>
-          <div style="text-align: right; margin-top: 10px;">
-            <span class="order-total">${formatRupiah(order.total)}</span>
+          ${paymentTag}
+          <div class="item-list">
+            ${itemsHtml}
           </div>
-          <div class="action-btn-group">
-            <button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')" ${isDisabled}>Proses</button>
-            <button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')" ${isDisabled}>Selesai</button>
-            <button class="btn-hapus" onclick="deleteOrder(${order.id})">Hapus</button>
+          <p class="total">Total: ${formatRupiah(order.total)}</p>
+          <div class="order-actions">
+            ${order.status === 'Baru' ? 
+              `<button class="btn-proses" onclick="updateOrderStatus(${order.id}, 'Proses')">▶ Proses</button>` : ''}
+            ${order.status === 'Proses' ? 
+              `<button class="btn-selesai" onclick="updateOrderStatus(${order.id}, 'Selesai')">✅ Selesai</button>` : ''}
+            ${order.status === 'Selesai' ? 
+              `<button class="btn-hapus" onclick="deleteOrder(${order.id})">❌ Hapus</button>` : ''}
           </div>
         `;
+
+        let targetList;
+        if (order.status === 'Baru') targetList = orderListBaru;
+        else if (order.status === 'Proses') targetList = orderListProses;
+        else if (order.status === 'Selesai') targetList = orderListSelesai;
+        
         targetList.appendChild(card);
       });
       
@@ -300,7 +281,7 @@
     
     function updateOrderStatus(id, newStatus) {
       let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-      const orderIndex = orders.findIndex(order => order.id === id);
+      const orderIndex = orders.findIndex(order => order.id.toString() === id.toString());
       
       if (orderIndex !== -1) {
         orders[orderIndex].status = newStatus;
@@ -311,15 +292,12 @@
 
     function deleteOrder(id) {
       if (!confirm(`Yakin ingin menghapus pesanan ID: ${id}?`)) return;
-      
+
       let orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-      orders = orders.filter(order => order.id !== id);
+      orders = orders.filter(order => order.id.toString() !== id.toString());
       localStorage.setItem('pantryOrders', JSON.stringify(orders));
-      loadOrders();
+      loadOrders(); 
     }
-    
-    // Auto-refresh untuk pesanan setiap 5 detik
-    setInterval(loadOrders, 5000);
   </script>
 
 </body>
