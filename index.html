@@ -84,7 +84,7 @@
       <p style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
     </div>
   </div>
-  
+
   <script>
     const menuData = [
       { name: 'Nasi Goreng Spesial', price: 25000, category: 'makanan', img: 'nasgor.jpg' },
@@ -112,6 +112,7 @@
       { name: 'Dana', img: 'dana.png', color: '#1B72E5', info: 'Transfer ke Virtual Account Dana: 8528XXXXXXXXX (nomor HP Anda).' },
       { name: 'Bank Transfer (BCA)', img: 'bca.png', color: '#004A99', info: 'Transfer ke Rekening BCA: 1234567890 a.n. Pantry.' },
       { name: 'QR All-Wallet', img: 'qris.png', color: '#004A99', info: 'Scan QRIS berikut. Pastikan nama Merchant: PANTRY.' }, 
+      // >>> METODE TUNAI DITAMBAHKAN <<<
       { name: 'Tunai (Cash)', img: 'cash.png', color: '#d14838', info: 'Bayar Tunai langsung ke kasir. Kasir akan memverifikasi di tempat.' }
     ];
 
@@ -143,7 +144,7 @@
       const pass = prompt("Masukkan password kasir:");
       if (pass === "kasir123") {
         sessionStorage.setItem("cashierAuth", "true");
-        window.location.href = "payment_dashboard.html"; 
+        window.location.href = "cashier.html";
       } else if (pass) alert("Password salah!");
     }
 
@@ -222,7 +223,6 @@
       const isPaid = currentPayment && currentPayment.status === "paid";
       const isPending = currentPayment && currentPayment.status === "pending";
 
-      // Tombol Pesan hanya aktif jika sudah LUNAS (Paid)
       checkoutBtn.disabled = (total === 0 || !isPaid);
       
       if (isPending) {
@@ -275,7 +275,7 @@
       const selectedMethod = paymentMethods.find(m => m.name === methodName);
       const instruction = selectedMethod.info; 
       
-      // LOGIKA TUNAI: Jika Tunai, status langsung 'paid'
+      // >>> LOGIKA TUNAI BARU: Jika Tunai, status langsung 'paid' <<<
       const status = (methodName === 'Tunai (Cash)') ? 'paid' : 'pending';
       let alertMessage = '';
       
@@ -284,14 +284,15 @@
       } else {
           alertMessage = `PENTING: LAKUKAN PEMBAYARAN!\n\nMetode: ${methodName}\nKode Bayar Anda: ${code}\nTotal: Rp${formatRupiah(total)}\n\nINSTRUKSI:\n${instruction}\n\nSetelah Anda selesai transfer, **JANGAN UBAH JUMLAH ITEM**, tunggu kasir memverifikasi pembayaran Anda.`;
       }
+      // >>> AKHIR LOGIKA TUNAI BARU <<<
       
       const newPayment = { 
           id: code, 
-          status: status, 
+          status: status, // Menggunakan status baru
           total, 
           cart: JSON.parse(JSON.stringify(cart)), 
           time: new Date().toLocaleString('id-ID'),
-          method: methodName, 
+          method: methodName,
           customerName: customerName 
       };
 
@@ -322,7 +323,7 @@
       
       if (!found) {
         if (currentPayment.status === "paid") {
-            // Pesanan sudah dikirim ke dapur/selesai
+            // Ini terjadi setelah pesanan dikirim ke dapur (checkout)
             cart = [];
             currentPayment = null;
             localStorage.removeItem('lastPaymentId'); 
@@ -339,11 +340,13 @@
         currentPayment.status = "paid"; 
         
         if(statusChanged) {
+            // Alert ini hanya muncul jika status berubah dari pending ke paid (misalnya, setelah transfer diverifikasi kasir)
             alert(`✅ Pembayaran Diverifikasi! Anda sekarang bisa menekan tombol "Pesan" untuk mengirim order ke dapur.`);
         }
         
         paymentStatusEl.textContent = `Sudah diverifikasi (${found.method}) ✅`;
       } else {
+        // Jika statusnya pending atau tidak ditemukan (tapi currentPayment ada), anggap pending
         currentPayment.status = "pending";
         paymentStatusEl.textContent = "Menunggu verifikasi kasir ⏳";
       }
@@ -370,8 +373,7 @@
         total: currentPayment.total, 
         status: 'Baru', 
         time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-        paymentId: currentPayment.id,
-        method: currentPayment.method // Tambahkan metode pembayaran ke order
+        paymentId: currentPayment.id 
       };
 
       const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
@@ -379,20 +381,12 @@
       localStorage.setItem('pantryOrders', JSON.stringify(orders)); 
 
       let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-      // Hapus dari daftar pembayaran tertunda
       payments = payments.filter(p => p.id !== currentPayment.id);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      alert(`✅ Pesanan ${name} berhasil dibuat! Pesanan Anda telah dikirim ke dapur.`);
+      alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
       
-      // Mengatur ulang tampilan pelanggan
-      cart = [];
-      currentPayment = null;
-      localStorage.removeItem('lastPaymentId'); 
-      document.getElementById('customer-name').value = ''; 
-      updateCart();
-      renderMenu(); 
-      document.getElementById('payment-status').textContent = "Belum dibayar ❌";
+      window.location.href = `order_status.html?orderId=${newOrderId}`;
     }
 
     function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; }
