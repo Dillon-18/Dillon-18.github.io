@@ -34,8 +34,8 @@
         <div id="sticky-sidebar">
             
             <div class="customer-info">
-                <h3>Masukkan Nama Anda</h3>
-                <input type="text" id="customer-name" placeholder="Contoh: Budi" required>
+                <h3>Detail Pelanggan</h3>
+                <input type="text" id="customer-name" placeholder="Contoh: Budi (Masukan Nama Anda)" required>
             </div>
 
             <div id="cart">
@@ -43,9 +43,12 @@
                 <ul id="cart-items" class="desktop-only"><li style="color: #999; text-align: center;">Keranjang kosong.</li></ul>
                 
                 <div id="mobile-summary">
-                    <div class="cart-summary">
-                        <p id="mobile-cart-total" style="margin: 0; font-weight: 700; color: #333;">Total: Rp0</p>
-                        <p id="mobile-payment-status" style="margin: 0; font-size: 0.8em; color: #ff6347;">Belum dibayar</p>
+                    <div id="mobile-summary-bar" onclick="openModal('cart-bottom-sheet')">
+                        <div class="cart-summary">
+                            <p id="mobile-cart-total-qty" style="margin: 0;">0 Item | Total: Rp0</p>
+                            <p id="mobile-payment-status" style="margin: 0; font-size: 0.8em; color: #ffc107;">Belum dibayar</p>
+                        </div>
+                        <button class="btn-cart-view">Keranjang Saya</button>
                     </div>
                 </div>
                 
@@ -62,6 +65,30 @@
 
   <footer>© 2025 Pantry — Dibuat dengan ❤️</footer>
 
+  <div id="cart-bottom-sheet-modal" class="bottom-sheet">
+    <div class="bottom-sheet-content">
+        <div class="bottom-sheet-header">
+            <h3>Keranjang Saya</h3>
+            <span class="close" onclick="closeModal('cart-bottom-sheet')">&times;</span>
+        </div>
+        <div class="bottom-sheet-body">
+            <div style="margin-top: 10px;">
+                <p style="font-size: 0.9em; color: #999;">Blue Tent Canteen, Jakarta</p>
+            </div>
+
+            <ul id="cart-modal-items" style="list-style: none; padding: 0;">
+                </ul>
+        </div>
+        <div class="bottom-sheet-footer">
+            <div id="cart-modal-total-display">
+                </div>
+            
+            <button id="continue-checkout-btn" class="btn-continue-checkout" onclick="continueToPayment()" disabled>
+                Lanjut Bayar
+            </button>
+        </div>
+    </div>
+  </div>
   <div id="info-modal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('info')">&times;</span>
@@ -81,7 +108,7 @@
   </div>
 
   <div id="payment-modal" class="modal">
-    <div class="modal-content" style="text-align:center;">
+    <div class="modal-content" style="max-width: 400px;">
       <span class="close" onclick="closeModal('payment')">&times;</span>
       <h2>Pilih Metode Pembayaran</h2>
       <p style="margin-bottom: 20px;">Total Pesanan: <b id="payment-total-display" style="color: #ff6347;"></b></p>
@@ -92,7 +119,7 @@
       <p id="payment-note" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
     </div>
   </div>
-    
+
   <div id="payment-detail-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('payment-detail')">&times;</span>
@@ -215,6 +242,58 @@
         else minumanEl.appendChild(div);
       });
     }
+    
+    // Fungsi untuk memperbarui jumlah item di cart-modal
+    function updateCartModal() {
+        const modalListEl = document.getElementById('cart-modal-items');
+        const totalDisplayEl = document.getElementById('cart-modal-total-display');
+        const continueBtn = document.getElementById('continue-checkout-btn');
+        modalListEl.innerHTML = '';
+        let total = 0;
+        
+        const isPaymentSubmitted = currentPayment && (currentPayment.status === "pending" || currentPayment.status === "paid");
+        const isDisabledAttr = isPaymentSubmitted ? 'disabled' : '';
+
+        if (cart.length === 0) {
+            modalListEl.innerHTML = '<li style="color:#999;text-align:center; padding: 20px;">Keranjang kosong.</li>';
+            totalDisplayEl.innerHTML = '';
+            continueBtn.disabled = true;
+            continueBtn.textContent = 'Keranjang Kosong';
+            return;
+        }
+
+        cart.forEach((item) => {
+            const subtotal = item.price * item.qty;
+            total += subtotal;
+            const menu = menuData.find(m => m.name === item.name);
+            const menuPrice = menu ? menu.price : 0; // Ambil harga asli
+
+            modalListEl.innerHTML += `
+                <li class="cart-modal-item">
+                    <div class="cart-modal-item-name">${item.name}</div>
+                    <div class="cart-modal-item-actions">
+                        <button class="btn-qty" onclick="changeMenuQty('${item.name}', ${menuPrice}, -1)" ${isDisabledAttr}>-</button>
+                        <div class="qty-display">${item.qty}</div>
+                        <button class="btn-qty btn-plus" onclick="changeMenuQty('${item.name}', ${menuPrice}, 1)" ${isDisabledAttr}>+</button>
+                    </div>
+                    <div class="cart-modal-item-price">Rp${formatRupiah(subtotal)}</div>
+                </li>
+            `;
+        });
+        
+        const totalRupiah = formatRupiah(total);
+        totalDisplayEl.innerHTML = `<div class="cart-modal-total"><span>Total price</span> <span>Rp${totalRupiah}</span></div>`;
+        
+        // Atur status tombol Lanjut Bayar di modal
+        if (isPaymentSubmitted) {
+            continueBtn.disabled = true;
+            continueBtn.textContent = (currentPayment.status === "pending") ? 'Menunggu Verifikasi...' : 'Pembayaran Diverifikasi';
+        } else {
+             continueBtn.disabled = false;
+             continueBtn.textContent = `Lanjut Bayar (Rp${totalRupiah})`;
+        }
+    }
+
 
     function changeMenuQty(name, price, delta) {
       if (currentPayment && (currentPayment.status === "pending" || currentPayment.status === "paid")) {
@@ -229,6 +308,7 @@
       } else if (delta > 0) cart.push({ name, price, qty: 1 });
       updateCart();
       renderMenu(); 
+      updateCartModal(); // Perbarui modal keranjang
     }
 
     function updateCart() {
@@ -237,6 +317,7 @@
       const payBtn = document.getElementById('pay-btn'); 
       listEl.innerHTML = '';
       let total = 0;
+      let totalQty = 0;
 
       // --- LOGIC PERHITUNGAN DAN LIST DESKTOP ---
       if (cart.length === 0) {
@@ -247,6 +328,7 @@
         cart.forEach((item) => {
           const subtotal = item.price * item.qty;
           total += subtotal;
+          totalQty += item.qty;
           // Tambahkan class desktop-only ke list item
           listEl.innerHTML += `<li class="desktop-only">${item.name} - Rp${formatRupiah(subtotal)} (${item.qty}x)</li>`;
         });
@@ -267,7 +349,7 @@
       // Cek apakah perangkat adalah mobile (max-width: 768px sesuai CSS)
       const isMobile = window.matchMedia('(max-width: 768px)').matches;
       const stickySidebar = document.getElementById('sticky-sidebar');
-      const mobileCartTotal = document.getElementById('mobile-cart-total');
+      const mobileCartTotalQty = document.getElementById('mobile-cart-total-qty');
       const mobilePaymentStatus = document.getElementById('mobile-payment-status');
       const nameInput = document.getElementById('customer-name');
 
@@ -275,28 +357,7 @@
       if (total > 0) {
           if (isMobile) {
               stickySidebar.classList.add('show-mobile'); // Tampilkan bar bawah jika ada item
-              mobileCartTotal.textContent = `Total: Rp${totalRupiah}`;
-              
-              // Atur fungsi dan teks tombol 'Pesan' di mobile
-              if (isPaid) {
-                  checkoutBtn.textContent = `Pesan Order (${totalRupiah})`;
-                  checkoutBtn.onclick = checkout;
-                  checkoutBtn.disabled = false;
-              } else if (isPending) {
-                   checkoutBtn.textContent = `Menunggu Verifikasi...`;
-                   checkoutBtn.onclick = () => alert("Pembayaran Anda masih menunggu verifikasi kasir.");
-                   checkoutBtn.disabled = true;
-              } else {
-                   checkoutBtn.textContent = `Lanjut Bayar (${totalRupiah})`;
-                   // Di mobile, tombol 'Pesan' akan berfungsi sebagai 'Bayar' jika belum dibayar/pending
-                   checkoutBtn.onclick = () => { 
-                      const name = nameInput.value.trim();
-                      if (!name) return alert("❌ Masukkan nama Anda terlebih dahulu (input di bagian atas halaman).");
-                      openPaymentModal();
-                   };
-                   checkoutBtn.disabled = false; // Tombol Bayar aktif jika ada barang
-              }
-
+              mobileCartTotalQty.textContent = `${totalQty} Item | Total: Rp${totalRupiah}`;
           } else {
               stickySidebar.classList.remove('show-mobile'); // Pastikan hilang di desktop
                // Logika desktop untuk tombol checkoutBtn.textContent
@@ -337,17 +398,36 @@
           payBtn.textContent = "💳 Bayar Sekarang";
           payBtn.disabled = (total === 0);
       }
+      
+      updateCartModal(); // Panggil ini juga untuk memastikan modal up-to-date
+    }
+
+    // Fungsi baru untuk Lanjut Bayar di modal mobile
+    function continueToPayment() {
+        if (currentPayment && currentPayment.status === "paid") {
+             // Jika sudah dibayar, tombol Lanjut Bayar di modal mobile berfungsi sebagai checkout
+             checkout(); 
+        } else {
+            // Jika belum dibayar, panggil openPaymentModal()
+            openPaymentModal();
+        }
     }
 
 
     function openPaymentModal() {
       const nameInput = document.getElementById('customer-name');
       const name = nameInput.value.trim();
-      if (!name) return alert("Masukkan nama Anda terlebih dahulu!"); 
+      if (!name) return alert("❌ Masukkan nama Anda terlebih dahulu (input di bagian atas halaman)."); 
 
       if (cart.length === 0) return alert("Keranjang kosong!");
-      if (currentPayment && currentPayment.status !== "paid") return alert("Anda sudah memiliki pembayaran tertunda. Harap tunggu verifikasi kasir.");
+      if (currentPayment && (currentPayment.status === "pending" || currentPayment.status === "paid")) {
+        closeModal('cart-bottom-sheet'); // Tutup modal keranjang jika terbuka
+        if(currentPayment.status === "pending") return alert("Anda sudah memiliki pembayaran tertunda. Harap tunggu verifikasi kasir.");
+        if(currentPayment.status === "paid") return alert("Pembayaran sudah diverifikasi. Silakan tekan tombol 'Pesan' di modal Keranjang Saya.");
+      }
       
+      closeModal('cart-bottom-sheet'); // Tutup modal keranjang jika dipanggil dari mobile
+
       const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
       document.getElementById('payment-total-display').textContent = 'Rp' + formatRupiah(total);
       
@@ -418,87 +498,4 @@
       const paymentStatusEl = document.getElementById('payment-status');
       
       if (!currentPayment) {
-        paymentStatusEl.textContent = "Belum dibayar ❌";
-        return;
-      }
-      
-      const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-      const found = payments.find(p => p.id === currentPayment.id);
-      
-      if (!found) {
-        if (currentPayment.status === "paid" && cart.length > 0) { 
-            // Setelah checkout, cart dikosongkan, currentPayment direset di checkout().
-            // Jika ini terjadi, berarti ada error atau halaman dimuat ulang setelah pembayaran tapi sebelum checkout.
-            // Biarkan saja, logika reset terjadi di bawah.
-        } else if (currentPayment.status === "paid" && cart.length === 0) {
-             // Reset setelah checkout berhasil
-            currentPayment = null;
-            localStorage.removeItem('lastPaymentId'); 
-            document.getElementById('customer-name').value = ''; 
-            updateCart();
-            renderMenu(); 
-            paymentStatusEl.textContent = "Pesanan selesai. Silakan pesan lagi!";
-            return;
-        }
-      }
-      
-      if (found && found.status === "paid") {
-        const statusChanged = currentPayment.status !== "paid";
-        currentPayment.status = "paid"; 
-        
-        if(statusChanged && found.method !== 'Tunai (Cash)') {
-            alert(`✅ Pembayaran Diverifikasi oleh Kasir! Anda sekarang bisa menekan tombol "Pesan" untuk mengirim order ke dapur.`);
-            closeModal('payment-detail'); // Tutup modal detail jika verifikasi berhasil
-        }
-        
-        paymentStatusEl.textContent = `Sudah diverifikasi (${found.method}) ✅`;
-      } else {
-        // Jika statusnya pending atau tidak ditemukan (tapi currentPayment ada), anggap pending
-        currentPayment.status = "pending";
-        paymentStatusEl.textContent = "Menunggu verifikasi kasir ⏳";
-      }
-      
-      updateCart(); 
-    }
-
-    function checkout() {
-      if (!currentPayment || currentPayment.status !== "paid") {
-          return alert("❌ Pembayaran belum diverifikasi oleh kasir!");
-      }
-
-      const nameInput = document.getElementById('customer-name');
-      const name = nameInput.value.trim();
-      if (!name) return alert("Masukkan nama Anda!");
-
-      const finalCart = currentPayment.cart; 
-      
-      const newOrderId = Date.now(); 
-      const order = {
-        id: newOrderId,
-        customerName: name, 
-        items: finalCart, 
-        total: currentPayment.total, 
-        status: 'Baru', 
-        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-        paymentId: currentPayment.id 
-      };
-
-      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
-      orders.unshift(order);
-      localStorage.setItem('pantryOrders', JSON.stringify(orders)); 
-
-      let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-      payments = payments.filter(p => p.id !== currentPayment.id);
-      localStorage.setItem('pantryPayments', JSON.stringify(payments));
-
-      alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
-      
-      window.location.href = `order_status.html?orderId=${newOrderId}`;
-    }
-
-    function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; }
-    function closeModal(t) { document.getElementById(t + "-modal").style.display = "none"; }
-    window.onclick = e => { if (e.target.classList.contains('modal')) e.target.style.display = "none"; };
-  </script>
-</body>
-</html>
+        paymentStatusEl.textContent =
