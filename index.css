@@ -49,17 +49,18 @@ html, body {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.2s, box-shadow 0.2s;
+  transition: background-color 0.2s;
+  text-decoration: none; /* Tambahkan untuk link */
+  text-align: center;
 }
 
 .btn-primary {
-  background-color: #ff6347;
+  background-color: #068b18;
   color: white;
 }
 
 .btn-primary:hover {
-  background-color: #e5533d;
-  box-shadow: 0 4px 8px rgba(255, 99, 71, 0.3);
+  background-color: #056a13;
 }
 
 .btn-secondary {
@@ -71,392 +72,386 @@ html, body {
   background-color: #e0e0e0;
 }
 
-/* === KONTEN UTAMA DUA KOLOM === */
+/* === MAIN LAYOUT === */
 .container {
-  width: 95%;
   max-width: 1200px;
-  margin: 30px auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin: 0 auto;
+  padding: 20px 25px;
 }
 
 .content-grid {
-    display: grid;
-    /* Kolom kiri (Menu) 2 bagian, Kolom kanan (Sticky Sidebar) 1 bagian */
-    grid-template-columns: 2fr 1fr; 
-    gap: 30px;
-    margin-top: 10px; 
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* Menu section (2/3) and Cart (1/3) */
+  gap: 25px;
 }
 
-/* === JUDUL === */
-h2 {
-  border-bottom: 2px solid #067c0c;
-  padding-bottom: 8px;
-  color: #ff6347;
-  margin-top: 40px;
+#menu-section {
+  grid-area: menu;
 }
 
-/* === MENU === */
+#sticky-sidebar {
+  position: sticky;
+  top: 90px; /* Di bawah navbar */
+  height: calc(100vh - 110px);
+  overflow-y: auto;
+  padding-bottom: 20px;
+}
+
+/* === MENU LIST === */
 .menu-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
 }
 
 .menu-item {
+  background: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 15px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  background-color: #fffaf7;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  flex-direction: column;
   transition: transform 0.2s;
 }
 
 .menu-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .menu-item img {
-  width: 80px;
-  height: 80px;
+  width: 100%;
+  height: 180px;
   object-fit: cover;
-  border-radius: 10px;
-  margin-right: 15px;
-  flex-shrink: 0;
 }
 
-.menu-info {
+.item-details {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
   flex-grow: 1;
 }
 
-.menu-name {
+.item-details h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
   font-weight: 600;
-  color: #333;
+  color: #068b18;
 }
 
-.menu-price {
-  color: #ff6347;
+.item-details p {
+  margin: 0 0 10px 0;
+  font-size: 0.9em;
+  color: #555;
+  flex-grow: 1;
+}
+
+.item-price {
   font-weight: 700;
   font-size: 1.1em;
-}
-
-/* === TOMBOL DI MENU === */
-.menu-actions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.btn-qty {
-  background-color: #f0f0f0;
   color: #333;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 5px 10px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: 0.2s;
+  margin-bottom: 10px;
 }
 
-.btn-qty:hover {
-  background-color: #ddd;
-}
-
-.btn-plus {
-  background-color: #068b18;
+.add-btn {
+  background-color: #f39c12;
   color: white;
-  border-color: #068b18;
-}
-
-.btn-plus:hover {
-  background-color: #046b13;
-}
-
-.qty-display {
-  width: 28px;
-  text-align: center;
-  font-weight: 600;
-}
-
-/* === SIDEBAR STICKY WRAPPER (BARU) === */
-#sticky-sidebar {
-  /* Membungkus keranjang dan info pelanggan agar ikut sticky */
-  position: sticky; 
-  top: 80px; /* Jarak dari atas layar (di bawah navbar) */
-  height: fit-content; /* Penting agar sticky berfungsi */
-  align-self: flex-start;
-}
-
-/* === CUSTOMER INFO (DIUBAH) === */
-.customer-info {
-  padding: 15px;
-  background: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  /* BARU: Tambahkan margin bawah agar ada jarak ke grid di bawahnya */
-  margin-bottom: 20px; 
-}
-
-.customer-info h3 {
-  margin-top: 0;
-  color: #068b18;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
-}
-
-.customer-info input {
-  width: 100%;
   padding: 10px;
-  margin-top: 5px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  box-sizing: border-box;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
 }
 
-/* === KERANJANG (DIUBAH) === */
+.add-btn:hover {
+  background-color: #e67e22;
+}
+
+/* === CART (KERANJANG) === */
 #cart {
-  background: #fff;
+  background: #ffffff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  /* Dulu margin-top ke customer-info, sekarang ke grid */
-  margin-top: 10px; 
 }
 
 #cart h2 {
-  color: #333;
-  border-bottom: 1px solid #ddd;
   margin-top: 0;
   padding-bottom: 10px;
+  border-bottom: 2px solid #068b18;
+  color: #068b18;
 }
 
 #cart-items {
   list-style: none;
   padding: 0;
+  margin: 15px 0;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
-#cart-items li {
-  padding: 10px 0;
-  border-bottom: 1px dotted #eee;
+.cart-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.95em;
+  padding: 8px 0;
+  border-bottom: 1px dashed #eee;
 }
 
-#cart-items li:last-child {
-  border-bottom: none;
+.item-name {
+  font-weight: 500;
 }
 
-/* Tombol di keranjang */
-.cart-actions .btn-qty {
-  background-color: #f0f0f0;
-  color: #333;
-  border: 1px solid #ccc;
-  width: 25px;
-  height: 25px;
-  border-radius: 4px;
+.item-qty {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.qty-btn {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-weight: 700;
   font-size: 14px;
-  padding: 0;
-  line-height: 1;
 }
 
-.cart-actions .btn-plus {
+.remove-btn {
+  color: #e74c3c;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: color 0.2s;
+}
+
+.remove-btn:hover {
+  color: #c0392b;
+}
+
+.total-summary {
+  padding-top: 15px;
+  border-top: 2px solid #068b18;
+  margin-top: 15px;
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+}
+
+#checkout-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  font-size: 1.1em;
   background-color: #068b18;
   color: white;
-  border-color: #068b18;
-}
-
-.btn-remove {
-  background-color: #ff4d4d;
-  color: white;
-  border-color: #ff4d4d;
-}
-
-/* === CHECKOUT BUTTON === */
-#checkout-btn {
-  display: block;
-  width: 100%;
-  padding: 15px;
-  background-color: #ff6347;
-  color: white;
-  font-size: 1.2em;
-  font-weight: 700;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  margin-top: 20px;
+  font-weight: 700;
   transition: background-color 0.2s;
-  text-align: center; 
 }
 
 #checkout-btn:hover:not(:disabled) {
-  background-color: #e5533d;
+  background-color: #056a13;
 }
 
 #checkout-btn:disabled {
-  background-color: #cccccc;
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
-/* === FOOTER === */
-footer {
-  text-align: center;
+
+/* === CUSTOMER INFO === */
+.customer-info {
+  background: #ffffff;
   padding: 20px;
-  margin-top: 40px;
-  border-top: 1px solid #eee;
-  color: #999;
-  font-size: 0.9em;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
 }
 
-/* === NOTIFIKASI === */
-.notification {
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  z-index: 1001;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+.customer-info h3 {
+  margin-top: 0;
+  color: #068b18;
 }
 
-.notification.show {
-  opacity: 1;
-  visibility: visible;
+.customer-info input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 1.0em;
 }
 
-/* === MODAL POPUP === */
+/* === PAYMENT MODAL === */
 .modal {
-  display: none; 
-  position: fixed; 
-  z-index: 2000; 
+  display: none;
+  position: fixed;
+  z-index: 2000;
   left: 0;
   top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
-  background-color: rgba(0,0,0,0.4); 
-  padding-top: 60px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
 }
 
 .modal-content {
   background-color: #fefefe;
-  margin: 5% auto; 
+  margin: 10% auto;
   padding: 30px;
-  border: 1px solid #888;
-  width: 80%; 
-  max-width: 500px;
   border-radius: 10px;
-  position: relative;
+  width: 90%;
+  max-width: 500px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  position: relative;
 }
 
-.close {
+.close-btn {
   color: #aaa;
   float: right;
   font-size: 28px;
   font-weight: bold;
-  position: absolute;
-  top: 10px;
-  right: 20px;
+  cursor: pointer;
 }
 
-.close:focus {
+.close-btn:hover,
+.close-btn:focus {
   color: #333;
   text-decoration: none;
   cursor: pointer;
 }
 
-.modal-content h2 {
-  color: #ff6347;
-  border-bottom: 2px solid #068b18;
-  padding-bottom: 10px;
-}
-
-.contact-link {
+.payment-options button {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  border: 2px solid #068b18;
+  background: white;
   color: #068b18;
-  text-decoration: none;
+  font-size: 1.1em;
   font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.contact-link:hover {
-  text-decoration: underline;
+.payment-options button:hover {
+  background: #068b18;
+  color: white;
 }
 
-/* Pastikan elemen mobile-only tersembunyi di desktop */
-#mobile-summary {
-    display: none; 
+/* Modal Info/Contact */
+.modal-content h2 {
+    color: #068b18;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
 }
 
+/* ========================================================================= */
+/* --- MEDIA QUERIES (MOBILE VIEW) --- */
+/* ========================================================================= */
 
-/* === START MOBILE RESPONSIVE STYLES === */
-
-/* Tambahkan class pembantu untuk menyembunyikan elemen tertentu di mobile */
-.desktop-only {
-    /* Hanya tampil di Desktop, default-nya sudah on */
-}
-
-/* MEDIA QUERY untuk Responsif */
-@media (max-width: 768px) {
-    .content-grid {
-        grid-template-columns: 1fr;
-        min-height: auto; 
+@media screen and (max-width: 768px) {
+    
+    .navbar {
+        padding: 10px 15px;
     }
     
-    /* === ATUR ULANG SIDEBAR UNTUK MOBILE (FIXED BOTTOM BAR) === */
-    #sticky-sidebar {
-        position: fixed; 
-        bottom: 0; /* Tempel di bawah layar */
-        top: auto; /* Override top: 80px */
-        left: 0;
-        width: 100%; 
-        z-index: 999;
-        
-        /* Default: Sembunyikan, akan dimunculkan oleh JS */
-        display: none; 
-        
-        /* Hapus style desktop */
+    .container {
+        padding: 15px;
+        /* Tambahkan padding bawah yang tinggi untuk memberi ruang pada fixed sidebar/cart */
+        padding-bottom: 140px; 
+    }
+
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+        padding-top: 0;
+    }
+
+    #menu-section {
+        grid-area: auto;
+    }
+    
+    .menu-list {
+        grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* Jadikan 1 kolom di mobile */
+        gap: 15px;
         padding: 0;
-        margin: 0;
-        box-shadow: 0 -4px 12px rgba(0,0,0,0.1); 
+    }
+
+    /* === SIDEBAR / CART BAWAH (MOBILE) === */
+    
+    /* START MODIFIKASI: Menampilkan Input Nama dan Keranjang di Fixed Bar Bawah */
+    #sticky-sidebar {
+        /* PROPERTI UTAMA UNTUK FIXED BAR BAWAH */
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-height: auto; 
+        z-index: 1000; 
+        overflow: visible;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.25); /* Shadow lebih kuat */
         background: #f7f7f7; 
+        
+        /* Mengatur susunan elemen di dalam sidebar */
+        display: flex;
+        flex-direction: column; /* Menata .customer-info di atas #cart */
         
         /* Padding untuk notch/nav bar HP modern */
         padding-bottom: env(safe-area-inset-bottom, 0); 
+        
+        /* Hapus properti desktop */
+        top: auto; 
+        height: auto;
+        overflow-y: visible;
     }
     
     /* Class yang ditambahkan oleh JS untuk menampilkan sidebar */
     #sticky-sidebar.show-mobile {
-        display: block;
+        display: flex; 
     }
     
     /* Sembunyikan semua elemen keranjang di desktop */
+    /* HANYA SEMBUNYIKAN DAFTAR ITEM KERANJANG DI MOBILE */
     .desktop-only {
         display: none !important;
     }
     
-    /* HAPUS: Kode ini dihapus agar Input Nama Pelanggan muncul di atas menu di HP */
-    /*
+    /* TAMPILKAN DAN ATUR INPUT NAMA PELANGGAN */
     .customer-info {
-        display: none; 
+        display: block; /* MENGGANTIKAN display: none; */
+        padding: 10px 15px 5px 15px; 
+        background: #ffffff;
+        border-bottom: 1px solid #eee;
+        box-shadow: none; /* Hilangkan shadow bawaan */
+        margin-bottom: 0; /* Hilangkan margin bawaan */
+        border-radius: 0;
     }
-    */
+    
+    /* Sembunyikan Judul Input Nama agar lebih ringkas */
+    .customer-info h3 {
+        display: none;
+    }
 
-    /* Atur Keranjang menjadi satu baris di mobile */
+    .customer-info input {
+        margin-top: 0;
+        font-size: 0.9em;
+        padding: 8px;
+    }
+
+    /* Atur Keranjang menjadi satu baris di mobile (Ringkasan & Tombol) */
     #cart {
         padding: 10px 15px;
         margin: 0;
@@ -466,6 +461,7 @@ footer {
         align-items: center;
         background: #fff;
         box-shadow: none; 
+        border-top: 1px solid #eee;
     }
     
     /* Tampilkan ringkasan dan tombol berdampingan */
@@ -477,17 +473,47 @@ footer {
     
     /* Tombol checkout (akan menjadi tombol utama) */
     #checkout-btn {
-        margin: 0;
-        padding: 10px 15px;
-        width: auto;
-        font-size: 1em;
-        flex-shrink: 0;
-        height: 100%; /* Agar sejajar dengan summary */
+        width: 150px; /* Lebar tombol yang cukup */
+        height: 40px;
+        font-size: 1.0em;
+        margin: 0; /* Hilangkan margin top/bottom bawaan */
     }
-    
-    /* Beri ruang di bawah menu agar tidak tertutup sticky bar */
-    .container {
-        padding-bottom: 75px; 
+    /* END MODIFIKASI */
+
+    .item-details {
+        padding: 10px 15px;
+    }
+
+    .menu-item img {
+        height: 150px;
     }
 }
-/* === END MOBILE RESPONSIVE STYLES === */
+
+/* Tambahan CSS untuk Tampilan Dashboard Pembayaran/Kasir */
+.order-status-card.paid {
+    border-left: 5px solid #068b18; /* Hijau */
+}
+
+.order-status-card.waiting {
+    border-left: 5px solid #f39c12; /* Kuning/Orange */
+}
+
+.order-status-card.failed {
+    border-left: 5px solid #e74c3c; /* Merah */
+}
+
+/* CSS untuk Dashboard Kasir */
+.kanban-container {
+    /* ... CSS yang ada di file cashier.html ... */
+}
+
+/* CSS untuk Dashboard Pembayaran */
+.payment-card.paid {
+    border-left: 5px solid #068b18;
+}
+.payment-card.waiting {
+    border-left: 5px solid #f39c12;
+}
+.payment-card.rejected {
+    border-left: 5px solid #e74c3c;
+}
