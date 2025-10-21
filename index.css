@@ -197,11 +197,12 @@ h2 {
 
 /* === CUSTOMER INFO (DIUBAH) === */
 .customer-info {
-  /* Hapus margin-top lama, sekarang margin diatur oleh #cart di bawahnya */
   padding: 15px;
   background: #ffffff;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  /* BARU: Tambahkan margin bawah agar ada jarak ke grid di bawahnya */
+  margin-bottom: 20px; 
 }
 
 .customer-info h3 {
@@ -226,7 +227,8 @@ h2 {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-top: 30px; /* Jarak antara Customer Info dan Keranjang */
+  /* Dulu margin-top ke customer-info, sekarang ke grid */
+  margin-top: 10px; 
 }
 
 #cart h2 {
@@ -304,8 +306,6 @@ h2 {
   background-color: #cccccc;
   cursor: not-allowed;
 }
-
-/* ... (Kode CSS untuk Modal dan Footer) ... */
 
 /* === FOOTER === */
 footer {
@@ -449,10 +449,12 @@ footer {
         display: none !important;
     }
     
-    /* Sembunyikan Input Nama Pelanggan dari bar bawah, biar user scroll ke atas */
+    /* HAPUS: Kode ini dihapus agar Input Nama Pelanggan muncul di atas menu di HP */
+    /*
     .customer-info {
         display: none; 
     }
+    */
 
     /* Atur Keranjang menjadi satu baris di mobile */
     #cart {
