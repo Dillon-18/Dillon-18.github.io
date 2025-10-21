@@ -305,8 +305,6 @@ h2 {
   cursor: not-allowed;
 }
 
-/* ... (Kode CSS untuk Modal dan Footer) ... */
-
 /* === FOOTER === */
 footer {
   text-align: center;
@@ -412,85 +410,80 @@ footer {
 
 /* MEDIA QUERY untuk Responsif */
 @media (max-width: 768px) {
-    /* Menu section tetap 1 kolom di mobile */
     .content-grid {
         grid-template-columns: 1fr;
         min-height: auto; 
     }
     
-    /* 1. Hapus posisi fixed, buat sidebar menjadi bagian normal dari alur dokumen (scrollable) */
+    /* === ATUR ULANG SIDEBAR UNTUK MOBILE (FIXED BOTTOM BAR) === */
     #sticky-sidebar {
-        position: static; 
-        bottom: auto; 
-        top: auto; 
-        left: auto;
-        width: auto; /* Biarkan mengikuti parent width */
-        z-index: 1;
-        display: block; /* Pastikan selalu tampil */
+        position: fixed; 
+        bottom: 0; /* Tempel di bawah layar */
+        top: auto; /* Override top: 80px */
+        left: 0;
+        width: 100%; 
+        z-index: 999;
         
-        /* Tambahkan padding & shadow agar tampilan keranjang terlihat bagus di mobile */
-        padding: 15px;
-        margin-top: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        border-radius: 8px;
-        background: #fff; /* Pastikan background putih */
+        /* Default: Sembunyikan, akan dimunculkan oleh JS */
+        display: none; 
         
-        /* Hapus padding notch yang tidak relevan saat tidak fixed */
-        padding-bottom: 15px; 
+        /* Hapus style desktop */
+        padding: 0;
+        margin: 0;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.1); 
+        background: #f7f7f7; 
+        
+        /* Padding untuk notch/nav bar HP modern */
+        padding-bottom: env(safe-area-inset-bottom, 0); 
     }
     
-    /* Class .show-mobile tetap dipertahankan jika ada logika JS yang menggunakannya */
+    /* Class yang ditambahkan oleh JS untuk menampilkan sidebar */
     #sticky-sidebar.show-mobile {
         display: block;
     }
     
-    /* 2. Tampilkan semua elemen keranjang: judul, item, dan total */
+    /* Sembunyikan semua elemen keranjang di desktop */
     .desktop-only {
-        display: block !important; /* Timpa display: none !important; */
+        display: none !important;
     }
     
-    /* 3. Tampilkan Input Nama Pelanggan */
+    /* Sembunyikan Input Nama Pelanggan dari bar bawah, biar user scroll ke atas */
     .customer-info {
-        display: block !important; /* Timpa display: none; */
-        margin-bottom: 20px;
-        padding: 0;
-        box-shadow: none;
-        background: none;
+        display: none; 
     }
 
-    /* 4. Atur ulang Keranjang dari baris fixed menjadi blok normal */
+    /* Atur Keranjang menjadi satu baris di mobile */
     #cart {
-        display: block; 
-        padding: 0; /* padding diatur oleh #sticky-sidebar */
+        padding: 10px 15px;
         margin: 0;
+        border-radius: 0; 
+        display: flex; 
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
         box-shadow: none; 
-        background: none;
     }
     
-    /* Tampilkan daftar item keranjang (diperlukan jika menggunakan JS untuk manipulasi display) */
-    #cart-items {
-        display: block !important;
-        padding-left: 0;
-        list-style: none;
-        margin-top: 15px;
-    }
-    
-    /* 5. Sembunyikan ringkasan total mobile yang ringkas (redundant) */
+    /* Tampilkan ringkasan dan tombol berdampingan */
     #mobile-summary {
-        display: none !important;
+        display: block;
+        flex-grow: 1;
+        margin-right: 15px;
     }
     
     /* Tombol checkout (akan menjadi tombol utama) */
     #checkout-btn {
-        margin-top: 20px;
-        padding: 15px;
-        width: 100%;
-        font-size: 1.2em;
+        margin: 0;
+        padding: 10px 15px;
+        width: auto;
+        font-size: 1em;
+        flex-shrink: 0;
+        height: 100%; 
     }
     
-    /* 6. Hapus padding bawah pada container (tidak ada bar fixed lagi) */
+    /* Beri ruang di bawah menu agar tidak tertutup sticky bar */
     .container {
-        padding-bottom: 20px; 
+        padding-bottom: 75px; 
     }
 }
 /* === END MOBILE RESPONSIVE STYLES === */
