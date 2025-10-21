@@ -92,7 +92,7 @@
       <p id="payment-note" style="margin-top: 30px;">Tunggu kasir memverifikasi pembayaranmu setelah kamu transfer.</p>
     </div>
   </div>
-
+    
   <div id="payment-detail-modal" class="modal">
     <div class="modal-content" style="text-align:center;">
       <span class="close" onclick="closeModal('payment-detail')">&times;</span>
@@ -153,51 +153,24 @@
     let currentPayment = null; 
 
     document.addEventListener('DOMContentLoaded', () => {
-        const lastPaymentId = localStorage.getItem('lastPaymentId');
-        
-        // Ambil semua pembayaran yang tersimpan di localStorage
-        const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
-        
-        if (lastPaymentId) {
-            const lastPayment = payments.find(p => p.id === lastPaymentId);
-
-            if (lastPayment) {
-                
-                if (lastPayment.status === 'pending') {
-                    // === FIX: HAPUS JIKA STATUS MASIH PENDING SETELAH REFRESH ===
-                    
-                    // Hapus item pending dari daftar pembayaran global
-                    const updatedPayments = payments.filter(p => p.id !== lastPaymentId);
-                    localStorage.setItem('pantryPayments', JSON.stringify(updatedPayments));
-                    
-                    // Hapus penanda pembayaran terakhir
-                    localStorage.removeItem('lastPaymentId');
-                    
-                    // Reset semua data lokal
-                    currentPayment = null;
-                    cart = [];
-                    document.getElementById('customer-name').value = '';
-
-                    // Tampilkan notifikasi bahwa transaksi dibatalkan (reset)
-                    showNotification(`⚠️ Transaksi sebelumnya (Kode: ${lastPaymentId}) dibatalkan. Silakan pesan ulang!`, 'error');
-                    
-                } else if (lastPayment.status === 'paid') {
-                    // Jika statusnya sudah PAID, kita tetap pertahankan keranjang
-                    currentPayment = lastPayment;
-                    if (currentPayment.cart) {
-                        cart = currentPayment.cart;
-                        document.getElementById('customer-name').value = currentPayment.customerName || '';
-                    }
-                }
-            } else {
-                // Jika ID ada tapi pembayaran tidak ditemukan di daftar, hapus ID-nya
-                localStorage.removeItem('lastPaymentId');
-            }
-        }
-        
-        renderMenu();
-        updateCart();
-        setInterval(checkPaymentStatus, 2000); 
+      const lastPaymentId = localStorage.getItem('lastPaymentId');
+      if (lastPaymentId) {
+          const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+          const lastPayment = payments.find(p => p.id === lastPaymentId);
+          if (lastPayment) {
+              currentPayment = lastPayment;
+              if (currentPayment.cart) {
+                  cart = currentPayment.cart;
+                  document.getElementById('customer-name').value = currentPayment.customerName || '';
+              }
+          } else {
+              localStorage.removeItem('lastPaymentId');
+          }
+      }
+      
+      renderMenu();
+      updateCart();
+      setInterval(checkPaymentStatus, 2000); 
     });
 
     function redirectToCashier() {
@@ -262,8 +235,6 @@
       const listEl = document.getElementById('cart-items');
       const checkoutBtn = document.getElementById('checkout-btn');
       const payBtn = document.getElementById('pay-btn'); 
-      const paymentStatusEl = document.getElementById('payment-status');
-      
       listEl.innerHTML = '';
       let total = 0;
 
@@ -289,8 +260,11 @@
 
       const isPaid = currentPayment && currentPayment.status === "paid";
       const isPending = currentPayment && currentPayment.status === "pending";
-      
+      const paymentStatusEl = document.getElementById('payment-status');
+
+
       // --- LOGIC RESPONSIVE & MOBILE BAR ---
+      // Cek apakah perangkat adalah mobile (max-width: 768px sesuai CSS)
       const isMobile = window.matchMedia('(max-width: 768px)').matches;
       const stickySidebar = document.getElementById('sticky-sidebar');
       const mobileCartTotal = document.getElementById('mobile-cart-total');
@@ -300,38 +274,40 @@
 
       if (total > 0) {
           if (isMobile) {
-              stickySidebar.classList.add('show-mobile'); 
+              stickySidebar.classList.add('show-mobile'); // Tampilkan bar bawah jika ada item
               mobileCartTotal.textContent = `Total: Rp${totalRupiah}`;
               
+              // Atur fungsi dan teks tombol 'Pesan' di mobile
               if (isPaid) {
                   checkoutBtn.textContent = `Pesan Order (${totalRupiah})`;
                   checkoutBtn.onclick = checkout;
                   checkoutBtn.disabled = false;
               } else if (isPending) {
                    checkoutBtn.textContent = `Menunggu Verifikasi...`;
-                   checkoutBtn.onclick = () => showNotification("Pembayaran Anda masih menunggu verifikasi kasir.", 'info');
+                   checkoutBtn.onclick = () => alert("Pembayaran Anda masih menunggu verifikasi kasir.");
                    checkoutBtn.disabled = true;
               } else {
                    checkoutBtn.textContent = `Lanjut Bayar (${totalRupiah})`;
+                   // Di mobile, tombol 'Pesan' akan berfungsi sebagai 'Bayar' jika belum dibayar/pending
                    checkoutBtn.onclick = () => { 
                       const name = nameInput.value.trim();
-                      if (!name) return alert("❌ Masukkan nama Anda terlebih dahulu.");
+                      if (!name) return alert("❌ Masukkan nama Anda terlebih dahulu (input di bagian atas halaman).");
                       openPaymentModal();
                    };
-                   checkoutBtn.disabled = false; 
+                   checkoutBtn.disabled = false; // Tombol Bayar aktif jika ada barang
               }
 
           } else {
-              stickySidebar.classList.remove('show-mobile'); 
-               
+              stickySidebar.classList.remove('show-mobile'); // Pastikan hilang di desktop
+               // Logika desktop untuk tombol checkoutBtn.textContent
               checkoutBtn.textContent = (total === 0) ? `Pesan` : `Pesan - Rp${totalRupiah}`;
-              checkoutBtn.onclick = checkout; 
-              checkoutBtn.disabled = (total === 0 || !isPaid); 
+              checkoutBtn.onclick = checkout; // Kembalikan fungsi checkout normal
+              checkoutBtn.disabled = (total === 0 || !isPaid); // Logic disabled desktop
           }
       } else {
           // Keranjang kosong
           if (isMobile) {
-              stickySidebar.classList.remove('show-mobile'); 
+              stickySidebar.classList.remove('show-mobile'); // Sembunyikan bar
           }
           checkoutBtn.textContent = `Pesan`;
           checkoutBtn.onclick = checkout;
@@ -399,9 +375,7 @@
       closeModal('payment');
       
       const code = "PAY" + Date.now().toString().slice(-6); 
-      // === FIX PENTING: Ambil nama terbaru saat pembayaran diajukan ===
-      const customerName = document.getElementById('customer-name').value.trim(); 
-      // ===============================================================
+      const customerName = document.getElementById('customer-name').value.trim();
       
       const selectedMethod = paymentMethods.find(m => m.name === methodName);
       const instruction = selectedMethod.info; 
@@ -415,7 +389,7 @@
           cart: JSON.parse(JSON.stringify(cart)), 
           time: new Date().toLocaleString('id-ID'),
           method: methodName,
-          customerName: customerName // PASTIKAN customerName DISIMPAN
+          customerName: customerName 
       };
 
       currentPayment = newPayment;
@@ -452,8 +426,12 @@
       const found = payments.find(p => p.id === currentPayment.id);
       
       if (!found) {
-        if (currentPayment.status === "paid" && cart.length === 0) { 
-            // Reset setelah checkout berhasil
+        if (currentPayment.status === "paid" && cart.length > 0) { 
+            // Setelah checkout, cart dikosongkan, currentPayment direset di checkout().
+            // Jika ini terjadi, berarti ada error atau halaman dimuat ulang setelah pembayaran tapi sebelum checkout.
+            // Biarkan saja, logika reset terjadi di bawah.
+        } else if (currentPayment.status === "paid" && cart.length === 0) {
+             // Reset setelah checkout berhasil
             currentPayment = null;
             localStorage.removeItem('lastPaymentId'); 
             document.getElementById('customer-name').value = ''; 
@@ -468,9 +446,8 @@
         const statusChanged = currentPayment.status !== "paid";
         currentPayment.status = "paid"; 
         
-        if(statusChanged) {
-             // AKTIFKAN NOTIFIKASI POP-UP
-            showNotification(`✅ Pembayaran Diterima! Tekan tombol "Pesan" untuk mengirim order.`, 'success');
+        if(statusChanged && found.method !== 'Tunai (Cash)') {
+            alert(`✅ Pembayaran Diverifikasi oleh Kasir! Anda sekarang bisa menekan tombol "Pesan" untuk mengirim order ke dapur.`);
             closeModal('payment-detail'); // Tutup modal detail jika verifikasi berhasil
         }
         
@@ -482,34 +459,6 @@
       }
       
       updateCart(); 
-    }
-
-    // FUNGSI MENAMPILKAN NOTIFIKASI POP-UP
-    function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = 'notification'; 
-        notification.textContent = message;
-        
-        if (type === 'success') {
-            notification.style.backgroundColor = '#068b18'; 
-        } else if (type === 'error') {
-            notification.style.backgroundColor = '#d14838'; 
-        } else {
-             notification.style.backgroundColor = '#333';
-        }
-
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 10); 
-
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 300); 
-        }, 5000); 
     }
 
     function checkout() {
