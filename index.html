@@ -16,7 +16,8 @@
     <div class="nav-right">
       <button class="nav-btn btn-secondary" onclick="openModal('contact')">Contact Me</button>
       <button class="nav-btn btn-secondary" onclick="openModal('info')">Info</button>
-      </div>
+      <button class="nav-btn btn-primary" onclick="redirectToCashier()">Dashboard Kasir</button>
+    </div>
   </header>
   
   <div class="container">
@@ -172,7 +173,13 @@
       setInterval(checkPaymentStatus, 2000); 
     });
 
-    // FUNGSI redirectToCashier() TELAH DIHAPUS
+    function redirectToCashier() {
+      const pass = prompt("Masukkan password kasir:");
+      if (pass === "kasir123") {
+        sessionStorage.setItem("cashierAuth", "true");
+        window.location.href = "cashier.html";
+      } else if (pass) alert("Password salah!");
+    }
 
     function formatRupiah(number) {
         return number.toLocaleString('id-ID');
@@ -234,9 +241,9 @@
       // --- LOGIC PERHITUNGAN DAN LIST DESKTOP ---
       if (cart.length === 0) {
         listEl.innerHTML = '<li style="color:#999;text-align:center;">Keranjang kosong.</li>';
-        if(payBtn) payBtn.disabled = true;
+        payBtn.disabled = true;
       } else {
-         if(payBtn) payBtn.disabled = false;
+         payBtn.disabled = false;
         cart.forEach((item) => {
           const subtotal = item.price * item.qty;
           total += subtotal;
@@ -320,17 +327,15 @@
       }
 
       // Kelola tombol Bayar (payBtn) hanya di tampilan DESKTOP
-      if (payBtn) {
-          if (isPending) {
-              payBtn.textContent = "⏳ Pembayaran Tertunda";
-              payBtn.disabled = true;
-          } else if (isPaid) {
-              payBtn.textContent = "✅ Pembayaran Diterima";
-              payBtn.disabled = true;
-          } else {
-              payBtn.textContent = "💳 Bayar Sekarang";
-              payBtn.disabled = (total === 0);
-          }
+      if (isPending) {
+          payBtn.textContent = "⏳ Pembayaran Tertunda";
+          payBtn.disabled = true;
+      } else if (isPaid) {
+          payBtn.textContent = "✅ Pembayaran Diterima";
+          payBtn.disabled = true;
+      } else {
+          payBtn.textContent = "💳 Bayar Sekarang";
+          payBtn.disabled = (total === 0);
       }
     }
 
@@ -421,7 +426,11 @@
       const found = payments.find(p => p.id === currentPayment.id);
       
       if (!found) {
-        if (currentPayment.status === "paid" && cart.length === 0) {
+        if (currentPayment.status === "paid" && cart.length > 0) { 
+            // Setelah checkout, cart dikosongkan, currentPayment direset di checkout().
+            // Jika ini terjadi, berarti ada error atau halaman dimuat ulang setelah pembayaran tapi sebelum checkout.
+            // Biarkan saja, logika reset terjadi di bawah.
+        } else if (currentPayment.status === "paid" && cart.length === 0) {
              // Reset setelah checkout berhasil
             currentPayment = null;
             localStorage.removeItem('lastPaymentId'); 
