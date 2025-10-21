@@ -400,14 +400,12 @@ footer {
     display: none; 
 }
 
-/* === START MOBILE RESPONSIVE STYLES === */
-
 /* Tambahkan class pembantu untuk menyembunyikan elemen tertentu di mobile */
 .desktop-only {
     /* Hanya tampil di Desktop, default-nya sudah on */
 }
 
-/* MEDIA QUERY untuk Responsif */
+/* === START MOBILE RESPONSIVE STYLES === */
 @media (max-width: 768px) {
     .content-grid {
         grid-template-columns: 1fr;
@@ -446,38 +444,65 @@ footer {
         display: none !important;
     }
     
-    /* Sembunyikan Input Nama Pelanggan dari bar bawah, biar user scroll ke atas */
+    /* PERUBAHAN: TAMPILKAN INPUT NAMA DI DALAM BOTTOM BAR (#cart)
+    */
     .customer-info {
-        display: none; 
+        display: block !important; /* Menggantikan display: none; */
+        padding: 0 15px 10px 15px; /* Padding di sekitar input, agar sejajar dengan ringkasan */
+        margin-bottom: 5px;
+        border-bottom: 1px solid #eee; 
+        box-shadow: none; 
+    }
+    
+    .customer-info h3 {
+        display: none; /* Sembunyikan judul agar lebih ringkas di HP */
+    }
+    
+    .customer-info input {
+        margin: 0; /* Hapus margin atas/bawah agar lebih compact */
+        padding: 8px;
+        font-size: 14px;
     }
 
-    /* Atur Keranjang menjadi satu baris di mobile */
+    /* ATUR ULANG KERANJANG UNTUK MENAMPILKAN NAMA DI ATAS RINGKASAN */
     #cart {
-        padding: 10px 15px;
+        /* Mengubah #cart menjadi tumpukan (kolom) untuk menampung nama di atas */
+        padding: 0; /* Hapus padding lama */
         margin: 0;
         border-radius: 0; 
         display: flex; 
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column; /* UBAH KE KOLOM */
+        justify-content: flex-start;
+        align-items: flex-start;
         background: #fff;
         box-shadow: none; 
     }
     
+    /* Sembunyikan detail keranjang belanja desktop dari bottom bar */
+    #cart h2, #cart-items {
+        display: none;
+    }
+    
     /* Tampilkan ringkasan dan tombol berdampingan */
     #mobile-summary {
-        display: block;
+        /* Menggunakan flex di sini untuk membuat Total dan Tombol bersebelahan */
+        display: flex; 
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
         flex-grow: 1;
-        margin-right: 15px;
+        margin-right: 0;
+        padding: 10px 15px; /* Tambahkan padding di sini */
     }
     
     /* Tombol checkout (akan menjadi tombol utama) */
     #checkout-btn {
         margin: 0;
         padding: 10px 15px;
-        width: auto;
+        width: 150px; /* Lebar tombol yang diatur */
         font-size: 1em;
         flex-shrink: 0;
-        height: 100%; /* Agar sejajar dengan summary */
+        height: auto; 
     }
     
     /* Beri ruang di bawah menu agar tidak tertutup sticky bar */
