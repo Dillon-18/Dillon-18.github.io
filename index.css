@@ -444,14 +444,14 @@ footer {
         display: none !important;
     }
     
-    /* PERUBAHAN: TAMPILKAN INPUT NAMA DI DALAM BOTTOM BAR (#cart)
-    */
+    /* 1. INPUT NAMA PELANGGAN (DITAMPILKAN DI ATAS BAR BAWAH) */
     .customer-info {
         display: block !important; /* Menggantikan display: none; */
-        padding: 0 15px 10px 15px; /* Padding di sekitar input, agar sejajar dengan ringkasan */
-        margin-bottom: 5px;
+        padding: 10px 15px 5px 15px; /* Padding di sekitar input */
+        margin: 0;
         border-bottom: 1px solid #eee; 
         box-shadow: none; 
+        background: #fff;
     }
     
     .customer-info h3 {
@@ -459,19 +459,19 @@ footer {
     }
     
     .customer-info input {
-        margin: 0; /* Hapus margin atas/bawah agar lebih compact */
+        margin-top: 0; 
         padding: 8px;
         font-size: 14px;
+        border-color: #ccc;
     }
 
-    /* ATUR ULANG KERANJANG UNTUK MENAMPILKAN NAMA DI ATAS RINGKASAN */
+    /* 2. ATUR ULANG KERANJANG UNTUK MENAMPILKAN RINGKASAN BARU */
     #cart {
-        /* Mengubah #cart menjadi tumpukan (kolom) untuk menampung nama di atas */
-        padding: 0; /* Hapus padding lama */
+        padding: 0; 
         margin: 0;
         border-radius: 0; 
         display: flex; 
-        flex-direction: column; /* UBAH KE KOLOM */
+        flex-direction: column; /* Mengubah tata letak menjadi kolom (tumpukan) */
         justify-content: flex-start;
         align-items: flex-start;
         background: #fff;
@@ -479,27 +479,48 @@ footer {
     }
     
     /* Sembunyikan detail keranjang belanja desktop dari bottom bar */
-    #cart h2, #cart-items {
+    #cart h2, #cart-items, #cart-total { 
         display: none;
     }
     
-    /* Tampilkan ringkasan dan tombol berdampingan */
+    /* 3. TAMPILKAN RINGKASAN ITEM & TOTAL DENGAN TOMBOL BERDAMPINGAN */
     #mobile-summary {
-        /* Menggunakan flex di sini untuk membuat Total dan Tombol bersebelahan */
-        display: flex; 
+        display: flex; /* Mengatur ringkasan dan tombol checkout agar sejajar */
         justify-content: space-between;
         align-items: center;
         width: 100%;
         flex-grow: 1;
         margin-right: 0;
-        padding: 10px 15px; /* Tambahkan padding di sini */
+        padding: 10px 15px; 
+        background: #fff;
+    }
+
+    /* Styling untuk Detail Item Mobile (Ringkasan Nama Barang dan Total) */
+    #mobile-item-summary {
+        flex-grow: 1;
+        padding-right: 15px;
+        line-height: 1.3;
+    }
+
+    #mobile-item-list {
+        font-size: 0.85em;
+        color: #555;
+        margin: 0;
+        white-space: nowrap; 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+    }
+    
+    #mobile-total-price {
+        font-size: 1.1em;
+        margin: 0;
     }
     
     /* Tombol checkout (akan menjadi tombol utama) */
     #checkout-btn {
         margin: 0;
         padding: 10px 15px;
-        width: 150px; /* Lebar tombol yang diatur */
+        width: 150px; 
         font-size: 1em;
         flex-shrink: 0;
         height: auto; 
