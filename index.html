@@ -287,7 +287,10 @@
         // Atur status tombol Lanjut Bayar di modal
         if (isPaymentSubmitted) {
             continueBtn.disabled = true;
-            continueBtn.textContent = (currentPayment.status === "pending") ? 'Menunggu Verifikasi...' : 'Pembayaran Diverifikasi';
+            continueBtn.textContent = (currentPayment.status === "pending") ? 'Menunggu Verifikasi...' : 'Pesan Sekarang';
+             if (currentPayment.status === "paid") {
+                 continueBtn.disabled = false;
+             }
         } else {
              continueBtn.disabled = false;
              continueBtn.textContent = `Lanjut Bayar (Rp${totalRupiah})`;
@@ -363,7 +366,7 @@
                // Logika desktop untuk tombol checkoutBtn.textContent
               checkoutBtn.textContent = (total === 0) ? `Pesan` : `Pesan - Rp${totalRupiah}`;
               checkoutBtn.onclick = checkout; // Kembalikan fungsi checkout normal
-              checkoutBtn.disabled = (total === 0 || !isPaid); // Logic disabled desktop
+              checkoutBtn.disabled = !isPaid; // Logic disabled desktop
           }
       } else {
           // Keranjang kosong
@@ -523,7 +526,7 @@
         currentPayment.status = "paid"; 
         
         if(statusChanged && found.method !== 'Tunai (Cash)') {
-            alert(`✅ Pembayaran Diverifikasi oleh Kasir! Anda sekarang bisa menekan tombol "Keranjang Saya" dan "Pesan" untuk mengirim order ke dapur.`);
+            alert(`✅ Pembayaran Diverifikasi oleh Kasir! Anda sekarang bisa menekan tombol "Keranjang Saya" dan "Pesan Sekarang" untuk mengirim order ke dapur.`);
             closeModal('payment-detail'); // Tutup modal detail jika verifikasi berhasil
         }
         
@@ -572,11 +575,19 @@
       payments = payments.filter(p => p.id !== currentPayment.id);
       localStorage.setItem('pantryPayments', JSON.stringify(payments));
 
-      alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
+      alert(`✅ Pesanan ${name} berhasil dibuat! Pesanan akan segera diproses.`);
       
-      // Halaman order_status.html tidak ada, tapi sesuai logika, setelah berhasil akan diarahkan.
-      // Kita tetap arahkan, meskipun halaman tidak tersedia.
-      window.location.href = `order_status.html?orderId=${newOrderId}`;
+      // Karena file order_status.html tidak tersedia, kita hanya akan me-refresh halaman 
+      // dan mereset status setelah order selesai dibuat.
+      
+      // Hapus data pembayaran yang baru saja di-checkout
+      currentPayment = null;
+      localStorage.removeItem('lastPaymentId'); 
+      cart = [];
+      document.getElementById('customer-name').value = ''; 
+      
+      updateCart();
+      renderMenu(); 
     }
 
     function openModal(t) { 
