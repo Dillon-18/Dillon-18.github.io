@@ -389,9 +389,16 @@ footer {
     
     /* 2. Sembunyikan Sidebar Desktop secara total */
     #sticky-sidebar {
-        display: none !important; /* Kunci: Sembunyikan sidebar di alur dokumen */
+        /* Kunci: Sembunyikan sidebar di alur dokumen */
+        display: none !important; 
+        position: static !important; 
     }
     
+    /* Hapus padding tambahan di container dari fixed bar lama */
+    .container {
+        padding-bottom: 20px; 
+    }
+
     /* 3. Tampilkan Tombol Floating Keranjang di Mobile */
     #floating-cart-btn {
         position: fixed;
@@ -404,7 +411,8 @@ footer {
         border-radius: 50px;
         box-shadow: 0 4px 10px rgba(0, 139, 24, 0.4);
         font-weight: 600;
-        display: flex;
+        /* Ditampilkan oleh JS saat ada item */
+        display: flex; 
         align-items: center;
         gap: 8px;
         cursor: pointer;
@@ -475,12 +483,17 @@ footer {
         margin-bottom: 20px;
     }
     
+    /* Tampilkan elemen yang sebelumnya desktop-only (keranjang penuh) di dalam sheet */
+    .desktop-only, #payment-section {
+        display: block !important;
+    }
+    
     #cart h2 {
         margin-top: 30px;
         color: #333;
     }
 
-    /* Gaya untuk handle sheet */
+    /* Gaya untuk handle sheet (untuk swipe) */
     .sheet-handle {
         width: 40px;
         height: 5px;
@@ -488,6 +501,18 @@ footer {
         border-radius: 5px;
         margin: 0 auto 15px auto;
         cursor: pointer;
+    }
+    
+    /* Sembunyikan ringkasan mobile yang lama */
+    #mobile-summary {
+        display: none !important;
+    }
+    
+    /* Pastikan tombol di dalam sheet full-width */
+    #cart #checkout-btn, #cart #payment-section #pay-btn {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
     }
 }
 /* === END MOBILE RESPONSIVE STYLES === */
