@@ -498,4 +498,113 @@
       const paymentStatusEl = document.getElementById('payment-status');
       
       if (!currentPayment) {
-        paymentStatusEl.textContent =
+        paymentStatusEl.textContent = "Belum dibayar ❌";
+        return;
+      }
+      
+      const payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+      const found = payments.find(p => p.id === currentPayment.id);
+      
+      if (!found) {
+        if (currentPayment.status === "paid" && cart.length === 0) {
+             // Reset setelah checkout berhasil
+            currentPayment = null;
+            localStorage.removeItem('lastPaymentId'); 
+            document.getElementById('customer-name').value = ''; 
+            updateCart();
+            renderMenu(); 
+            paymentStatusEl.textContent = "Pesanan selesai. Silakan pesan lagi!";
+            return;
+        }
+      }
+      
+      if (found && found.status === "paid") {
+        const statusChanged = currentPayment.status !== "paid";
+        currentPayment.status = "paid"; 
+        
+        if(statusChanged && found.method !== 'Tunai (Cash)') {
+            alert(`✅ Pembayaran Diverifikasi oleh Kasir! Anda sekarang bisa menekan tombol "Keranjang Saya" dan "Pesan" untuk mengirim order ke dapur.`);
+            closeModal('payment-detail'); // Tutup modal detail jika verifikasi berhasil
+        }
+        
+        paymentStatusEl.textContent = `Sudah diverifikasi (${found.method}) ✅`;
+      } else {
+        // Jika statusnya pending atau tidak ditemukan (tapi currentPayment ada), anggap pending
+        if(currentPayment.status !== "paid") {
+             currentPayment.status = "pending";
+        }
+        paymentStatusEl.textContent = "Menunggu verifikasi kasir ⏳";
+      }
+      
+      updateCart(); 
+    }
+
+    function checkout() {
+      if (!currentPayment || currentPayment.status !== "paid") {
+          return alert("❌ Pembayaran belum diverifikasi oleh kasir!");
+      }
+
+      const nameInput = document.getElementById('customer-name');
+      const name = nameInput.value.trim();
+      if (!name) return alert("Masukkan nama Anda!");
+
+      closeModal('cart-bottom-sheet'); // Tutup modal keranjang
+
+      const finalCart = currentPayment.cart; 
+      
+      const newOrderId = Date.now(); 
+      const order = {
+        id: newOrderId,
+        customerName: name, 
+        items: finalCart, 
+        total: currentPayment.total, 
+        status: 'Baru', 
+        time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        paymentId: currentPayment.id,
+        method: currentPayment.method // Tambahkan metode pembayaran
+      };
+
+      const orders = JSON.parse(localStorage.getItem('pantryOrders')) || [];
+      orders.unshift(order);
+      localStorage.setItem('pantryOrders', JSON.stringify(orders)); 
+
+      let payments = JSON.parse(localStorage.getItem('pantryPayments')) || [];
+      payments = payments.filter(p => p.id !== currentPayment.id);
+      localStorage.setItem('pantryPayments', JSON.stringify(payments));
+
+      alert(`✅ Pesanan ${name} berhasil dibuat! Anda akan dialihkan ke halaman status pesanan.`);
+      
+      // Halaman order_status.html tidak ada, tapi sesuai logika, setelah berhasil akan diarahkan.
+      // Kita tetap arahkan, meskipun halaman tidak tersedia.
+      window.location.href = `order_status.html?orderId=${newOrderId}`;
+    }
+
+    function openModal(t) { 
+        if(t === 'cart-bottom-sheet') {
+            document.getElementById(t + "-modal").style.display = "block"; 
+            setTimeout(() => { // Tambahkan class 'open' setelah display block untuk trigger animasi
+                document.getElementById(t + "-modal").classList.add('open');
+            }, 10);
+        } else {
+            document.getElementById(t + "-modal").style.display = "block"; 
+        }
+    }
+    
+    function closeModal(t) { 
+        if(t === 'cart-bottom-sheet') {
+            document.getElementById(t + "-modal").classList.remove('open');
+            setTimeout(() => { // Sembunyikan setelah animasi selesai
+                document.getElementById(t + "-modal").style.display = "none";
+            }, 300);
+        } else {
+            document.getElementById(t + "-modal").style.display = "none"; 
+        }
+    }
+    
+    window.onclick = e => { 
+        if (e.target.classList.contains('modal')) e.target.style.display = "none"; 
+        if (e.target.classList.contains('bottom-sheet')) closeModal('cart-bottom-sheet'); // Tutup bottom sheet
+    };
+  </script>
+</body>
+</html>
