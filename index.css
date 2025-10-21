@@ -186,7 +186,7 @@ h2 {
   font-weight: 600;
 }
 
-/* === SIDEBAR STICKY WRAPPER (BARU) === */
+/* === SIDEBAR STICKY WRAPPER (DESKTOP) === */
 #sticky-sidebar {
   /* Membungkus keranjang dan info pelanggan agar ikut sticky */
   position: sticky; 
@@ -195,9 +195,8 @@ h2 {
   align-self: flex-start;
 }
 
-/* === CUSTOMER INFO (DIUBAH) === */
+/* === CUSTOMER INFO === */
 .customer-info {
-  /* Hapus margin-top lama, sekarang margin diatur oleh #cart di bawahnya */
   padding: 15px;
   background: #ffffff;
   border-radius: 10px;
@@ -220,13 +219,13 @@ h2 {
   box-sizing: border-box;
 }
 
-/* === KERANJANG (DIUBAH) === */
+/* === KERANJANG === */
 #cart {
   background: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-top: 30px; /* Jarak antara Customer Info dan Keranjang */
+  margin-top: 30px; 
 }
 
 #cart h2 {
@@ -315,29 +314,7 @@ footer {
   font-size: 0.9em;
 }
 
-/* === NOTIFIKASI === */
-.notification {
-  position: fixed;
-  top: 60px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  z-index: 1001;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-.notification.show {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* === MODAL POPUP === */
+/* === MODAL POPUP (Lainnya) === */
 .modal {
   display: none; 
   position: fixed; 
@@ -395,95 +372,122 @@ footer {
   text-decoration: underline;
 }
 
-/* Pastikan elemen mobile-only tersembunyi di desktop */
+/* Sembunyikan Ringkasan Mobile Lama di desktop */
 #mobile-summary {
     display: none; 
 }
 
-
-/* === START MOBILE RESPONSIVE STYLES === */
-
-/* Tambahkan class pembantu untuk menyembunyikan elemen tertentu di mobile */
-.desktop-only {
-    /* Hanya tampil di Desktop, default-nya sudah on */
-}
+/* === START MOBILE RESPONSIVE STYLES (MODAL SHEET BARU) === */
 
 /* MEDIA QUERY untuk Responsif */
 @media (max-width: 768px) {
+    /* 1. Atur Konten Utama */
     .content-grid {
         grid-template-columns: 1fr;
         min-height: auto; 
     }
     
-    /* === ATUR ULANG SIDEBAR UNTUK MOBILE (FIXED BOTTOM BAR) === */
+    /* 2. Sembunyikan Sidebar Desktop secara total */
     #sticky-sidebar {
-        position: fixed; 
-        bottom: 0; /* Tempel di bawah layar */
-        top: auto; /* Override top: 80px */
-        left: 0;
-        width: 100%; 
-        z-index: 999;
-        
-        /* Default: Sembunyikan, akan dimunculkan oleh JS */
-        display: none; 
-        
-        /* Hapus style desktop */
-        padding: 0;
-        margin: 0;
-        box-shadow: 0 -4px 12px rgba(0,0,0,0.1); 
-        background: #f7f7f7; 
-        
-        /* Padding untuk notch/nav bar HP modern */
-        padding-bottom: env(safe-area-inset-bottom, 0); 
+        display: none !important; /* Kunci: Sembunyikan sidebar di alur dokumen */
     }
     
-    /* Class yang ditambahkan oleh JS untuk menampilkan sidebar */
-    #sticky-sidebar.show-mobile {
-        display: block;
-    }
-    
-    /* Sembunyikan semua elemen keranjang di desktop */
-    .desktop-only {
-        display: none !important;
-    }
-    
-    /* Sembunyikan Input Nama Pelanggan dari bar bawah, biar user scroll ke atas */
-    .customer-info {
-        display: none; 
+    /* 3. Tampilkan Tombol Floating Keranjang di Mobile */
+    #floating-cart-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1050;
+        background-color: #068b18;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 50px;
+        box-shadow: 0 4px 10px rgba(0, 139, 24, 0.4);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: transform 0.2s;
     }
 
-    /* Atur Keranjang menjadi satu baris di mobile */
-    #cart {
-        padding: 10px 15px;
-        margin: 0;
-        border-radius: 0; 
-        display: flex; 
-        justify-content: space-between;
-        align-items: center;
-        background: #fff;
-        box-shadow: none; 
+    #floating-cart-btn:hover {
+        transform: scale(1.05);
     }
-    
-    /* Tampilkan ringkasan dan tombol berdampingan */
-    #mobile-summary {
+
+    /* 4. Gaya untuk Modal Sheet (Container Baru) */
+    .cart-sheet-overlay {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        display: none; /* Awalnya tersembunyi, ditampilkan oleh JS */
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .cart-sheet-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        max-height: 85vh; /* Batas tinggi sheet */
+        background-color: #fff;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        
+        /* Animasi masuk dari bawah */
+        transform: translateY(100%);
+        transition: transform 0.3s ease-out;
+        
+        /* Konten di dalam sheet bisa digulir */
+        overflow-y: auto;
+        
+        /* Padding untuk notch/nav bar HP modern */
+        padding-bottom: calc(20px + env(safe-area-inset-bottom, 0));
+    }
+
+    /* Kelas yang ditambahkan JS saat sheet terbuka */
+    .cart-sheet-overlay.active {
         display: block;
-        flex-grow: 1;
-        margin-right: 15px;
+        opacity: 1;
+    }
+
+    .cart-sheet-overlay.active .cart-sheet-content {
+        transform: translateY(0);
+    }
+
+    /* 5. Atur Tampilan Keranjang di dalam sheet */
+    /* Hapus bayangan dan margin di dalam sheet */
+    .customer-info, #cart {
+        box-shadow: none;
+        background: none;
+        margin-top: 0;
+        padding: 0;
     }
     
-    /* Tombol checkout (akan menjadi tombol utama) */
-    #checkout-btn {
-        margin: 0;
-        padding: 10px 15px;
-        width: auto;
-        font-size: 1em;
-        flex-shrink: 0;
-        height: 100%; 
+    .customer-info {
+        margin-bottom: 20px;
     }
     
-    /* Beri ruang di bawah menu agar tidak tertutup sticky bar */
-    .container {
-        padding-bottom: 75px; 
+    #cart h2 {
+        margin-top: 30px;
+        color: #333;
+    }
+
+    /* Gaya untuk handle sheet */
+    .sheet-handle {
+        width: 40px;
+        height: 5px;
+        background-color: #ccc;
+        border-radius: 5px;
+        margin: 0 auto 15px auto;
+        cursor: pointer;
     }
 }
 /* === END MOBILE RESPONSIVE STYLES === */
