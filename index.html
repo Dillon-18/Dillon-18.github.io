@@ -247,19 +247,30 @@
         const sheetContent = document.getElementById('cart-sheet-content');
         const sidebar = document.getElementById('sticky-sidebar');
         
-        // Pindahkan konten dari sidebar desktop ke sheet (handle dipisahkan)
+        // Pindahkan konten dari sidebar desktop ke sheet (handle ditambahkan)
         sheetContent.innerHTML = `
             <div class="sheet-handle" onclick="closeCartSheet({target: document.getElementById('cart-sheet-overlay')})"></div>
             ${sidebar.innerHTML}
         `;
         
-        // Panggil updateCart untuk mengatur state tombol/data di dalam sheet
+        // Penting: Masukkan nilai customer name kembali ke input di dalam sheet!
+        const nameValue = document.getElementById('customer-name').value;
+        const sheetNameInput = sheetContent.querySelector('#customer-name');
+        if(sheetNameInput) sheetNameInput.value = nameValue;
+        
         updateCart(); 
         
         sheetOverlay.classList.add('active');
     }
     
     function closeCartSheet(event) {
+        // Ambil nama dari input di dalam sheet sebelum ditutup (jika ada)
+        const sheetNameInput = document.getElementById('cart-sheet-content').querySelector('#customer-name');
+        if(sheetNameInput) {
+            // Simpan kembali nama pelanggan ke input desktop/utama
+            document.getElementById('customer-name').value = sheetNameInput.value;
+        }
+        
         // Hanya tutup jika mengklik overlay atau handle, BUKAN konten di dalam sheet
         if (event.target.id === 'cart-sheet-overlay' || event.target.classList.contains('sheet-handle')) {
             document.getElementById('cart-sheet-overlay').classList.remove('active');
@@ -273,11 +284,12 @@
       const isMobile = window.matchMedia('(max-width: 768px)').matches;
       const isSheetActive = isMobile && document.getElementById('cart-sheet-overlay').classList.contains('active');
       
+      // Target elemen keranjang di Desktop (atau di dalam Sheet)
       let listEl = document.getElementById('cart-items');
       let checkoutBtn = document.getElementById('checkout-btn');
       let payBtn = document.getElementById('pay-btn'); 
       let paymentStatusEl = document.getElementById('payment-status');
-      const nameInput = document.getElementById('customer-name');
+      const nameInput = document.getElementById('customer-name'); // Input nama utama
 
       // Jika sheet aktif, target elemen di dalam sheet
       if (isSheetActive) {
@@ -318,6 +330,7 @@
           const floatingBtn = document.getElementById('floating-cart-btn');
           const floatingQty = document.getElementById('floating-cart-qty');
           const floatingTotal = document.getElementById('floating-cart-total');
+          
           if (total > 0) {
               floatingBtn.style.display = 'flex';
               floatingQty.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -327,7 +340,7 @@
           }
       }
       
-      // --- LOGIC TOMBOL CHECKOUT & BAYAR (untuk sidebar desktop & sheet mobile) ---
+      // --- LOGIC TOMBOL CHECKOUT & BAYAR (untuk desktop sidebar & sheet mobile) ---
       if (checkoutBtn) {
           if (total > 0) {
               if (isPaid) {
@@ -340,27 +353,19 @@
                    checkoutBtn.disabled = true;
               } else {
                    // Jika belum paid/pending
-                   if (isMobile) {
-                        // Di mobile, tombol ini berfungsi sebagai "Lanjut Bayar"
-                        checkoutBtn.textContent = `Lanjut Bayar (${totalRupiah})`;
-                        checkoutBtn.onclick = () => { 
-                            // Ambil nama dari input di dalam sheet jika sheet aktif, atau dari input di sidebar
-                            const currentNameInput = isSheetActive ? document.getElementById('cart-sheet-content').querySelector('#customer-name') : nameInput;
-                            const name = currentNameInput.value.trim();
-                            if (!name) return alert("❌ Masukkan nama Anda terlebih dahulu (input di bagian atas keranjang).");
-                            
-                            // Tutup sheet (hanya jika aktif)
-                            if (isSheetActive) closeCartSheet({target: document.getElementById('cart-sheet-overlay')}); 
-
-                            openPaymentModal();
-                        };
-                        checkoutBtn.disabled = false;
-                   } else {
-                        // Di desktop, tombol ini disabled sampai paid
-                        checkoutBtn.textContent = `Pesan - Rp${totalRupiah}`;
-                        checkoutBtn.onclick = checkout;
-                        checkoutBtn.disabled = true;
-                   }
+                   // Di desktop, tombol ini disabled sampai paid. Di mobile sheet, ini adalah 'Lanjut Bayar'
+                   checkoutBtn.textContent = isMobile ? `Lanjut Bayar (${totalRupiah})` : `Pesan - Rp${totalRupiah}`;
+                   checkoutBtn.onclick = isMobile ? () => { 
+                      const currentNameInput = isSheetActive ? document.getElementById('cart-sheet-content').querySelector('#customer-name') : nameInput;
+                      const name = currentNameInput.value.trim();
+                      if (!name) return alert("❌ Masukkan nama Anda terlebih dahulu.");
+                      
+                      if (isSheetActive) closeCartSheet({target: document.getElementById('cart-sheet-overlay')}); 
+                      openPaymentModal();
+                   } : checkout; 
+                   
+                   // Mobile: aktif; Desktop: non-aktif (sampai paid)
+                   checkoutBtn.disabled = isMobile ? false : true; 
               }
           } else {
               // Keranjang kosong
@@ -549,11 +554,18 @@
 
     function openModal(t) { document.getElementById(t + "-modal").style.display = "block"; }
     function closeModal(t) { document.getElementById(t + "-modal").style.display = "none"; }
-    window.onclick = e => { if (e.target.classList.contains('modal') || e.target.classList.contains('cart-sheet-overlay')) {
-        e.target.style.display = "none";
-        // Khusus untuk sheet, pastikan kelas active dihilangkan saat diklik overlay
-        if (e.target.classList.contains('cart-sheet-overlay')) e.target.classList.remove('active');
-    }};
+    
+    // Perbarui fungsi window.onclick untuk mendukung sheet
+    window.onclick = e => { 
+        if (e.target.classList.contains('modal')) e.target.style.display = "none"; 
+        
+        // Tambahkan logic penutupan untuk overlay sheet
+        if (e.target.classList.contains('cart-sheet-overlay')) {
+            e.target.classList.remove('active');
+            // Panggil logic penutupan sheet untuk menyimpan nama pelanggan
+            closeCartSheet(e); 
+        }
+    };
   </script>
 </body>
 </html>
