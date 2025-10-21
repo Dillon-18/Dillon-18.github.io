@@ -280,6 +280,7 @@ h2 {
 }
 
 /* === CHECKOUT BUTTON === */
+/* Styling umum untuk checkout button */
 #checkout-btn {
   display: block;
   width: 100%;
@@ -415,39 +416,31 @@ footer {
     /* === ATUR ULANG SIDEBAR UNTUK MOBILE (FIXED BOTTOM BAR) === */
     #sticky-sidebar {
         position: fixed; 
-        bottom: 0; /* Tempel di bawah layar */
-        top: auto; /* Override top: 80px */
+        bottom: 0; 
+        top: auto; 
         left: 0;
         width: 100%; 
         z-index: 999;
-        
-        /* Default: Sembunyikan, akan dimunculkan oleh JS */
         display: none; 
-        
-        /* Hapus style desktop */
         padding: 0;
         margin: 0;
         box-shadow: 0 -4px 12px rgba(0,0,0,0.1); 
         background: #f7f7f7; 
-        
-        /* Padding untuk notch/nav bar HP modern */
         padding-bottom: env(safe-area-inset-bottom, 0); 
     }
     
-    /* Class yang ditambahkan oleh JS untuk menampilkan sidebar */
     #sticky-sidebar.show-mobile {
         display: block;
     }
     
-    /* Sembunyikan semua elemen keranjang di desktop */
     .desktop-only {
         display: none !important;
     }
     
     /* 1. INPUT NAMA PELANGGAN (DITAMPILKAN DI ATAS BAR BAWAH) */
     .customer-info {
-        display: block !important; /* Menggantikan display: none; */
-        padding: 10px 15px 5px 15px; /* Padding di sekitar input */
+        display: block !important;
+        padding: 10px 15px 5px 15px;
         margin: 0;
         border-bottom: 1px solid #eee; 
         box-shadow: none; 
@@ -455,7 +448,7 @@ footer {
     }
     
     .customer-info h3 {
-        display: none; /* Sembunyikan judul agar lebih ringkas di HP */
+        display: none;
     }
     
     .customer-info input {
@@ -465,31 +458,31 @@ footer {
         border-color: #ccc;
     }
 
-    /* 2. ATUR ULANG KERANJANG UNTUK MENAMPILKAN RINGKASAN BARU */
+    /* 2. ATUR ULANG KERANJANG */
     #cart {
         padding: 0; 
         margin: 0;
         border-radius: 0; 
         display: flex; 
-        flex-direction: column; /* Mengubah tata letak menjadi kolom (tumpukan) */
+        flex-direction: column; 
         justify-content: flex-start;
         align-items: flex-start;
         background: #fff;
         box-shadow: none; 
     }
     
-    /* Sembunyikan detail keranjang belanja desktop dari bottom bar */
     #cart h2, #cart-items, #cart-total { 
         display: none;
     }
     
     /* 3. TAMPILKAN RINGKASAN ITEM & TOTAL DENGAN TOMBOL BERDAMPINGAN */
     #mobile-summary {
-        display: flex; /* Mengatur ringkasan dan tombol checkout agar sejajar */
-        justify-content: space-between;
+        /* Mengatur flex untuk Ringkasan dan Tombol */
+        display: flex; 
+        /* Pastikan Ringkasan di Kiri, Tombol di Kanan */
+        justify-content: space-between; 
         align-items: center;
         width: 100%;
-        flex-grow: 1;
         margin-right: 0;
         padding: 10px 15px; 
         background: #fff;
@@ -497,9 +490,12 @@ footer {
 
     /* Styling untuk Detail Item Mobile (Ringkasan Nama Barang dan Total) */
     #mobile-item-summary {
-        flex-grow: 1;
-        padding-right: 15px;
+        /* Memungkinkan ringkasan mengambil semua ruang yang tersedia */
+        flex-grow: 1; 
+        padding-right: 15px; /* Jarak antara Ringkasan dan Tombol */
         line-height: 1.3;
+        /* Pastikan elemen ini ada di kiri */
+        text-align: left; 
     }
 
     #mobile-item-list {
@@ -522,7 +518,8 @@ footer {
         padding: 10px 15px;
         width: 150px; 
         font-size: 1em;
-        flex-shrink: 0;
+        /* Memastikan tombol tidak mengecil */
+        flex-shrink: 0; 
         height: auto; 
     }
     
